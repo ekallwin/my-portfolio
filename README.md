@@ -1,7 +1,7 @@
 # Portfolio Project ReadMe
 
 ## Project Overview
-Welcome to my portfolio project! This application is a showcase of my skills and expertise as a web developer. It includes sections for my projects, achievements, a contact form, and more. The entire application is built using **React.js** and styled with CSS.
+Welcome to my portfolio project! This application is a showcase of my skills and expertise as a web developer. It includes sections for my projects, achievements, a contact form, and more. The entire application is built using **React.jsx** and styled with CSS.
 
 ## Features
 ### 1. **Home Page**
@@ -24,30 +24,30 @@ Welcome to my portfolio project! This application is a showcase of my skills and
 
 ## Technologies Used
 ### Frontend
-- **React.js**: For building the user interface.
+- **React.jsx**: For building the user interface.
 - **React Router**: For navigation between pages.
 - **CSS**: For styling components.
 
 ### Libraries
 - **react-toastify**: To display notifications and alerts.
-- **Email.js**: To send emails directly from the contact form.
+- **Email.jsx**: To send emails directly from the contact form.
 
 
 ## Folder Structure
 ```
-├── App.js                     # Main application entry point
+├── App.jsx                     # Main application entry point
 ├── App.css                    # Global styles
-├── Home.js                    # Home page component
+├── Home.jsx                    # Home page component
 ├── Home.css                   # Home page CSS
 ├── Components/
-│   ├── navbar.js              # Navbar component
-│   ├── header.js              # Header component
-│   ├── about.js               # About section
-│   ├── contact.js             # Contact form
+│   ├── navbar.jsx              # Navbar component
+│   ├── header.jsx              # Header component
+│   ├── about.jsx               # About section
+│   ├── contact.jsx             # Contact form
 │   ├── contact.css            # Contact CSS page          
-│   ├── footer.js              # Footer section
-│   ├── project.js             # Projects page
-│   ├── achievements.js        # Achievements page
+│   ├── footer.jsx              # Footer section
+│   ├── project.jsx             # Projects page
+│   ├── achievements.jsx        # Achievements page
 │   └── achievements.css       # Achievements CSS page
 ```
 
