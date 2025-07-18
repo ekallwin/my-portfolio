@@ -1,0 +1,116 @@
+.Project li {
+    list-style: disc;
+    margin-left: 10px;
+}
+
+.Project {
+    max-width: 900px;
+    max-height: 550px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    margin: 0 auto;
+    padding: 30px;
+    margin-bottom: 5%;
+    color: black;
+    background-color: white;
+}
+
+.Pro-img {
+    max-width: 80%;
+    max-height: 20%;
+    margin-top: 10px;
+}
+
+.Project-links {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1px;
+    padding-bottom: 20px;
+}
+
+.Project-links a {
+    color: black;
+    padding: 1px;
+    text-align: center;
+}
+
+.pro-icon {
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.Projects {
+    /* margin-top: 120px; */
+    margin-bottom: 120px;
+}
+
+a {
+    text-decoration: none;
+}
+
+.Project-info {
+    margin-left: 20px;
+}
+
+.Project-links a * {
+    color: black;
+}
+
+.Project-links a *:hover {
+    color: #646363;
+}
+
+@media (max-width: 768px) {
+
+
+    .Project-info {
+        margin: auto;
+    }
+
+    .Project {
+        max-width: 600px;
+        max-height: 500px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid white;
+        border-radius: 10px;
+        margin: 0 auto;
+        padding: 10px;
+        margin-bottom: 70px;
+    }
+
+    .Pro-img {
+        max-width: 80%;
+        max-height: 20%;
+        margin-top: 10px;
+    }
+
+    .gradient-button {
+        margin: 0 auto;
+        display: block;
+        text-decoration: none;
+        margin-top: 90px;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    .Project-info li {
+        padding: 1px;
+    }
+
+    .Project-links {
+        padding: 2px;
+    }
+
+    .Project {
+        width: 85%;
+    }
+}

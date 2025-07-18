@@ -1,0 +1,193 @@
+.abt h2 {
+    color: white;
+}
+
+
+#About {
+    padding: 2px;
+    margin-top: -50px;
+    max-width: 95%;
+    margin: 0 auto;
+}
+
+.About figure {
+    text-align: center;
+}
+
+.About img {
+    max-width: 200px;
+    border-radius: 100% !important;
+}
+
+figcaption {
+    padding: 10px;
+    text-align: left;
+    color: #dcdcdc;
+}
+
+.About figcaption {
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.About {
+    padding: 2px 5px;
+    width: 100%;
+    margin: 0 auto;
+    background-color: rgba(255, 255, 255, 0.015) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+}
+
+.About fieldset {
+    margin-top: 20px;
+    font-size: 18px;
+    padding: 10px;
+}
+
+figure img {
+    width: 200px;
+    height: 200px;
+    border-radius: 100%;
+    border: 2px solid black;
+    margin-top: 15px;
+}
+
+@media (max-width: 768px) {
+    #About {
+        padding: -10px;
+    }
+
+    .About figure {
+        text-align: center;
+    }
+
+    .About img {
+        max-width: 200px;
+        border-radius: 50%;
+    }
+
+    .About figcaption {
+        margin-top: 10px;
+        font-size: 14px;
+    }
+
+    figcaption {
+        font-size: 14px;
+    }
+
+    .About fieldset {
+        font-size: 18px;
+    }
+
+    figure img {
+        width: 150px;
+        height: 150px;
+        border-radius: 100%;
+        border: 2px solid black;
+    }
+
+    #down_btn {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .About {
+        width: 100%;
+    }
+}
+
+.glass-button-down {
+    color: #fff !important;
+    font-size: 20px !important;
+    font-family: serif;
+    padding: 15px 25px !important;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.3s ease;
+    z-index: 1;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    user-select: none;
+    display: block;
+    text-decoration: none;
+    margin: 30px auto !important;
+    width: fit-content;
+    transition: all 0.4s ease;
+}
+
+.glass-button-down::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) scaleX(1);
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(45px);
+    -webkit-backdrop-filter: blur(45px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+    border-radius: 100px;
+    z-index: -1;
+    pointer-events: none;
+    transition: transform 0.3s ease;
+    transform-origin: center;
+}
+
+.glass-button-down:hover {
+    transform: scale(1.08);
+}
+
+.glass-button-down:focus {
+    outline: none;
+    color: white;
+    transform: scale(1);
+}
+
+.About {
+    position: relative;
+    border-radius: 10px !important;
+    z-index: 1;
+}
+
+.About::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    padding: 4px;
+    background: radial-gradient(transparent, transparent, #D9006D, #8900F9, transparent, transparent);
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    background-size: 300% 300%;
+    animation: shine-pulse 10s linear infinite;
+    z-index: -1;
+}
+
+@keyframes shine-pulse {
+    0% {
+        background-position: 0% 0%;
+    }
+
+    50% {
+        background-position: 100% 100%;
+    }
+
+    100% {
+        background-position: 0% 0%;
+    }
+}
+
+.About .card {
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 8px;
+    padding: 20px;
+}

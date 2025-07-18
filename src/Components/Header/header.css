@@ -1,0 +1,107 @@
+.item-name,
+.titlename {
+    font-family: serif;
+    color: white;
+    text-align: left;
+    margin: 50px 0 10px 20px;
+    font-size: 45px !important;
+    user-select: none;
+}
+
+.header-text {
+    margin-top: -0.2% !important;
+}
+
+.item-name h2 {
+    font-size: 40px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    margin-right: -10px;
+    text-align: left;
+}
+
+.typewriter-text {
+    font-size: 1.5rem;
+    color: #ffffff;
+}
+
+.typing-effect {
+    color: white;
+}
+
+.typewritter {
+    color: white;
+}
+
+.glass-button {
+    color: #fff !important;
+    font-size: 25px !important;
+    font-family: serif;
+    padding: 20px 35px !important;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.3s ease;
+    z-index: 1;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    user-select: none;
+    display: block;
+    text-decoration: none;
+    margin: 30px auto !important;
+    width: fit-content;
+    transition: all 0.4s ease;
+}
+
+
+.glass-button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) scaleX(1);
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(45px);
+    -webkit-backdrop-filter: blur(45px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+    border-radius: 100px;
+    z-index: -1;
+    pointer-events: none;
+    transition: transform 0.3s ease;
+    transform-origin: center;
+
+}
+
+.glass-button:hover {
+    transform: scale(1.15);
+}
+
+
+@media (max-width: 768px) {
+    .item-name h2 {
+        font-size: 25px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        margin-top: 1px;
+        margin-right: -10px;
+        text-align: left;
+    }
+
+    .item-name,
+    .titlename {
+        font-size: 30px !important;
+        margin-top: 80px;
+    }
+
+    .typing-effect {
+        margin-top: 40px;
+        color: white;
+    }
+}

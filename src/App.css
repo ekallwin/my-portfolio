@@ -1,0 +1,143 @@
+body {
+  background-image: url('../Background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-color 0.3s, color 0.3s;
+  overflow-x: hidden;
+  height: 100vh;
+  scroll-behavior: smooth;
+}
+
+
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  height: max-content;
+}
+
+html,
+body {
+  -webkit-overflow-scrolling: touch;
+}
+
+body,
+ul,
+li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.icons {
+  margin-right: 10px;
+}
+
+.char-count {
+  font-size: 18px;
+  margin-top: -10px;
+  text-align: left;
+  color: white;
+}
+
+.char-count-max {
+  color: red;
+  font-size: 18px;
+  margin-top: -10px;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: white !important;
+}
+
+span {
+  margin-left: 5px;
+}
+
+.menu-icon {
+  color: white;
+  display: none;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  position: relative;
+  padding: 25px 45px 25px 0;
+}
+
+.fade-in {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 1s ease-in, transform 1s ease-in;
+}
+
+.fade-in.show {
+  opacity: 1;
+}
+
+.fade-in-contact {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 1s ease-in, transform 1s ease-in;
+}
+
+.fade-in-contact.show {
+  opacity: 1;
+}
+
+.fade-in-contact.hide {
+  opacity: 0;
+  transform: translateX(40px);
+}
+
+/* .btn-fade {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 2s ease-in, transform 2s ease-in;
+}
+
+.btn-fade.show {
+  opacity: 1;
+} */
+
+.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (max-width: 768px) {
+  .menu-icon {
+    display: block;
+  }
+
+  .toast-container {
+    text-align: left;
+  }
+
+}
+
+div h2 {
+  margin: 100px 0 5% 0;
+  font-family: serif;
+  font-size: 45px;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+footer,
+nav,
+button {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
