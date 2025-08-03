@@ -62,7 +62,7 @@ function Projects() {
         <div className="Project">
           <img src={Instagram} alt='Instagram Clone' className='Pro-img'></img>
           <div className="Project-info">
-            <h5>Instagram Clone</h5>
+            <h5>Instagram Clone Page(React.js)</h5>
             <ul>
               <legend>Skills used</legend>
               <li>React.js</li>
