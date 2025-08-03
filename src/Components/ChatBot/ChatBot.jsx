@@ -82,18 +82,58 @@ export default function ChatBot() {
     const sendContactForm = useCallback(() => {
         const serviceID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
         const templateID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+        const templateIDAdmin = import.meta.env.VITE_EMAILJS_TEMPLATE_ID_ADMIN;
         const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
         const templateParams = {
-            name: formattedName,
-            email: formData.email,
-            phone: formData.phone,
+            name: formData.name,
+            user_email: formData.email,
+            maskedphone: (() => {
+                const raw = formData.phone.startsWith('+') ? formData.phone : `+${formData.phone}`;
+                const match = raw.match(/^(\+\d{1,4})(\d+)?$/);
+                if (!match) return raw;
+                const countryCode = match[1];
+                const localNumber = match[2] || '';
+                const last4 = localNumber.slice(-3);
+                const maskedSection = '*'.repeat(localNumber.length - 4);
+                return `${countryCode}${maskedSection}${last4}`;
+            })(),
+
+
+            maskedemail: (() => {
+                const email = formData.email.trim();
+                const atIndex = email.indexOf('@');
+
+                if (atIndex <= 4) return email;
+
+                const username = email.slice(0, atIndex);
+                const domain = email.slice(atIndex);
+
+                const firstTwo = username.slice(0, 2);
+                const lastTwo = username.slice(-2);
+
+                const safeDomain = domain
+                    .replace('@', '\u200B@')
+                    .replace(/\./g, '\u200B.');
+                return `${firstTwo}*****${lastTwo}${safeDomain}`;
+            })(),
+
+
             message: formData.message,
-            timestamp: moment().add(2, 'seconds').format('YYYY-MM-DD[T]HH:mm:ssZ'),
-            sendtime: moment().format('DD-MM-YYYY hh:mm:ss A')
+            timestamp: moment().add(2, 'seconds').format('DD-MM-YYYY hh:mm:ss A Z'),
+        };
+        const templateParamsAdmin = {
+            name: formData.name,
+            phone: formData.phone.startsWith('+') ? formData.phone : `+${formData.phone}`,
+            email: formData.email,
+            message: formData.message,
+            timestamp: moment().add(2, 'seconds').format('DD-MM-YYYY hh:mm:ss A Z'),
         };
 
-        emailjs.send(serviceID, templateID, templateParams, publicKey)
+        Promise.all([
+            emailjs.send(serviceID, templateID, templateParams, publicKey),
+            emailjs.send(serviceID, templateIDAdmin, templateParamsAdmin, publicKey)
+        ])
             .then(() => {
                 setMessages((prev) => [
                     ...prev,
@@ -110,11 +150,13 @@ export default function ChatBot() {
             });
     }, [formattedName, formData]);
 
+    const [hasSentEmail, setHasSentEmail] = useState(false);
     useEffect(() => {
-        if (conversationStep === 5 && formData.message) {
+        if (conversationStep === 5 && formData.message && !hasSentEmail) {
             sendContactForm();
+            setHasSentEmail(true);
         }
-    }, [conversationStep, formData.message, sendContactForm]);
+    }, [conversationStep, formData.message, hasSentEmail, sendContactForm]);
 
     const toggleChat = () => {
         setIsOpen((prev) => {
