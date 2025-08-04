@@ -62,6 +62,7 @@
     border-radius: 2px;
     max-height: 500px;
     margin-bottom: -10px;
+    pointer-events: none;
 }
 
 .project-content {
@@ -137,17 +138,17 @@
 }
 
 .github-link:hover {
-    background: #ec45ff;
-    transform: scale(1.05);
+    background: #ed4aff;
+    transform: scale(1.02);
 }
 
 .demo-link {
-    background: #0095ff;
+    background: #0599ff;
 }
 
 .demo-link:hover {
-    background: #30a9ff;
-    transform: scale(1.05);
+    background: #32aaff;
+    transform: scale(1.02);
 }
 
 .project-link svg {
