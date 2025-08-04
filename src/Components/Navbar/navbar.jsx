@@ -78,6 +78,9 @@ function Navbar() {
               <HashLink to="/#About" className="nav-link navbar-link" smooth onClick={(e) => handleLinkClick(e, null, true)}><span>About</span></HashLink>
             </li>
             <li className="nav-item">
+              <HashLink to="/#Skills" className="nav-link navbar-link" smooth onClick={(e) => handleLinkClick(e, null, true)}><span>Skills</span></HashLink>
+            </li>
+            <li className="nav-item">
               <Link to="/projects" className="nav-link navbar-link" onClick={(e) => handleLinkClick(e, "/projects")}><span>Projects</span></Link>
             </li>
             <li className="nav-item">

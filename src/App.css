@@ -79,7 +79,7 @@ span {
 
 .fade-in-contact {
   opacity: 0;
-  transform: translateX(40px);
+  transform: translateX(-40px);
   transition: opacity 1s ease-in, transform 1s ease-in;
 }
 
@@ -87,22 +87,19 @@ span {
   opacity: 1;
 }
 
-.fade-in-contact.hide {
-  opacity: 0;
-  transform: translateX(40px);
-}
-
-/* .btn-fade {
-  opacity: 0;
-  transform: translateX(40px);
-  transition: opacity 2s ease-in, transform 2s ease-in;
-}
-
-.btn-fade.show {
-  opacity: 1;
-} */
 
 .show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.fade-in-skill {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 1s ease-in, transform 1s ease-in;
+}
+
+.fade-in-skill.show {
   opacity: 1;
   transform: translateX(0);
 }
