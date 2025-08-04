@@ -3,12 +3,13 @@ import './Skills.css';
 
 const Skills = () => {
     const skillsData = [
-        { name: 'JavaScript', percentage: 80 },
-        { name: 'React', percentage: 85 },
-        { name: 'Node.js', percentage: 75 },
-        { name: 'Express.js', percentage: 75 },
-        { name: 'MongoDB', percentage: 70 },
         { name: 'HTML/CSS', percentage: 95 },
+        { name: 'JavaScript', percentage: 75 },
+        { name: 'MongoDB', percentage: 70 },
+        { name: 'Express.js', percentage: 70 },
+        { name: 'React.js', percentage: 85 },
+        { name: 'Node.js', percentage: 70 },
+        { name: 'Git', percentage: 75 },
     ];
 
     const skillsRef = useRef(null);
