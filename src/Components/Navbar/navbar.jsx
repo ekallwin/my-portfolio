@@ -47,7 +47,7 @@ function Navbar() {
       if (to && !isHash) {
         navigate(to);
       }
-    }, 800);
+    }, 600);
   };
 
 
