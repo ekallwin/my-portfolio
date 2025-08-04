@@ -112,10 +112,14 @@ export default function ChatBot() {
                 const firstTwo = username.slice(0, 2);
                 const lastTwo = username.slice(-2);
 
+                const starsCount = Math.max(username.length - 4, 1);
+                const stars = '*'.repeat(starsCount);
+
                 const safeDomain = domain
                     .replace('@', '\u200B@')
                     .replace(/\./g, '\u200B.');
-                return `${firstTwo}*****${lastTwo}${safeDomain}`;
+
+                return `${firstTwo}${stars}${lastTwo}${safeDomain}`;
             })(),
 
 

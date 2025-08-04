@@ -22,7 +22,7 @@ const ContactForm = () => {
     countryCode: "in",
   });
   const [phoneLength, setPhoneLength] = useState(10);
-  const [hidePhone, setHidePhone] = useState(false); 
+  const [hidePhone, setHidePhone] = useState(false);
 
   const contactRef = useRef(null);
 
@@ -178,7 +178,7 @@ const ContactForm = () => {
         name: formData.name,
         user_email: formData.email,
         maskedphone: hidePhone
-          ? "Hidden by user"
+          ? "Hidden"
           : (() => {
             const raw = formData.phone.startsWith('+') ? formData.phone : `+${formData.phone}`;
             const match = raw.match(/^(\+\d{1,4})(\d+)?$/);
@@ -202,11 +202,16 @@ const ContactForm = () => {
           const firstTwo = username.slice(0, 2);
           const lastTwo = username.slice(-2);
 
+          const starsCount = Math.max(username.length - 4, 1);
+          const stars = '*'.repeat(starsCount);
+
           const safeDomain = domain
             .replace('@', '\u200B@')
             .replace(/\./g, '\u200B.');
-          return `${firstTwo}*****${lastTwo}${safeDomain}`;
+
+          return `${firstTwo}${stars}${lastTwo}${safeDomain}`;
         })(),
+
 
 
         message: formData.message,
