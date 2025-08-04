@@ -139,7 +139,7 @@
 }
 
 .github-link:hover {
-    background: #ed4aff;
+    background: #ea4aff;
     transform: scale(1.02);
 }
 
@@ -148,7 +148,7 @@
 }
 
 .demo-link:hover {
-    background: #32aaff;
+    background: #3aaaff;
     transform: scale(1.02);
 }
 
