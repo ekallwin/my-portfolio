@@ -120,14 +120,14 @@ export default function ChatBot() {
 
 
             message: formData.message,
-            timestamp: moment().add(2, 'seconds').format('DD-MM-YYYY hh:mm:ss A Z'),
+            timestamp: moment().add(2, 'seconds').format('DD-MM-YYYY [at] hh:mm:ss A'),
         };
         const templateParamsAdmin = {
             name: formData.name,
             phone: formData.phone.startsWith('+') ? formData.phone : `+${formData.phone}`,
             email: formData.email,
             message: formData.message,
-            timestamp: moment().add(2, 'seconds').format('DD-MM-YYYY hh:mm:ss A Z'),
+            timestamp: moment().add(2, 'seconds').format('DD-MM-YYYY [at] hh:mm:ss A'),
         };
 
         Promise.all([

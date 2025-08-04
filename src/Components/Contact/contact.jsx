@@ -22,7 +22,7 @@ const ContactForm = () => {
     countryCode: "in",
   });
   const [phoneLength, setPhoneLength] = useState(10);
-  const [hidePhone, setHidePhone] = useState(false); // New state for hiding phone
+  const [hidePhone, setHidePhone] = useState(false); 
 
   const contactRef = useRef(null);
 
@@ -210,7 +210,7 @@ const ContactForm = () => {
 
 
         message: formData.message,
-        timestamp: moment().add(2, 'seconds').format('DD-MM-YYYY hh:mm:ss A Z'),
+        timestamp: moment().add(2, 'seconds').format('DD-MM-YYYY [at] hh:mm:ss A'),
       };
 
       const templateParamsAdmin = {
@@ -218,7 +218,7 @@ const ContactForm = () => {
         phone: hidePhone ? "Hidden by user" : formData.phone.startsWith('+') ? formData.phone : `+${formData.phone}`,
         email: formData.email,
         message: formData.message,
-        timestamp: moment().add(2, 'seconds').format('DD-MM-YYYY hh:mm:ss A Z'),
+        timestamp: moment().add(2, 'seconds').format('DD-MM-YYYY [at] hh:mm:ss A'),
       };
 
       setFormData({
