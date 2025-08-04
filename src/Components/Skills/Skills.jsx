@@ -5,10 +5,10 @@ const Skills = () => {
     const skillsData = [
         { name: 'HTML/CSS', percentage: 95 },
         { name: 'JavaScript', percentage: 75 },
-        { name: 'MongoDB', percentage: 70 },
-        { name: 'Express.js', percentage: 70 },
         { name: 'React.js', percentage: 85 },
         { name: 'Node.js', percentage: 70 },
+        { name: 'Express.js', percentage: 70 },
+        { name: 'MongoDB', percentage: 70 },
         { name: 'Git', percentage: 75 },
     ];
 
