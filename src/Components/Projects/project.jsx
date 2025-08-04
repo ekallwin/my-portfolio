@@ -1,7 +1,4 @@
 import { useEffect } from "react";
-import Dine from "./Project Images/Dine.png";
-import Railway from "./Project Images/Railway.png";
-import Instagram from './Project Images/Instagram.png';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
@@ -9,10 +6,50 @@ import { toast } from "react-toastify";
 import Navbar from "../Navbar/navbar";
 import Footer from "../Footer/footer";
 import './project.css';
+
+import Railway from "./Project Images/Railway.png";
+import Instagram from "./Project Images/Instagram.png";
+import Dine from "./Project Images/Dine.png";
+
+const projects = [
+  {
+    id: 1,
+    title: "Railway Reservation Site (MERN)",
+    image: Railway,
+    alt: "Railway Reservation System Screenshot",
+    skills: ["Node.js", "React.js", "Express.js", "MongoDB"],
+    githubUrl: "https://github.com/ekallwin/railway_reservation",
+    demoUrl: "https://railway-reservation-frontend.onrender.com",
+    githubMessage: "Redirecting to Railway Reservation GitHub",
+    demoMessage: "Redirecting to Railway Reservation Live Demo"
+  },
+  {
+    id: 2,
+    title: "Instagram Clone (React.js)",
+    image: Instagram,
+    alt: "Instagram Clone Screenshot",
+    skills: ["React.js", "Vite"],
+    githubUrl: "https://github.com/ekallwin/instagram-clone",
+    demoUrl: "https://instagram-clone-ekallwin.vercel.app",
+    githubMessage: "Redirecting to Instagram Clone GitHub",
+    demoMessage: "Redirecting to Instagram Clone Live Demo"
+  },
+  {
+    id: 3,
+    title: "Food Ordering Website (Front-End)",
+    image: Dine,
+    alt: "Food Ordering Website Screenshot",
+    skills: ["HTML", "CSS", "JavaScript"],
+    githubUrl: "https://github.com/ekallwin/Dine",
+    demoUrl: "https://ekallwin-dine.vercel.app/",
+    githubMessage: "Redirecting to Dine GitHub",
+    demoMessage: "Redirecting to Dine Live Demo"
+  }
+];
+
 function Projects() {
   useEffect(() => {
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
+    window.scrollTo(0, 0);
   }, []);
 
   const handleLinkClick = (event, url, message) => {
@@ -26,87 +63,77 @@ function Projects() {
     });
     setTimeout(() => {
       window.open(url, "_blank", "noopener,noreferrer");
-    }, 2500);
+    }, 2000);
+  };
+
+  const handleImageError = (e) => {
+    e.target.src = Placeholder;
+    e.target.alt = 'Project screenshot not available';
   };
 
   return (
     <>
       <Navbar />
-      <div className="Projects">
-        <h2 id="Projects">Projects</h2>
 
-        <div className="Project">
-          <img src={Railway} alt='Railway' className='Pro-img'></img>
-          <div className="Project-info">
-            <h5>Railway Reservation Site (MERN)</h5>
-            <ul>
-              <legend>Skills used</legend>
-              <li>Node.js</li>
-              <li>React.js</li>
-              <li>Express.js</li>
-              <li>Mongodb</li>
-            </ul>
-          </div>
-          <div className="Project-links">
-            <a href="https://github.com/ekallwin/railway_reservation" target="_blank" rel="noopener noreferrer" className="pro-icon" onClick={(e) => handleLinkClick(e, 'https://github.com/ekallwin/railway_reservation', 'Redirecting to GitHub')}>
-              <FontAwesomeIcon icon={faGithub} size="xl" />
-              <span>GitHub</span>
-            </a>
-            <a href="https://railway-reservation-frontend.onrender.com" target="_blank" rel="noopener noreferrer" className="pro-icon" onClick={(e) => handleLinkClick(e, 'https://railway-reservation-frontend.onrender.com', 'Redirecting to Live Demo')}>
-              <FontAwesomeIcon icon={faLink} size='xl' />
-              <span>Live Demo</span>
-            </a>
-          </div>
+      <h2 className="projects-title">My Projects</h2>
+      <div className="projects-container">
+        <div className="projects-list">
+          {projects.map((project) => (
+            <div key={project.id} className="project-card">
+              <div className="project-image-container">
+                <img
+                  src={project.image}
+                  alt={project.alt}
+                  className="project-image"
+                  onError={handleImageError}
+                  loading="lazy"
+                />
+              </div>
+
+              <div className="project-content">
+                <h3 className="project-title">{project.title}</h3>
+
+                <div className="project-skills">
+                  <h3>Technologies Used</h3>
+                  <ul className="skills-list">
+                    {project.skills.map((skill, index) => (
+                      <li key={index} className="skill-item">{skill}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="project-links">
+                  <button
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="project-link github-link"
+                    onClick={(e) => handleLinkClick(e, project.githubUrl, project.githubMessage)}
+                    aria-label={`View ${project.title} on GitHub`}
+                  >
+                    <FontAwesomeIcon icon={faGithub} />
+                    <span>GitHub</span>
+                  </button>
+
+                  <button
+                    href={project.demoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="project-link demo-link"
+                    onClick={(e) => handleLinkClick(e, project.demoUrl, project.demoMessage)}
+                    aria-label={`View ${project.title} live demo`}
+                  >
+                    <FontAwesomeIcon icon={faLink} />
+                    <span>Live Demo</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
-
-        <div className="Project">
-          <img src={Instagram} alt='Instagram Clone' className='Pro-img'></img>
-          <div className="Project-info">
-            <h5>Instagram Clone Page(React.js)</h5>
-            <ul>
-              <legend>Skills used</legend>
-              <li>React.js</li>
-              <li>Vite</li>
-            </ul>
-          </div>
-          <div className="Project-links">
-            <a href="https://github.com/ekallwin/instagram-clone" target="_blank" rel="noopener noreferrer" className="pro-icon" onClick={(e) => handleLinkClick(e, 'https://github.com/ekallwin/Dine', 'Redirecting to GitHub')}>
-              <FontAwesomeIcon icon={faGithub} size="xl" />
-              <span>GitHub</span>
-            </a>
-            <a href="https://instagram-clone-ekallwin.vercel.app" target="_blank" rel="noopener noreferrer" className="pro-icon" onClick={(e) => handleLinkClick(e, 'https://ekallwin-dine.vercel.app/', 'Redirecting to Live Demo')}>
-              <FontAwesomeIcon icon={faLink} size='xl' />
-              <span>Live Demo</span>
-            </a>
-          </div>
-        </div>
-
-        <div className="Project">
-          <img src={Dine} alt='Dine' className='Pro-img'></img>
-          <div className="Project-info">
-            <h5>Food ordering website (Front-End)</h5>
-            <ul>
-              <legend>Skills used</legend>
-              <li>HTML</li>
-              <li>CSS</li>
-              <li>JavaScript</li>
-            </ul>
-          </div>
-          <div className="Project-links">
-            <a href="https://github.com/ekallwin/Dine" target="_blank" rel="noopener noreferrer" className="pro-icon" onClick={(e) => handleLinkClick(e, 'https://github.com/ekallwin/Dine', 'Redirecting to GitHub')}>
-              <FontAwesomeIcon icon={faGithub} size="xl" />
-              <span>GitHub</span>
-            </a>
-            <a href="https://ekallwin-dine.vercel.app/" target="_blank" rel="noopener noreferrer" className="pro-icon" onClick={(e) => handleLinkClick(e, 'https://ekallwin-dine.vercel.app/', 'Redirecting to Live Demo')}>
-              <FontAwesomeIcon icon={faLink} size='xl' />
-              <span>Live Demo</span>
-            </a>
-          </div>
-        </div>
-
       </div>
       <Footer />
     </>
-  )
+  );
 }
+
 export default Projects;
