@@ -31,8 +31,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/achievements" element={<Achievements />} />
-          <Route path="/error" element={<Error />} />
-          <Route path="*" element={<Navigate to="/error" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </>
