@@ -32,6 +32,7 @@ function Navbar() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
   const handleLinkClick = (e, to = null, isHash = false) => {
     const link = e.currentTarget;
     link.classList.add('active');
@@ -46,10 +47,10 @@ function Navbar() {
 
       if (to && !isHash) {
         navigate(to);
+        window.scrollTo(0, 0); // Scroll to top when navigating
       }
     }, 600);
   };
-
 
   return (
     <nav className="navbar navbar-expand-lg fixed-top glass-navbar px-3" ref={navbarRef}>
@@ -69,10 +70,9 @@ function Navbar() {
         </button>
 
         <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
-
           <ul className="navbar-nav ms-auto gap-lg-4 text-start text-lg-center">
             <li className="nav-item">
-              <HashLink to="/#Home" className="nav-link navbar-link" smooth onClick={(e) => handleLinkClick(e, null, true)}><span>Home</span></HashLink>
+              <Link to="/" className="nav-link navbar-link" onClick={(e) => handleLinkClick(e, "/")}><span>Home</span></Link>
             </li>
             <li className="nav-item">
               <HashLink to="/#About" className="nav-link navbar-link" smooth onClick={(e) => handleLinkClick(e, null, true)}><span>About</span></HashLink>
