@@ -93,17 +93,6 @@ span {
   transform: translateX(0);
 }
 
-.fade-in-skill {
-  opacity: 0;
-  transform: translateX(40px);
-  transition: opacity 1s ease-in, transform 1s ease-in;
-}
-
-.fade-in-skill.show {
-  opacity: 1;
-  transform: translateX(0);
-}
-
 @media (max-width: 768px) {
   .menu-icon {
     display: block;

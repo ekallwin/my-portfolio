@@ -23,6 +23,14 @@
     color: var(--text-color);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     user-select: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.skill-box.show {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .skill-info {
