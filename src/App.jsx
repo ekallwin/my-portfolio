@@ -7,7 +7,7 @@ import ScrollToTop from './ScrollToTop';
 import Home from "./Home";
 import Projects from "./Components/Projects/project";
 import Achievements from "./Components/Achievements/achievements";
-import Error from './Components/Error/Error'
+
 function App() {
 
   return (
