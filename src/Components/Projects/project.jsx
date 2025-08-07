@@ -103,66 +103,67 @@ function Projects() {
   return (
     <>
       <Navbar />
-
-      <h2 className="projects-title">Projects</h2>
-      <div className="projects-container">
-        <div className="projects-list">
-          {projects.map((project, index) => (
-            <div
-              key={project.id}
-              className="project-card"
-              ref={el => projectRefs.current[index] = el}
-              style={getDelayStyle(index)}
-            >
-              <div className="project-image-container">
-                <img
-                  src={project.image}
-                  alt={project.alt}
-                  className="project-image"
-                  onError={handleImageError}
-                  loading="lazy"
-                />
-              </div>
-
-              <div className="project-content">
-                <h3 className="project-title">{project.title}</h3>
-
-                <div className="project-skills">
-                  <h3>Technologies Used</h3>
-                  <ul className="skills-list">
-                    {project.skills.map((skill, index) => (
-                      <li key={index} className="skill-item">{skill}</li>
-                    ))}
-                  </ul>
+      <div className="components-container">
+        <h2 className="projects-title">Projects</h2>
+        <div className="projects-container">
+          <div className="projects-list">
+            {projects.map((project, index) => (
+              <div
+                key={project.id}
+                className="project-card"
+                ref={el => projectRefs.current[index] = el}
+                style={getDelayStyle(index)}
+              >
+                <div className="project-image-container">
+                  <img
+                    src={project.image}
+                    alt={project.alt}
+                    className="project-image"
+                    onError={handleImageError}
+                    loading="lazy"
+                  />
                 </div>
 
-                <div className="project-links">
-                  <button
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="project-link github-link"
-                    onClick={(e) => handleLinkClick(e, project.githubUrl, project.githubMessage)}
-                    aria-label={`View ${project.title} on GitHub`}
-                  >
-                    <FontAwesomeIcon icon={faGithub} />
-                    <span>GitHub</span>
-                  </button>
+                <div className="project-content">
+                  <h3 className="project-title">{project.title}</h3>
 
-                  <button
-                    href={project.demoUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="project-link demo-link"
-                    onClick={(e) => handleLinkClick(e, project.demoUrl, project.demoMessage)}
-                    aria-label={`View ${project.title} live demo`}
-                  >
-                    <FontAwesomeIcon icon={faLink} />
-                    <span>Live Demo</span>
-                  </button>
+                  <div className="project-skills">
+                    <h3>Technologies Used</h3>
+                    <ul className="skills-list">
+                      {project.skills.map((skill, index) => (
+                        <li key={index} className="skill-item">{skill}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="project-links">
+                    <button
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="project-link github-link"
+                      onClick={(e) => handleLinkClick(e, project.githubUrl, project.githubMessage)}
+                      aria-label={`View ${project.title} on GitHub`}
+                    >
+                      <FontAwesomeIcon icon={faGithub} />
+                      <span>GitHub</span>
+                    </button>
+
+                    <button
+                      href={project.demoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="project-link demo-link"
+                      onClick={(e) => handleLinkClick(e, project.demoUrl, project.demoMessage)}
+                      aria-label={`View ${project.title} live demo`}
+                    >
+                      <FontAwesomeIcon icon={faLink} />
+                      <span>Live Demo</span>
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
       <Footer />

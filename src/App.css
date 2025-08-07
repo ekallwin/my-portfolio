@@ -102,8 +102,8 @@ span {
     text-align: left;
   }
 
-  div h2 {
-    margin: 100px 0 10% 0 !important;
+  .components-container h2 {
+    margin: 100px 0 10% 0;
   }
 }
 

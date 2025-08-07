@@ -70,7 +70,8 @@ const Achievements = () => {
   return (
     <>
       <Navbar />
-      <h2 style={{ textAlign: 'center' }} id="achievments">Achievements</h2>
+      <div className="components-container">
+      <h2 id="achievments">Achievements</h2>
 
       <div className="custom-carousel">
         <button
@@ -123,6 +124,7 @@ const Achievements = () => {
 
       <div className="custom-carousel-caption">
         <p>{slides[currentIndex].caption}</p>
+      </div>
       </div>
       <Footer />
     </>
