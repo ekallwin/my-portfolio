@@ -4,7 +4,7 @@
     align-items: center;
     height: 100vh;
     text-align: center;
-    overflow: hidden;
+    overflow: hidden !important;
 }
 
 .not-found-content {
