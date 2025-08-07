@@ -1,24 +1,50 @@
-.not-found-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    text-align: center;
-    overflow: hidden !important;
-}
-
-.not-found-content {
-    max-width: 400px;
+.error-page {
+    --min-height: calc(100vh - env(safe-area-inset-bottom, 0px) - env(safe-area-inset-top, 0px));
+    display: grid;
+    place-items: center;
+    min-height: var(--min-height);
+    min-height: 100dvh;
     padding: 20px;
+    box-sizing: border-box;
 }
 
-.error-head {
-    font-size: 20px;
-    margin-bottom: 10px;
+.error-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: min(400px, 90vw);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.error-card h2 {
     color: white;
+    font-size: clamp(1.25rem, 5vw, 1.5rem);
+    margin-bottom: 1rem;
 }
 
-.error-txt {
+.error-card p {
     color: whitesmoke;
-    font-size: 15px;
+    font-size: clamp(0.9rem, 4vw, 1rem);
+    margin-bottom: 2rem;
+    line-height: 1.5;
+}
+
+.error-card button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: clamp(10px, 3vw, 12px) clamp(20px, 5vw, 24px);
+    font-size: clamp(0.9rem, 4vw, 1rem);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: min(200px, 100%);
+}
+
+.error-card button:hover {
+    background-color: #0069d9;
+    transform: translateY(-2px);
 }
