@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
@@ -48,10 +48,38 @@ const projects = [
 ];
 
 function Projects() {
+  const projectRefs = useRef([]);
+
   useEffect(() => {
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    projectRefs.current.forEach((el) => {
+      if (el) observer.observe(el);
+    });
+
+    return () => {
+      projectRefs.current.forEach((el) => {
+        if (el) observer.unobserve(el);
+      });
+    };
   }, []);
+
+  const getDelayStyle = (index) => ({
+    transitionDelay: `${index * 0.1}s`
+  });
 
   const handleLinkClick = (event, url, message) => {
     event.preventDefault();
@@ -79,8 +107,13 @@ function Projects() {
       <h2 className="projects-title">Projects</h2>
       <div className="projects-container">
         <div className="projects-list">
-          {projects.map((project) => (
-            <div key={project.id} className="project-card">
+          {projects.map((project, index) => (
+            <div
+              key={project.id}
+              className="project-card"
+              ref={el => projectRefs.current[index] = el}
+              style={getDelayStyle(index)}
+            >
               <div className="project-image-container">
                 <img
                   src={project.image}
