@@ -48,7 +48,7 @@
 
 .project-card:hover {
     transform: scale(1.02);
-    box-shadow: 0 0 35px 0 rgba(232, 28, 255, 0.5);
+    box-shadow: 0 0 40px 0 rgba(232, 28, 255, 0.8);
 }
 
 .project-card.show {
@@ -184,6 +184,11 @@
     .project-title {
         font-size: 1.3rem;
     }
+
+    .project-card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 0 30px 0 rgba(232, 28, 255, 0.9);
+    }
 }
 
 @media (max-width: 600px) {
@@ -208,5 +213,10 @@
 
     .project-link {
         justify-content: center;
+    }
+
+    .project-card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 0 30px 0 rgba(232, 28, 255, 0.9);
     }
 }
