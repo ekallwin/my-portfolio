@@ -70,7 +70,7 @@ span {
 .fade-in {
   opacity: 0;
   transform: translateY(40px);
-  transition: opacity 1.5s ease-in, transform 1.5s ease-in;
+  transition: opacity 1s ease-in, transform 1s ease-in;
 }
 
 .fade-in.show {
@@ -80,7 +80,7 @@ span {
 .fade-in-contact {
   opacity: 0;
   transform: translateY(40px);
-  transition: opacity 1.5s ease-in, transform 1.5s ease-in;
+  transition: opacity 1s ease-in, transform 1s ease-in;
 }
 
 .fade-in-contact.show {
