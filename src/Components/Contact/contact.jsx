@@ -178,7 +178,7 @@ const ContactForm = () => {
         name: formData.name,
         user_email: formData.email,
         maskedphone: hidePhone
-          ? "Hidden"
+          ? "Not Available"
           : (() => {
             const raw = formData.phone.startsWith('+') ? formData.phone : `+${formData.phone}`;
             const match = raw.match(/^(\+\d{1,4})(\d+)?$/);
