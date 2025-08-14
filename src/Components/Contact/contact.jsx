@@ -221,6 +221,7 @@ const ContactForm = () => {
       const templateParamsAdmin = {
         name: formData.name,
         phone: hidePhone ? "Hidden by user" : formData.phone.startsWith('+') ? formData.phone : `+${formData.phone}`,
+        whatsapp: hidePhone ? "Hidden by user" : (formData.phone.startsWith('+') ? formData.phone.slice(1) : formData.phone),
         email: formData.email,
         message: formData.message,
         timestamp: moment().add(2, 'seconds').format('DD-MM-YYYY [at] hh:mm:ss A'),
