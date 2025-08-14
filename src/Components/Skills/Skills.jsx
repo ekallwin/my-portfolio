@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import './Skills.css';
 
 const Skills = () => {
@@ -12,7 +12,9 @@ const Skills = () => {
         { name: 'Git', percentage: 75 },
     ];
 
+    const [animatedPercentages, setAnimatedPercentages] = useState(skillsData.map(() => 0));
     const skillBoxRefs = useRef([]);
+    const animationRefs = useRef([]);
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -20,6 +22,10 @@ const Skills = () => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add("show");
+                        const index = skillBoxRefs.current.indexOf(entry.target);
+                        if (index !== -1) {
+                            animatePercentage(index);
+                        }
                         observer.unobserve(entry.target);
                     }
                 });
@@ -35,8 +41,34 @@ const Skills = () => {
             skillBoxRefs.current.forEach((el) => {
                 if (el) observer.unobserve(el);
             });
+            animationRefs.current.forEach(raf => cancelAnimationFrame(raf));
         };
     }, []);
+
+    const animatePercentage = (index) => {
+        const duration = 1500;
+        const startTime = performance.now();
+        const startValue = 0;
+        const endValue = skillsData[index].percentage;
+        
+        const animate = (currentTime) => {
+            const elapsedTime = currentTime - startTime;
+            const progress = Math.min(elapsedTime / duration, 1);
+            const currentValue = Math.floor(progress * endValue);
+            
+            setAnimatedPercentages(prev => {
+                const newPercentages = [...prev];
+                newPercentages[index] = currentValue;
+                return newPercentages;
+            });
+            
+            if (progress < 1) {
+                animationRefs.current[index] = requestAnimationFrame(animate);
+            }
+        };
+        
+        animationRefs.current[index] = requestAnimationFrame(animate);
+    };
 
     const getDelayStyle = (index) => ({
         transitionDelay: `${index * 0.1}s`
@@ -55,12 +87,12 @@ const Skills = () => {
                     >
                         <div className="skill-info">
                             <span className="skill-name">{skill.name}</span>
-                            <span className="skill-percentage">{skill.percentage}%</span>
+                            <span className="skill-percentage">{animatedPercentages[index]}%</span>
                         </div>
                         <div className="skill-bar">
                             <div
                                 className="skill-progress"
-                                style={{ width: `${skill.percentage}%` }}
+                                style={{ width: `${animatedPercentages[index]}%` }}
                             ></div>
                         </div>
                     </div>
