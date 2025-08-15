@@ -74,10 +74,6 @@ textarea {
   outline: none;
 }
 
-.phone-input-wrapper .phone-dropdown {
-  color: black;
-}
-
 input:focus+.label,
 input:not(:placeholder-shown)+.label,
 textarea:focus+.label,
@@ -206,25 +202,98 @@ textarea {
   left: -20px;
 }
 
-.phone-input {
+.custom-phone-input {
   width: 100% !important;
-  box-sizing: border-box;
+  height: 40px;
+  padding-left: 48px !important;
 }
 
-.country-list .country {
-  display: flex;
+.custom-phone-button {
+  background: transparent !important;
+  border-right: 1px solid #ddd !important;
 }
 
-.country-list .country .dial-code {
-  flex-shrink: 0;
-  color: #000000;
-  font-weight: bold;
+.country {
+  position: relative;
+  padding: 12px 9px 13px 46px;
+
+  .dial-code {
+    color: #6b6b6b;
+  }
+
+  &:hover {
+    background-color: #f1f1f1;
+  }
+
+  &.highlight {
+    background-color: #f1f1f1;
+  }
+}
+
+.search {
+  z-index: 2;
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  /* padding: 10px 0 6px; */
+  margin: auto !important;
+  text-align: center;
+  margin: 0 auto !important;
+}
+
+.search-emoji {
+  display: none;
+}
+
+.search-box {
+  display: block;
+  width: 95% !important;
+  margin: 0 auto !important;
+  border: 1px solid #cacaca;
+  border-radius: 3px;
+  font-size: 15px;
+  line-height: 15px;
+  padding: 3px 8px 5px;
+  outline: none;
+
+  &:hover {
+    border-color: #505050;
+  }
+}
+
+
+.custom-phone-dropdown {
+  overflow-x: hidden;
   margin-left: auto;
+  color: black;
+  width: 920% !important;
+  min-width: 100% !important;
+  margin-top: 5px !important;
 }
 
-@media (max-width: 600px) {
+.react-tel-input .country-list .country .dial-code {
+  margin-left: auto !important;
+  color: #555 !important;
+  font-weight: normal !important;
+}
+
+.react-tel-input .country-list .country {
+  display: flex !important;
+  align-items: center !important;
+  padding: 7px 10px !important;
+}
+
+.react-tel-input .country-list .country-name {
+  margin-right: auto !important;
+}
+
+.react-tel-input .country-list .flag {
+  margin-right: 10px !important;
+}
+
+@media (max-width: 768px) {
   form {
-    padding: 30px;
+    padding: 25px;
   }
 
   h2 {
@@ -234,26 +303,27 @@ textarea {
   .contact {
     width: 95%;
     margin: auto;
+    padding: 24px;
+  }
+
+  .custom-phone-dropdown {
+    width: 920% !important;
+    max-width: 920% !important;
+  }
+}
+
+@media (max-width: 500px) {
+  form {
     padding: 25px;
   }
 
-}
+  h2 {
+    font-size: 20px;
+  }
 
-.country-list .search-emoji {
-  display: none !important;
-}
-
-.react-tel-input .country-list {
-  width: calc(1000% + 10px) !important;
-  max-height: 300px;
-  overflow-y: auto;
-  box-sizing: border-box;
-  margin: 0 auto;
-}
-
-.react-tel-input .search-box {
-  width: calc(100% - 1px) !important;
-  margin: 0 auto !important;
-  display: block;
-  margin-top: 1px;
+  .contact {
+    width: 95%;
+    margin: auto;
+    padding: 24px;
+  }
 }

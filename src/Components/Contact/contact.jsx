@@ -11,7 +11,6 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { Filter } from 'bad-words';
 import moment from 'moment-timezone';
-import { displayName } from "react-world-flags";
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -321,11 +320,22 @@ const ContactForm = () => {
               country={"in"}
               value={formData.phone}
               onChange={handlePhoneChange}
-              inputClass="phone-input"
-              buttonClass="phone-dropdown-button"
-              dropdownClass="phone-dropdown"
+              inputClass="custom-phone-input"
+              buttonClass="custom-phone-button"
+              dropdownClass="custom-phone-dropdown"
               enableSearch={true}
+              searchPlaceholder="Search country"
+              searchNotFound="No country found"
               autoComplete="off"
+              inputProps={{
+                required: !hidePhone,
+                name: 'phone',
+                id: 'phone-input'
+              }}
+              dropdownStyle={{
+                width: 'auto',
+                minWidth: '100%'
+              }}
             />
           </div>
         )}
