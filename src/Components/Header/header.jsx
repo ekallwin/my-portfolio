@@ -99,7 +99,7 @@ function Header() {
           />
           </h2>
         </div>
-        <button className="glass-button" onClick={LinkedIn} ref={buttonRef}>Let's connect</button>
+        <button className="button" onClick={LinkedIn} ref={buttonRef}>Let's connect</button>
       </div>
     </>
   )

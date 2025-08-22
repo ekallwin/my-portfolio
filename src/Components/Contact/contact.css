@@ -91,55 +91,32 @@ textarea {
 
 .submit {
   width: 50%;
-  color: #fff !important;
-  font-size: 20px !important;
+  color: #fff;
+  font-size: 20px;
   font-family: serif;
-  padding: 10px 25px !important;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.4s ease;
-  z-index: 1;
-  background: transparent;
+  padding: 10px 25px;
+  background: linear-gradient(120deg, var(--btn-primary), var(--btn-secondary));
+  border-radius: 100px;
   border: none;
   cursor: pointer;
-  user-select: none;
   display: block;
-  text-decoration: none;
-  margin-top: 30px !important;
-  margin-bottom: 10px !important;
-  margin: 0 auto;
+  margin: 30px auto 10px;
   width: fit-content;
-  border-radius: 100px;
+  transition: transform 0.3s ease, color 0.3s ease;
+  text-decoration: none;
 }
 
-.submit::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%) scaleX(1);
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(45px);
-  -webkit-backdrop-filter: blur(45px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.1);
-  border-radius: 100px;
-  z-index: -1;
-  pointer-events: none;
-  transition: transform 0.3s ease;
-  transform-origin: center;
+.submit:hover {
+  transform: scale(1.08);
+  background: linear-gradient(120deg, var(--btn-primary), var(--btn-secondary));
 }
 
 .submit:focus {
   outline: none;
-  color: white;
+  color: #fff;
   transform: scale(1);
 }
+
 
 
 .contact {

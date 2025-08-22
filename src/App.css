@@ -1,3 +1,14 @@
+:root {
+  --primary-color: #40c9ff;
+  --secondary-color: #e81cff;
+  --teritary-color: #D9006D;
+  --dark-color: #000000;
+  --light-color: #ffffff;
+  --text-color: #ffffff;
+  --btn-primary: #ff0066;
+  --btn-secondary: #9a00ff;
+}
+
 body {
   background-image: url('../Background.jpg');
   background-size: cover;

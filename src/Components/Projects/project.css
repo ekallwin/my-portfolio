@@ -1,11 +1,3 @@
-:root {
-    --primary-color: #40c9ff;
-    --secondary-color: #e81cff;
-    --teritary-color: #D9006D;
-    --dark-color: #000000;
-    --light-color: #ffffff;
-    --text-color: #ffffff;
-}
 
 .projects-container {
     max-width: 85%;
