@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import './particles.css';
+import './Particles.css';
 
 const ParticlesBackground = () => {
     const particlesRef = useRef(null);
