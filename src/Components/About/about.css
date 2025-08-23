@@ -101,8 +101,8 @@ figure img {
     font-size: 20px;
     font-family: serif;
     padding: 15px 25px;
-    background: linear-gradient(120deg, var(--btn-primary), var(--btn-secondary));
-    border-radius: 50px;
+    background: linear-gradient(110deg, var(--btn-primary), var(--btn-secondary), var(--btn-teritary));
+    border-radius: 100px;
     border: none;
     cursor: pointer;
     display: block;
@@ -114,7 +114,7 @@ figure img {
 
 .button-download:hover {
     transform: scale(1.08);
-    background: linear-gradient(120deg, var(--btn-primary), var(--btn-secondary));
+    background: linear-gradient(100deg, var(--btn-primary), var(--btn-secondary), var(--btn-teritary));
 }
 
 .button-download:focus {
