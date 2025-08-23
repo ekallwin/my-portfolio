@@ -16,10 +16,11 @@ form {
 form {
   background: rgba(0, 0, 0, 0.06);
   border-radius: 25px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: linear-gradient(var(--dark-color), var(--dark-color)) padding-box,
+    linear-gradient(135deg, var(--teritary-color), var(--secondary-color), var(--primary-color)) border-box;
+  border: 2px solid transparent;
   padding: 30px;
   max-width: 600px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
