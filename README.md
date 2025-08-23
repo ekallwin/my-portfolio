@@ -33,24 +33,6 @@ Welcome to my portfolio project! This application is a showcase of my skills and
 - **Email.jsx**: To send emails directly from the contact form.
 
 
-## Folder Structure
-```
-├── App.jsx                     # Main application entry point
-├── App.css                    # Global styles
-├── Home.jsx                    # Home page component
-├── Home.css                   # Home page CSS
-├── Components/
-│   ├── navbar.jsx              # Navbar component
-│   ├── header.jsx              # Header component
-│   ├── about.jsx               # About section
-│   ├── contact.jsx             # Contact form
-│   ├── contact.css            # Contact CSS page          
-│   ├── footer.jsx              # Footer section
-│   ├── project.jsx             # Projects page
-│   ├── achievements.jsx        # Achievements page
-│   └── achievements.css       # Achievements CSS page
-```
-
 ## Installation
 1. Clone the repository:
    ```bash
