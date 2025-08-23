@@ -23,9 +23,7 @@ html {
   height: max-content;
 }
 
-html,
-body,
-#root {
+html, body, #root {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -149,5 +147,5 @@ button {
 
 .app-shell {
   position: relative;
-  z-index: 1;
+  z-index: 1; 
 }

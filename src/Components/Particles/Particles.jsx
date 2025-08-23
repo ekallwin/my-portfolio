@@ -71,7 +71,7 @@ const ParticlesBackground = () => {
                         },
                         move: {
                             enable: true,
-                            speed: 13,
+                            speed: 5,
                             direction: "none",
                             random: false,
                             straight: false,
