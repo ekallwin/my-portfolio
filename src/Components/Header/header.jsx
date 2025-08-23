@@ -60,19 +60,7 @@ function Header() {
       <h1 id="Home">Allwin E K</h1>
       <div className="item-name" >
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <SplitText
-            text={`Good ${greeting}!`}
-            className="titlename font-semibold h2"
-            delay={100}
-            duration={1}
-            ease="power3.out"
-            splitType="chars"
-            from={{ opacity: 0, y: 40 }}
-            to={{ opacity: 1, y: 0 }}
-            threshold={0.1}
-            rootMargin="-100px"
-            textAlign="left"
-          />
+          <h2 className="titlename">Good {greeting}!</h2>
           <SplitText
             text="I'm Allwin E K"
             className="titlename font-semibold header-text"
