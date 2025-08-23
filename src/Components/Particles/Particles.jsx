@@ -142,7 +142,6 @@ const ParticlesBackground = () => {
     return (
         <div className="particles-container">
             <div id="particles-js" ref={particlesRef}></div>
-            {/* Your content would go here */}
         </div>
     );
 };

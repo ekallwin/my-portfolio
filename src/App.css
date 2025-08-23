@@ -146,6 +146,6 @@ button {
 }
 
 .app-shell {
-  position: relative;
+  position: relative; 
   z-index: 1; 
 }

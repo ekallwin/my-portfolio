@@ -9,7 +9,7 @@ import Home from "./Home";
 import Projects from "./Components/Projects/project";
 import Achievements from "./Components/Achievements/achievements";
 import Loader from "./Components/Loader/Loader";
-import Particle from "./Components/Particles/Particles"
+import Particle from "./Components/Particles/Particles";
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
@@ -26,7 +26,7 @@ function App() {
       ) : (
         <>
           <ToastContainer
-            position="top-center"
+            position="top-right"
             autoClose={5000}
             hideProgressBar={false}
             newestOnTop={false}
