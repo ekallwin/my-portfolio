@@ -11,20 +11,26 @@
 }
 
 .skill-box {
-    border: 1px solid #e0e0e0;
-    border-radius: 15px;
+    position: relative;
+    border-radius: 10px;
     padding: 15px 20px;
-    background: linear-gradient(var(--dark-color), var(--dark-color)) padding-box,
-        linear-gradient(135deg, var(--teritary-color), var(--secondary-color), var(--primary-color)) border-box;
-    border: 2px solid transparent;
-    overflow: hidden;
-    transform-origin: center;
-    color: var(--text-color);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    user-select: none;
-    opacity: 0;
-    transform: translateY(25px);
-    transition: opacity 1.2s ease, transform 1.2s ease;
+}
+
+.skill-box::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    padding: 2px;
+    background: radial-gradient(transparent, transparent, #D9006D, #8900F9, transparent, transparent);
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    background-size: 300% 300%;
+    animation: shine-pulse 15s linear infinite;
+    z-index: -1;
 }
 
 .skill-box.show {
@@ -61,5 +67,5 @@
     background: #dd00ff;
     border-radius: 100px;
     width: 0;
-    transition: width 1.5s ease-out;
+    transition: none;
 }

@@ -3,7 +3,7 @@ import { faLinkedin, faSquareGithub, faSquareXTwitter, faSquareInstagram, faSqua
 import { toast } from "react-toastify";
 import './footer.css';
 import moment from 'moment';
-
+import Ip from '../Ip/Ip';
 function Footer() {
   const currentYear = moment().format('YYYY');
   
@@ -98,6 +98,7 @@ function Footer() {
 
           <div className="footer-copyright">
             <p>&copy; {currentYear} Created, Developed and maintained by <a href="#About">Allwin E K</a></p>
+            <p><Ip /></p>
           </div>
         </div>
       </footer>

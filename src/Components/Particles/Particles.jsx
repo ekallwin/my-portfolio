@@ -71,7 +71,7 @@ const ParticlesBackground = () => {
                         },
                         move: {
                             enable: true,
-                            speed: 5,
+                            speed: 11,
                             direction: "none",
                             random: false,
                             straight: false,
@@ -88,14 +88,14 @@ const ParticlesBackground = () => {
                         detect_on: "canvas",
                         events: {
                             onhover: {
-                                enable: true,
+                                enable: false,
                                 mode: "repulse"
                             },
                             onclick: {
-                                enable: true,
+                                enable: false,
                                 mode: "push"
                             },
-                            resize: true
+                            resize: false
                         },
                         modes: {
                             grab: {
@@ -130,7 +130,6 @@ const ParticlesBackground = () => {
 
         loadParticles();
 
-        // Cleanup function
         return () => {
             if (window.pJSDom && window.pJSDom.length > 0) {
                 window.pJSDom[0].pJS.fn.vendors.destroypJS();
