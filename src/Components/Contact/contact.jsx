@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-// import { toast } from "react-notifications";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
@@ -11,6 +10,9 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { Filter } from 'bad-words';
 import moment from 'moment-timezone';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -304,14 +306,25 @@ const ContactForm = () => {
         </div>
 
         <div className="checkbox-container">
-          <input
-            type="checkbox"
-            id="hidePhone"
-            className="form-check-input"
-            checked={hidePhone}
-            onChange={(e) => setHidePhone(e.target.checked)}
+          <FormControlLabel
+            control={
+              <Checkbox
+                sx={{
+                  '& .MuiSvgIcon-root': {
+                    fontSize: 24,
+                  },
+                  color: "white",
+                  '&.Mui-checked': {
+                    color: "blue",
+                  },
+                }}
+                checked={hidePhone}
+                onChange={(e) => setHidePhone(e.target.checked)}
+              />
+            }
+            label="Hide phone number"
           />
-          <label htmlFor="hidePhone" className="form-check-label" style={{ marginLeft: '10px' }}>Hide phone number</label>
+
         </div>
 
         {!hidePhone && (
@@ -345,7 +358,7 @@ const ContactForm = () => {
           <label className="label">Email Address</label>
         </div>
         <div className="input-container">
-          <textarea type="text" name="message" value={formData.message} maxLength={501} onChange={handleChange} placeholder=" " style={{ width: "100%", resize: 'none' }} autoComplete="off" />
+          <textarea type="text" name="message" value={formData.message} onChange={handleChange} placeholder=" " style={{ width: "100%", resize: 'none' }} autoComplete="off" />
           <label className="label">Your Message</label>
           <div className={formData.message.length > 490 ? "char-count-max" : "char-count"}>
             {formData.message.length > 490

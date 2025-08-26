@@ -13,17 +13,17 @@
 body {
   overflow-x: hidden;
   height: 100vh;
-  scroll-behavior: smooth;
 }
 
 
 html {
   overflow-x: hidden;
-  scroll-behavior: smooth;
   height: max-content;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -33,6 +33,7 @@ html, body, #root {
 html,
 body {
   -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
 }
 
 body,
@@ -146,6 +147,6 @@ button {
 }
 
 .app-shell {
-  position: relative; 
-  z-index: 1; 
+  position: relative;
+  z-index: 1;
 }

@@ -12,8 +12,7 @@
 
 .skill-box {
     position: relative;
-    border-radius: 10px;
-    padding: 15px 20px;
+    padding: 25px 20px;
     background-color: #000000ee;
 }
 
@@ -21,9 +20,9 @@
     content: "";
     position: absolute;
     inset: 0;
-    border-radius: 10px;
+    border-radius: 5px;
     padding: 2px;
-    background: radial-gradient(transparent, transparent, #D9006D, #8900F9, transparent, transparent);
+    background: radial-gradient(transparent, transparent, var(--teritary-color), var(--primary-color), transparent, transparent);
     -webkit-mask:
         linear-gradient(#fff 0 0) content-box,
         linear-gradient(#fff 0 0);
@@ -34,10 +33,17 @@
     z-index: -1;
 }
 
+.skill-box {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.6s cubic-bezier(0.47, 0, 0.745, 0.715);
+}
+
 .skill-box.show {
     opacity: 1;
     transform: translateY(0);
 }
+
 
 .skill-info {
     display: flex;
@@ -65,7 +71,7 @@
 
 .skill-progress {
     height: 100%;
-    background: #dd00ff;
+    background: linear-gradient(90deg, var(--teritary-color), var(--primary-color));
     border-radius: 100px;
     width: 0;
     transition: none;
