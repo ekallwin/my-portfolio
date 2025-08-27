@@ -315,7 +315,7 @@ const ContactForm = () => {
                   },
                   color: "white",
                   '&.Mui-checked': {
-                    color: "blue",
+                    color: "#2196F3",
                   },
                 }}
                 checked={hidePhone}
