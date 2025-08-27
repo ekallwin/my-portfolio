@@ -11,7 +11,7 @@
   margin: 0 auto;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
-  border-radius: 8px;
+  border-radius: 5px !important;
   margin-top: 5%;
   margin-bottom: 20px;
 }
@@ -29,7 +29,7 @@
 
 .custom-carousel-slide img {
   width: 100%;
-  height: 300px;
+  height: 350px;
   object-fit: cover;
 }
 
@@ -37,7 +37,7 @@
   width: fit-content;
   position: relative;
   left: 50%;
-  margin-top: 5%;
+  margin-top: 2%;
   transform: translate(-50%, -50%);
   color: white;
   font-family: serif;
@@ -52,7 +52,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.148);
+  background: rgba(0, 0, 0, 0.05);
   border: none;
   color: white;
   font-size: 20px;
@@ -63,15 +63,15 @@
 }
 
 .custom-prev {
-  left: 10px;
+  left: 5px;
 }
 
 .custom-next {
-  right: 10px;
+  right: 5px;
 }
 
 button:hover {
-  background: rgba(0, 0, 0, 0.297);
+  background: rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 768px) {
@@ -89,11 +89,37 @@ button:hover {
     font-size: 20px;
     padding: 8px;
   }
+
+  .custom-carousel-slide img {
+    width: 100%;
+    height: 250px;
+    border-radius: 5px;
+  }
+
+  .custom-carousel-dots {
+    text-align: center;
+    margin-top: -15% !important;
+  }
+
+  .custom-prev,
+  .custom-next {
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.1);
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 10;
+    padding: 10px;
+    border-radius: 100%;
+  }
 }
 
 .custom-carousel-dots {
   text-align: center;
-  margin: 2% 0 5% 0;
+  margin-top: -1.5%;
 }
 
 .custom-dot {

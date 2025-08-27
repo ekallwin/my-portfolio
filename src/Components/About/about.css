@@ -135,7 +135,7 @@ figure img {
     inset: 0;
     border-radius: 20px;
     padding: 4px;
-    background: radial-gradient(transparent, transparent, #D9006D, #8900F9, transparent, transparent);
+    background: radial-gradient(transparent, transparent, var(--teritary-color), var(--primary-color), transparent, transparent);
     -webkit-mask:
         linear-gradient(#fff 0 0) content-box,
         linear-gradient(#fff 0 0);

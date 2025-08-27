@@ -13,6 +13,7 @@ const Skills = () => {
     ];
 
     const [animatedPercentages, setAnimatedPercentages] = useState(skillsData.map(() => 0));
+    const skillsRef = useRef(null);
     const skillBoxRefs = useRef([]);
     const animationRefs = useRef([]);
 
@@ -30,7 +31,7 @@ const Skills = () => {
                     }
                 });
             },
-            { threshold: 0.1 }
+            { threshold: 0.3 }
         );
 
         skillBoxRefs.current.forEach((el) => {
@@ -45,28 +46,52 @@ const Skills = () => {
         };
     }, []);
 
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("show");
+                    }
+                });
+            },
+            { threshold: 0.3 }
+        );
+
+        const skillsElement = skillsRef.current;
+        if (skillsElement) {
+            observer.observe(skillsElement);
+        }
+
+        return () => {
+            if (skillsElement) {
+                observer.unobserve(skillsElement);
+            }
+        };
+    }, []);
+
     const animatePercentage = (index) => {
         const duration = 1500;
         const startTime = performance.now();
         const startValue = 0;
         const endValue = skillsData[index].percentage;
-        
+
         const animate = (currentTime) => {
             const elapsedTime = currentTime - startTime;
             const progress = Math.min(elapsedTime / duration, 1);
             const currentValue = Math.floor(progress * endValue);
-            
+
             setAnimatedPercentages(prev => {
                 const newPercentages = [...prev];
                 newPercentages[index] = currentValue;
                 return newPercentages;
             });
-            
+
             if (progress < 1) {
                 animationRefs.current[index] = requestAnimationFrame(animate);
             }
         };
-        
+
         animationRefs.current[index] = requestAnimationFrame(animate);
     };
 
@@ -77,12 +102,15 @@ const Skills = () => {
     return (
         <div className="skills-container" id='Skills'>
             <h2>Technical Skills</h2>
-            <div className="skills-grid">
+            <div className="skills-grid" >
                 {skillsData.map((skill, index) => (
                     <div
                         key={index}
-                        className="skill-box"
-                        ref={el => skillBoxRefs.current[index] = el}
+                        className="skill-box skill-fade-in"
+                        ref={el => {
+                            skillBoxRefs.current[index] = el;
+                            if (skillsRef) skillsRef.current = el;
+                        }}
                         style={getDelayStyle(index)}
                     >
                         <div className="skill-info">

@@ -92,6 +92,17 @@ span {
   opacity: 1;
 }
 
+.skill-fade-in {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1s ease-in, transform 1s ease-in;
+}
+
+.skill-fade-in.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .fade-in-contact {
   opacity: 0;
   transform: translateY(40px);
