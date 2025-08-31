@@ -115,13 +115,18 @@ const ContactForm = () => {
     if (!formData.email.trim()) {
       toast.error("Email address is required", null, 4000);
       isValid = false;
-    } else if (
+    } else if (["demo", "example", "test", "invalid", "fake", "sample", "dummy", "user"].some(word => formData.email.includes(word)) ||
       !formData.email.includes("@") ||
       !formData.email.match(/^[a-zA-Z0-9.-_]+@[a-zA-Z0-9]+(\.[a-zA-Z]{2,})?$/) ||
-      !formData.email.match(/\.(com|net|org|info|biz|co|me|site|online|website|store|space|io|app|dev|tech|ai|so|cloud|systems|digital|solutions|company|enterprises|agency|firm|group|international|consulting|edu|edu\.in|ac\.in|university|school|college|institute|in|co\.in|gov\.in|mil\.in|uk|us|ca|au|nz|ph|sg|id|de|fr|it|jp|tv|fm|radio|press|news|media)$/)
-    ) {
+      !formData.email.match(/\.(com|net|org|info|biz|co|me|site|online|website|store|space|io|app|dev|tech|ai|so|cloud|systems|digital|solutions|company|enterprises|agency|firm|group|international|consulting|edu|edu\.in|ac\.in|university|school|college|institute|in|co\.in|gov\.in|mil\.in|uk|us|ca|au|nz|ph|sg|id|de|fr|it|jp|tv|fm|radio|press|news|media)$/)) {
       toast.error("Invalid email address", null, 4000);
       isValid = false;
+    } else {
+      const filter = new Filter();
+      if (filter.isProfane(formData.email)) {
+        toast.error("Email contains inappropriate language", null, 4000);
+        isValid = false;
+      }
     }
 
     if (!formData.message.trim()) {
