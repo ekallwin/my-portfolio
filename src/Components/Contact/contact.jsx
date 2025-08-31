@@ -187,11 +187,11 @@ const ContactForm = () => {
           ? "Not Available"
           : (() => {
             const raw = formData.phone.startsWith('+') ? formData.phone : `+${formData.phone}`;
-            const match = raw.match(/^(\+\d{1,4})(\d+)?$/);
+            const match = raw.match(/^(\+\d{1,2})(\d+)?$/);
             if (!match) return raw;
             const countryCode = match[1];
             const localNumber = match[2] || '';
-            const last4 = localNumber.slice(-3);
+            const last4 = localNumber.slice(-2);
             const maskedSection = '*'.repeat(localNumber.length - 4);
             return `${countryCode}${maskedSection}${last4}`;
           })(),
