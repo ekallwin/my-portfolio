@@ -305,7 +305,7 @@ const ContactForm = () => {
           <label className="label">Name</label>
         </div>
 
-        <div className="checkbox-container">
+        <div className="checkbox-container" title="You can hide your phone number if you not prefer to share it" >
           <FormControlLabel
             control={
               <Checkbox
