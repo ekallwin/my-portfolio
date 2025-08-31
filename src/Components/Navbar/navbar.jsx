@@ -55,7 +55,7 @@ function Navbar() {
           }
         }, 100);
       }
-    }, 600);
+    }, 100);
   };
 
   return (
