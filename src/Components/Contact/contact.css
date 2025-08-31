@@ -239,14 +239,13 @@ textarea {
   }
 }
 
-
 .custom-phone-dropdown {
   overflow-x: hidden;
   margin-left: auto;
   color: black;
   width: 920% !important;
   min-width: 100% !important;
-  margin-top: 5px !important;
+  margin-top: 2px !important;
 }
 
 .react-tel-input .country-list .country .dial-code {

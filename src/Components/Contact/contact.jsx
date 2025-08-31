@@ -21,6 +21,7 @@ const ContactForm = () => {
     email: "",
     message: "",
     countryCode: "in",
+    dialCode: "",
   });
   const [phoneLength, setPhoneLength] = useState(10);
   const [hidePhone, setHidePhone] = useState(false);
@@ -32,9 +33,14 @@ const ContactForm = () => {
     if (country && country.format) {
       expectedLength = country.format.replace(/[^.#]/g, "").length;
     }
+    const dialCode = country && country.dialCode ? `+${country.dialCode}` : "";
 
     setPhoneLength(expectedLength);
-    setFormData((prev) => ({ ...prev, phone: phone.startsWith("+") ? phone : "" + phone }));
+    setFormData((prev) => ({
+      ...prev,
+      phone: phone.startsWith("+") ? phone : `+${phone}`,
+      dialCode,
+    }));
   };
 
   const handleChange = (e) => {
@@ -187,13 +193,15 @@ const ContactForm = () => {
           ? "Not Available"
           : (() => {
             const raw = formData.phone.startsWith('+') ? formData.phone : `+${formData.phone}`;
-            const match = raw.match(/^(\+\d{1,2})(\d+)?$/);
-            if (!match) return raw;
-            const countryCode = match[1];
-            const localNumber = match[2] || '';
-            const last4 = localNumber.slice(-2);
-            const maskedSection = '*'.repeat(localNumber.length - 4);
-            return `${countryCode}${maskedSection}${last4}`;
+            let dialCode = formData.dialCode || "";
+            if (!dialCode) {
+              const m = raw.match(/^\+(\d{1,4})/);
+              dialCode = m ? `+${m[1]}` : "";
+            }
+            const local = dialCode ? raw.slice(dialCode.length) : raw.replace(/^\+/, '');
+            const last2 = local.slice(-4);
+            const stars = local.length > 2 ? "*".repeat(local.length - 2) : "";
+            return `${dialCode}${stars}${last2}`;
           })(),
 
         maskedemail: (() => {
@@ -301,6 +309,25 @@ const ContactForm = () => {
     return () => resizeObserver.disconnect();
   }, []);
 
+  useEffect(() => {
+    const fetchCountry = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_IP_API}`);
+        const data = await res.json();
+        if (data.success && data.country_code) {
+          setFormData((prev) => ({
+            ...prev,
+            countryCode: data.country_code.toLowerCase(),
+          }));
+        }
+      } catch (err) {
+        console.error("Failed to fetch", err);
+      }
+    };
+    fetchCountry();
+  }, []);
+
+
   return (
     <div className="contact" id="Contact">
       <h2>Contact me</h2>
@@ -335,7 +362,7 @@ const ContactForm = () => {
         {!hidePhone && (
           <div className="input-container phone-input-wrapper">
             <PhoneInput
-              country={"in"}
+              country={formData.countryCode}
               value={formData.phone}
               onChange={handlePhoneChange}
               inputClass="custom-phone-input"
@@ -343,7 +370,7 @@ const ContactForm = () => {
               dropdownClass="custom-phone-dropdown"
               enableSearch={true}
               searchPlaceholder="Search country"
-              searchNotFound="No found"
+              searchNotFound="No country found"
               autoComplete="off"
               inputProps={{
                 required: !hidePhone,

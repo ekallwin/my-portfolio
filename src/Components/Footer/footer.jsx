@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import './footer.css';
 import moment from 'moment';
 import { useScrollToSection } from "./Scroll"
+import Isp from '../Isp/Isp';
 
 function Footer() {
   const currentYear = moment().format('YYYY');
@@ -109,6 +110,7 @@ function Footer() {
               >Allwin E K
               </span>
             </p>
+            <p style={{ fontSize: '12px'}}><Isp /></p>
           </div>
 
         </div>
