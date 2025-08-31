@@ -1,0 +1,167 @@
+.abt h2 {
+    color: white;
+}
+
+#About {
+    padding: 2px;
+    margin-top: -50px;
+    max-width: 95%;
+    margin: 0 auto;
+}
+
+.About figure {
+    text-align: center;
+}
+
+.About img {
+    max-width: 200px;
+    border-radius: 100% !important;
+}
+
+figcaption {
+    padding: 10px;
+    text-align: left;
+    color: #dcdcdc;
+}
+
+.About figcaption {
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.About {
+    padding: 2px 5px;
+    width: 100%;
+    margin: 0 auto;
+    background-color: rgba(255, 255, 255, 0.015) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+}
+
+.About fieldset {
+    margin-top: 20px;
+    font-size: 18px;
+    padding: 10px;
+}
+
+figure img {
+    width: 200px;
+    height: 200px;
+    border-radius: 100%;
+    border: 2px solid black;
+    margin-top: 15px;
+}
+
+@media (max-width: 768px) {
+    #About {
+        padding: -10px;
+    }
+
+    .About figure {
+        text-align: center;
+    }
+
+    .About img {
+        max-width: 200px;
+        border-radius: 50%;
+    }
+
+    .About figcaption {
+        margin-top: 10px;
+        font-size: 14px;
+    }
+
+    figcaption {
+        font-size: 14px;
+    }
+
+    .About fieldset {
+        font-size: 18px;
+    }
+
+    figure img {
+        width: 200px;
+        height: 200px;
+        border-radius: 100%;
+        border: 2px solid black;
+    }
+
+    #down_btn {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .About {
+        width: 100%;
+    }
+}
+
+.button-download {
+    color: #fff;
+    font-size: 20px;
+    font-family: serif;
+    padding: 15px 25px;
+    background: linear-gradient(110deg, var(--btn-primary), var(--btn-secondary), var(--btn-teritary));
+    border-radius: 100px;
+    border: none;
+    cursor: pointer;
+    display: block;
+    margin: 30px auto;
+    width: fit-content;
+    transition: transform 0.3s ease, color 0.3s ease;
+    text-decoration: none;
+}
+
+.button-download:hover {
+    transform: scale(1.08);
+    background: linear-gradient(100deg, var(--btn-primary), var(--btn-secondary), var(--btn-teritary));
+}
+
+.button-download:focus {
+    outline: none;
+    color: #fff;
+    transform: scale(1);
+}
+
+
+.About {
+    position: relative;
+    border-radius: 10px !important;
+    z-index: 1;
+}
+
+.About::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    padding: 4px;
+    background: radial-gradient(transparent, transparent, var(--teritary-color), var(--primary-color), transparent, transparent);
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    background-size: 300% 300%;
+    animation: shine-pulse 10s linear infinite;
+    z-index: -1;
+}
+
+@keyframes shine-pulse {
+    0% {
+        background-position: 0% 0%;
+    }
+
+    50% {
+        background-position: 100% 100%;
+    }
+
+    100% {
+        background-position: 0% 0%;
+    }
+}
+
+.About .card {
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 8px;
+    padding: 20px;
+}

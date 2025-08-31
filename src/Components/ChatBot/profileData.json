@@ -1,0 +1,34 @@
+{
+    "name": "Allwin E K",
+    "about": "Allwin E K is an aspiring Computer Science student and beginner in MERN stack development, who identifies as passionate about coding and problem-solving, and currently pursuing Computer Science and Engineering at Ponjesly College of Engineering. ",
+    "skills": [
+        "React.js",
+        "Node.js",
+        "Express.js",
+        "MongoDB",
+        "MySQL",
+        "HTML",
+        "CSS",
+        "JavaScript"
+    ],
+    "college": "Ponjesly College of Engineering, Nagercoil",
+    "projects": [
+        "Food ordering website (Front-End)",
+        "Instagram Clone (React.js)",
+        "Railway Reservation Site (MERN)"
+    ],
+    "achievements": [
+        "1st Prize in Web Browser Design and Quiz at DMI College of Engineering, Aralvaimozhi",
+        "2nd Prize in Web Pixies at Amrita College of Engineering and Technology, Erachakulam",
+        "3rd Prize in Technical Quiz at Annai Vailankanni College Of Engineering, Azhagappapuram",
+        "1st Prize in Paper Presentation and 2nd Prize in Ad Mad (Non technical) at St. Xavier's Catholic College of Engineering, Chunkankadai"
+    ],
+    "social_medias": {
+        "LinkedIn": "https://www.linkedin.com/in/ekallwin/",
+        "GitHub": "https://github.com/ekallwin",
+        "Facebook": "https://www.facebook.com/ekallwin",
+        "Instagram": "https://www.instagram.com/ekallwin",
+        "X (Twitter)": "https://x.com/ekallwin",
+        "Threads": "https://www.threads.net/@ekallwin"
+    }
+}
