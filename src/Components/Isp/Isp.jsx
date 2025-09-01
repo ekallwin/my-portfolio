@@ -42,7 +42,7 @@ function IP() {
             {loading}
 
             {info && (
-                <span>Securely connected via <strong>{info.isp} - {info.country}</strong></span>
+                <span>Securely connected via <strong>{info.isp}</strong> <br></br> Region: <strong>{info.country}</strong> | <strong>{info.continent}</strong></span>
             )}
 
             {!loading && !error && !info}

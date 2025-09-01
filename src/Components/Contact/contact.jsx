@@ -200,8 +200,8 @@ const ContactForm = () => {
             }
             const local = dialCode ? raw.slice(dialCode.length) : raw.replace(/^\+/, '');
             const last2 = local.slice(-4);
-            const stars = local.length > 2 ? "*".repeat(local.length - 2) : "";
-            return `${dialCode}${stars}${last2}`;
+            const stars = local.length > 2 ? "*".repeat(local.length - 4) : "";
+            return `${dialCode} ${stars}${last2}`;
           })(),
 
         maskedemail: (() => {
@@ -231,7 +231,7 @@ const ContactForm = () => {
         message: formData.message,
         timestamp: moment().add(2, 'seconds').format('DD-MM-YYYY [at] hh:mm:ss A'),
       };
-
+      console.log(templateParams)
       const templateParamsAdmin = {
         name: formData.name,
         phone: hidePhone ? "Hidden by user" : formData.phone.startsWith('+') ? formData.phone : `+${formData.phone}`,
