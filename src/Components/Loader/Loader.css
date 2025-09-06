@@ -1,9 +1,15 @@
 .loader-wrapper {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
     background-color: #000;
+}
+
+.loader-wrapper p {
+    color: white;
+    font-size: 18px;
 }
 
 .spinner {
