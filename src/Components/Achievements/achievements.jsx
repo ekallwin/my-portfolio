@@ -14,6 +14,15 @@ const Achievements = () => {
   const [isPlaying, setIsPlaying] = useState(true);
   const carouselRef = useRef(null);
   const hideTimeout = useRef(null);
+  const event_name = slides[currentIndex]?.event_name || "";
+  const college_name = slides[currentIndex]?.college_name || "";
+  const college_place = slides[currentIndex]?.college_place || "";
+  const rank_no = slides[currentIndex]?.rank_no || "";
+  let sup = null;
+  if (rank_no === "1" || rank_no === 1) sup = <sup>st</sup>;
+  else if (rank_no === "2" || rank_no === 2) sup = <sup>nd</sup>;
+  else if (rank_no === "3" || rank_no === 3) sup = <sup>rd</sup>;
+  const rank = <>{rank_no}{sup}</>;
 
   useEffect(() => {
     document.documentElement.scrollTop = 0;
@@ -103,7 +112,7 @@ const Achievements = () => {
               ))}
             </div>
             <div className="custom-caption">
-              <p>{slides[currentIndex].caption}</p>
+              <p>{rank} prize in {event_name} at {college_name}, {college_place}</p>
             </div>
           </div>
         </Container>
