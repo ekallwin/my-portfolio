@@ -21,6 +21,7 @@ function IP() {
                     country: data.country,
                     continent: data.continent,
                     isp: data.connection?.isp || data.isp || data.org || null,
+                    domain: data.connection?.domain || data.domain || null,
                 });
             } catch (err) {
                 if (!mounted) return;
@@ -37,12 +38,22 @@ function IP() {
     }, []);
 
 
+    const handleIspClick = () => {
+        if (info && info.domain) {
+            let url = info.domain.startsWith('http') ? info.domain : `https://${info.domain}`;
+            window.open(url, '_blank');
+        }
+    };
+
     return (
         <span>
             {loading}
 
             {info && (
-                <span>Securely connected via <strong>{info.isp}</strong> <br></br> Region: <strong>{info.country}</strong> | <strong>{info.continent}</strong></span>
+                <span>
+                    User ISP: <strong style={{ cursor: 'pointer' }} onClick={handleIspClick}>{info.isp}</strong> <br />
+                    Region: <strong>{info.country}</strong> - <strong>{info.continent}</strong>
+                </span>
             )}
 
             {!loading && !error && !info}
