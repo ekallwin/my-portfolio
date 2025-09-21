@@ -1,15 +1,18 @@
+
 import React, { useRef, useEffect, useState } from 'react';
 import './Skills.css';
+import { FaHtml5, FaCss3Alt, FaJs, FaReact, FaNodeJs, FaGitAlt } from 'react-icons/fa';
+import { SiExpress, SiMongodb } from 'react-icons/si';
 
 const Skills = () => {
     const skillsData = [
-        { name: 'HTML/CSS', percentage: 95 },
-        { name: 'JavaScript', percentage: 75 },
-        { name: 'React.js', percentage: 85 },
-        { name: 'Node.js', percentage: 70 },
-        { name: 'Express.js', percentage: 70 },
-        { name: 'MongoDB', percentage: 70 },
-        { name: 'Git', percentage: 75 },
+        { name: 'HTML/CSS', percentage: 95, icon: <><FaHtml5 color="#e34c26" title="HTML5" size={28} style={{ marginRight: 2 }} /><FaCss3Alt color="#1572B6" title="CSS3" size={28} /></> },
+        { name: 'JavaScript', percentage: 75, icon: <FaJs color="#f7df1e" title="JavaScript" size={28} /> },
+        { name: 'React.js', percentage: 85, icon: <FaReact color="#61dafb" title="React.js" size={28} /> },
+        { name: 'Node.js', percentage: 70, icon: <FaNodeJs color="#3c873a" title="Node.js" size={28} /> },
+        { name: 'Express.js', percentage: 70, icon: <SiExpress color="#ffffffff" title="Express.js" size={28} /> },
+        { name: 'MongoDB', percentage: 70, icon: <SiMongodb color="#47A248" title="MongoDB" size={28} /> },
+        { name: 'Git', percentage: 75, icon: <FaGitAlt color="#f34f29" title="Git" size={28} /> },
     ];
 
     const [animatedPercentages, setAnimatedPercentages] = useState(skillsData.map(() => 0));
@@ -114,6 +117,7 @@ const Skills = () => {
                         style={getDelayStyle(index)}
                     >
                         <div className="skill-info">
+                            <span className="skill-icon">{skill.icon}</span>
                             <span className="skill-name">{skill.name}</span>
                             <span className="skill-percentage">{animatedPercentages[index]}%</span>
                         </div>

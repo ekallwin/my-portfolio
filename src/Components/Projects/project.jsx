@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 import Navbar from "../Navbar/navbar";
 import Footer from "../Footer/footer";
 import './project.css';
@@ -19,9 +19,7 @@ const projects = [
     alt: "Railway Reservation System Screenshot",
     skills: ["Node.js", "React.js", "Express.js", "MongoDB"],
     githubUrl: "https://github.com/ekallwin/railway_reservation",
-    demoUrl: "https://railway-reservation-frontend.onrender.com",
-    githubMessage: "Redirecting to Railway Reservation GitHub",
-    demoMessage: "Redirecting to Railway Reservation Live Demo"
+    demoUrl: "https://railway-reservation-frontend.onrender.com"
   },
   {
     id: 2,
@@ -30,9 +28,7 @@ const projects = [
     alt: "Instagram Clone Screenshot",
     skills: ["React.js", "Vite"],
     githubUrl: "https://github.com/ekallwin/instagram-clone",
-    demoUrl: "https://instagram-clone-ekallwin.vercel.app",
-    githubMessage: "Redirecting to Instagram Clone GitHub",
-    demoMessage: "Redirecting to Instagram Clone Live Demo"
+    demoUrl: "https://instagram-clone-ekallwin.vercel.app"
   },
   {
     id: 3,
@@ -41,9 +37,7 @@ const projects = [
     alt: "Food Ordering Website Screenshot",
     skills: ["HTML", "CSS", "JavaScript"],
     githubUrl: "https://github.com/ekallwin/Dine",
-    demoUrl: "https://ekallwin-dine.vercel.app/",
-    githubMessage: "Redirecting to Dine GitHub",
-    demoMessage: "Redirecting to Dine Live Demo"
+    demoUrl: "https://ekallwin-dine.vercel.app/"
   }
 ];
 
@@ -81,18 +75,9 @@ function Projects() {
     transitionDelay: `${index * 0.1}s`
   });
 
-  const handleLinkClick = (event, url, message) => {
+  const handleLinkClick = (event, url) => {
     event.preventDefault();
-    toast.info(message, {
-      autoClose: 3000,
-      closeOnClick: false,
-      pauseOnHover: false,
-      draggable: false,
-      progress: undefined,
-    });
-    setTimeout(() => {
-      window.open(url, "_blank", "noopener,noreferrer");
-    }, 2000);
+    window.open(url, "_blank", 'noopener,noreferrer,width=800,height=800');
   };
 
   const handleImageError = (e) => {
@@ -141,7 +126,7 @@ function Projects() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="project-link github-link"
-                      onClick={(e) => handleLinkClick(e, project.githubUrl, project.githubMessage)}
+                      onClick={(e) => handleLinkClick(e, project.githubUrl)}
                       aria-label={`View ${project.title} on GitHub`}
                     >
                       <FontAwesomeIcon icon={faGithub} />
@@ -153,7 +138,7 @@ function Projects() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="project-link demo-link"
-                      onClick={(e) => handleLinkClick(e, project.demoUrl, project.demoMessage)}
+                      onClick={(e) => handleLinkClick(e, project.demoUrl)}
                       aria-label={`View ${project.title} live demo`}
                     >
                       <FontAwesomeIcon icon={faLink} />

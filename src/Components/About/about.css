@@ -1,3 +1,29 @@
+.about-icons {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.about-icons a {
+    background-color: black;
+}
+
+.icon-link {
+    font-size: 2.3rem;
+    transition: transform 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.icon-link.github {
+    color: #ffffff;
+}
+
+.icon-link.linkedin {
+    color: #0A66C2;
+}
+
 .abt h2 {
     color: white;
 }

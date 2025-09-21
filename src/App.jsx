@@ -4,7 +4,6 @@ import "./App.css";
 import { Bounce, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import 'react-notifications/lib/notifications.css';
-import ScrollToTop from './ScrollToTop';
 import Home from "./Home";
 import Projects from "./Components/Projects/project";
 import Achievements from "./Components/Achievements/achievements";
@@ -40,7 +39,6 @@ function App() {
             theme="colored"
             transition={Bounce}
           />
-          <ScrollToTop />
 
           <Stars mouseRepulsion={false}
             mouseInteraction={false}

@@ -58,7 +58,7 @@ const Achievements = () => {
     <>
       <Navbar />
       <div className="components-container">
-        <h2 id="achievments">Achievements</h2>
+        <h2 id="achievments" className="projects-title">Achievements</h2>
         <Container>
           <div className="carousel-wrapper">
             <Carousel
