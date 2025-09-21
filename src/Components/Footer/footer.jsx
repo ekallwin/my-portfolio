@@ -10,76 +10,22 @@ function Footer() {
   const currentYear = moment().format('YYYY');
 
   const Facebook = () => {
-    toast.info('Redirecting to Facebook', {
-      autoClose: 3000,
-      closeOnClick: false,
-      pauseOnHover: false,
-      draggable: false,
-      progress: undefined,
-    });
-    setTimeout(() => {
-      window.open('https://www.facebook.com/ekallwin', '_blank');
-    }, 2500);
+    window.open('https://www.facebook.com/ekallwin', '_blank');
   };
   const Instagram = () => {
-    toast.info('Redirecting to Instagram', {
-      autoClose: 3000,
-      closeOnClick: false,
-      pauseOnHover: false,
-      draggable: false,
-      progress: undefined,
-    });
-    setTimeout(() => {
-      window.open('https://www.instagram.com/ekallwin', '_blank');
-    }, 2500);
+    window.open('https://www.instagram.com/ekallwin', '_blank');
   };
   const Twitter = () => {
-    toast.info('Redirecting to X (Twitter)', {
-      autoClose: 3000,
-      closeOnClick: false,
-      pauseOnHover: false,
-      draggable: false,
-      progress: undefined,
-    });
-    setTimeout(() => {
-      window.open('https://www.twitter.com/ekallwin', '_blank');
-    }, 2500);
+    window.open('https://www.twitter.com/ekallwin', '_blank');
   };
   const Threads = () => {
-    toast.info('Redirecting to Threads (by Instagram)', {
-      autoClose: 3000,
-      closeOnClick: false,
-      pauseOnHover: false,
-      draggable: false,
-      progress: undefined,
-    });
-    setTimeout(() => {
-      window.open('https://www.threads.net/@ekallwin', '_blank');
-    }, 2500);
+    window.open('https://www.threads.net/@ekallwin', '_blank');
   };
   const LinkedIn = () => {
-    toast.info('Redirecting to LinkedIn', {
-      autoClose: 3000,
-      closeOnClick: false,
-      pauseOnHover: false,
-      draggable: false,
-      progress: undefined,
-    });
-    setTimeout(() => {
-      window.open('https://www.linkedin.com/in/ekallwin/', '_blank');
-    }, 2500);
+    window.open('https://www.linkedin.com/in/ekallwin/', '_blank');
   };
   const Github = () => {
-    toast.info('Redirecting to GitHub', {
-      autoClose: 3000,
-      closeOnClick: false,
-      pauseOnHover: false,
-      draggable: false,
-      progress: undefined,
-    });
-    setTimeout(() => {
-      window.open('https://github.com/ekallwin', '_blank');
-    }, 2500);
+    window.open('https://github.com/ekallwin', '_blank');
   };
 
   const scrollToSection = useScrollToSection();
@@ -101,6 +47,7 @@ function Footer() {
           </div>
 
           <div className="footer-copyright">
+            <p style={{ fontSize: '12px' }}><Isp /></p>
             <p>
               &copy; {currentYear} Created, Developed and maintained by
               <span
@@ -110,7 +57,7 @@ function Footer() {
               >Allwin E K
               </span>
             </p>
-            <p style={{ fontSize: '12px'}}><Isp /></p>
+
           </div>
 
         </div>

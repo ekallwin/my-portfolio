@@ -116,7 +116,7 @@ const Skills = () => {
                         }}
                         style={getDelayStyle(index)}
                     >
-                        <div className="skill-info">
+                        <div className="skill-info" title={`${skill.name}`}>
                             <span className="skill-icon">{skill.icon}</span>
                             <span className="skill-name">{skill.name}</span>
                             <span className="skill-percentage">{animatedPercentages[index]}%</span>
