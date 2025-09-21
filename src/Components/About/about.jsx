@@ -94,7 +94,7 @@ function About() {
                 <FaGithub />
               </a>
               <a
-                href="https://www.linkedin.com/in/allwin-e-k/"
+                href="https://www.linkedin.com/in/ekallwin/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
