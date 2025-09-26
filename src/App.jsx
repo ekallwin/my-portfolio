@@ -11,54 +11,49 @@ import Loader from "./Components/Loader/Loader";
 import Stars from './Components/Stars/Stars'
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-
+    const timer = setTimeout(() => setLoading(false), 1000);
     return () => clearTimeout(timer);
   }, []);
 
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
     <>
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <>
-          <ToastContainer
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick={false}
-            rtl={false}
-            pauseOnFocusLoss
-            draggable={false}
-            pauseOnHover={false}
-            theme="colored"
-            transition={Bounce}
-          />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable={false}
+        pauseOnHover={false}
+        theme="colored"
+        transition={Bounce}
+      />
 
-          <Stars mouseRepulsion={false}
-            mouseInteraction={false}
-            density={2}
-            glowIntensity={0.3}
-            saturation={0.3}
-            hueShift={140}
-            starSpeed={0.5}
-          />
+      <Stars mouseRepulsion={false}
+        mouseInteraction={false}
+        density={2}
+        glowIntensity={0.3}
+        saturation={0.3}
+        hueShift={140}
+        starSpeed={0.5}
+      />
 
-          <div className="app-shell">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/projects" element={<Projects />} />
-              <Route path="/achievements" element={<Achievements />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </div>
-        </>
-      )}
+      <div className="app-shell">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/achievements" element={<Achievements />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </div>
     </>
   );
 }
