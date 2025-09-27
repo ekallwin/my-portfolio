@@ -7,16 +7,7 @@ import moment from 'moment';
 function Header() {
   const buttonRef = useRef(null);
   const LinkedIn = () => {
-    toast.info('Redirecting to LinkedIn', {
-      autoClose: 3000,
-      closeOnClick: false,
-      pauseOnHover: false,
-      draggable: false,
-      progress: undefined,
-    });
-    setTimeout(() => {
-      window.open('https://www.linkedin.com/in/ekallwin/', '_blank');
-    }, 2500);
+    window.open('https://www.linkedin.com/in/ekallwin/', '_blank');
   };
 
   useEffect(() => {
@@ -75,7 +66,7 @@ function Header() {
             textAlign="left"
           />
         </div>
-        <div className="typing-effect" style={{ display: 'flex', flexDirection: 'column', color: 'white', marginLeft: '15px' }}>
+        <div className="typing-effect" style={{ display: 'flex', flexDirection: 'column', color: 'white', marginLeft: '10px' }}>
           <h2 className="typewritter"><Typewriter
             options={{
               strings: ["MERN stack Developer", "Designer", "Freelancer"],

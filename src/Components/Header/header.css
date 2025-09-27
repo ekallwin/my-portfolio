@@ -3,13 +3,13 @@
     font-family: serif;
     color: white;
     text-align: left;
-    margin: 50px 0 10px 15px;
+    margin: 50px 0 10px 10px;
     font-size: 45px !important;
     user-select: none;
 }
 
 .header-text {
-    margin-top: -0.2% !important;
+    margin-top: 1rem !important;
 }
 
 .item-name h2 {
@@ -45,6 +45,7 @@
     cursor: pointer;
     display: block;
     margin: 30px auto;
+
     width: fit-content;
     transition: transform 0.4s ease;
     text-decoration: none;
@@ -75,5 +76,10 @@
     .typing-effect {
         margin-top: 40px;
         color: white;
+    }
+
+    .button {
+        margin-top: 5rem !important;
+        margin-bottom: 1rem !important;
     }
 }
