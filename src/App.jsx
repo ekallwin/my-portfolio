@@ -8,8 +8,7 @@ import Home from "./Home";
 import Projects from "./Components/Projects/project";
 import Achievements from "./Components/Achievements/achievements";
 import Loader from "./Components/Loader/Loader";
-import Stars from './Components/Stars/Stars'
-import Orb from './Components/Stars/Stars.jsx';
+import Orb from './Components/Orb/Orb.jsx';
 function App() {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -37,24 +36,14 @@ function App() {
         transition={Bounce}
       />
 
-      {/* <Stars mouseRepulsion={false}
-        mouseInteraction={false}
-        density={2}
-        glowIntensity={0.3}
-        saturation={0.3}
-        hueShift={140}
-        starSpeed={0.5}
-      /> */}
-
-
-<div style={{ width: '100%', height: '100%', position: 'absolute' }}>
-  <Orb
-    hoverIntensity={0.5}
-    rotateOnHover={true}
-    hue={0}
-    forceHoverState={false}
-  />
-</div>
+      <div style={{ width: '100%', height: '100%', position: 'absolute' }}>
+        <Orb
+          hoverIntensity={0.5}
+          rotateOnHover={true}
+          hue={0}
+          forceHoverState={false}
+        />
+      </div>
 
       <div className="app-shell">
         <Routes>
