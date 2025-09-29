@@ -51,7 +51,7 @@ function IP() {
 
             {info && (
                 <span>
-                    User ISP: <strong style={{ cursor: 'pointer' }} onClick={handleIspClick}>{info.isp}</strong> <br />
+                    ISP: <strong style={{ cursor: 'pointer' }} onClick={handleIspClick}>{info.isp}</strong> <br />
                     Region: <strong>{info.country}</strong> - <strong>{info.continent}</strong>
                 </span>
             )}
