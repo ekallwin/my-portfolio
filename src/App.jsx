@@ -9,8 +9,31 @@ import Projects from "./Components/Projects/project";
 import Achievements from "./Components/Achievements/achievements";
 import Loader from "./Components/Loader/Loader";
 import Orb from './Components/Orb/Orb.jsx';
+import OfflinePage from "./Components/Offline/Offline.jsx";
+
+const useOnlineStatus = () => {
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  return isOnline;
+};
+
 function App() {
   const [loading, setLoading] = useState(true);
+  const isOnline = useOnlineStatus();
+
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1000);
     return () => clearTimeout(timer);
@@ -18,6 +41,10 @@ function App() {
 
   if (loading) {
     return <Loader />;
+  }
+
+  if (!isOnline) {
+    return <OfflinePage />;
   }
 
   return (
