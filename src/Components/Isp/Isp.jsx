@@ -37,21 +37,13 @@ function IP() {
         };
     }, []);
 
-
-    const handleIspClick = () => {
-        if (info && info.domain) {
-            let url = info.domain.startsWith('http') ? info.domain : `https://${info.domain}`;
-            window.open(url, '_blank');
-        }
-    };
-
     return (
         <span>
             {loading}
 
             {info && (
                 <span>
-                    ISP: <strong style={{ cursor: 'pointer' }} onClick={handleIspClick}>{info.isp}</strong> <br />
+                    ISP: <strong >{info.isp}</strong> <br />
                     Region: <strong>{info.country}</strong> - <strong>{info.continent}</strong>
                 </span>
             )}
