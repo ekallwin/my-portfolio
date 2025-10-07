@@ -5,8 +5,7 @@
   height: 100vh;
   width: 100vw;
   background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #2d2d2d 100%);
-  color: #ffffff;
-  text-align: center;
+  color: #f4f4f4 !important;
   position: fixed;
   top: 0;
   left: 0;
@@ -16,11 +15,11 @@
 
 .offline-content {
   background: rgba(30, 30, 30, 0.95);
-  padding: 50px 40px;
+  padding: 40px 40px;
   border-radius: 24px;
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 
+  box-shadow:
     0 20px 40px rgba(0, 0, 0, 0.5),
     0 0 0 1px rgba(255, 255, 255, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -29,18 +28,12 @@
   animation: fadeInUp 0.6s ease-out;
 }
 
-.offline-icon {
-  font-size: 4.5rem;
-  margin-bottom: 25px;
-  filter: grayscale(0.3);
-  opacity: 0.9;
-}
-
 .offline-title {
+  margin: 1rem;
   font-size: 2.2rem;
   margin-bottom: 20px;
   font-weight: 700;
-  background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
+  background: linear-gradient(#f4f4f4);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -48,194 +41,60 @@
 
 .offline-message {
   font-size: 1.1rem;
-  margin-bottom: 35px;
-  opacity: 0.8;
+  margin-bottom: 15px;
   line-height: 1.6;
-  color: #cccccc;
 }
 
-/* WiFi Animation */
-.offline-animation {
-  margin: 30px 0;
-  display: flex;
-  justify-content: center;
+.offline-tips {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+  padding-left: 20px;
 }
 
-.wifi-symbol {
-  position: relative;
-  width: 80px;
-  height: 80px;
+.offline-tips li {
+  margin-bottom: 8px !important;
+  margin: 1rem !important;
+  padding: 0 !important;
 }
 
-.wifi-circle {
-  position: absolute;
-  border: 3px solid;
-  border-color: #666 transparent transparent transparent;
-  border-radius: 50%;
-  animation: wifi-pulse 2s infinite;
-}
-
-.wifi-circle.first {
-  width: 80px;
-  height: 80px;
-  top: 0;
-  left: 0;
-  animation-delay: 0s;
-}
-
-.wifi-circle.second {
-  width: 60px;
-  height: 60px;
-  top: 10px;
-  left: 10px;
-  animation-delay: 0.3s;
-}
-
-.wifi-circle.third {
-  width: 40px;
-  height: 40px;
-  top: 20px;
-  left: 20px;
-  animation-delay: 0.6s;
-}
-
-.retry-button {
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-  color: white;
-  border: none;
-  padding: 14px 35px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: 
-    0 4px 20px rgba(99, 102, 241, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
-  margin-top: 20px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.retry-button:hover {
-  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
-  transform: translateY(-2px);
-  box-shadow: 
-    0 8px 30px rgba(99, 102, 241, 0.4),
-    0 0 0 1px rgba(255, 255, 255, 0.15);
-}
-
-.retry-button:active {
-  transform: translateY(0);
-  box-shadow: 
-    0 2px 15px rgba(99, 102, 241, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
-}
-
-.retry-button:focus {
-  outline: none;
-  box-shadow: 
-    0 0 0 3px rgba(99, 102, 241, 0.3),
-    0 4px 20px rgba(99, 102, 241, 0.3);
-}
-
-/* Animations */
-
-
-@keyframes wifi-pulse {
-  0% {
-    border-color: #666 transparent transparent transparent;
-    transform: scale(0.8);
-    opacity: 0.7;
-  }
-  50% {
-    border-color: #999 transparent transparent transparent;
-    transform: scale(1);
-    opacity: 1;
-  }
-  100% {
-    border-color: #666 transparent transparent transparent;
-    transform: scale(0.8);
-    opacity: 0.7;
-  }
-}
-
-/* Glow effect for container */
-.offline-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(99, 102, 241, 0.1) 0%,
-    transparent 70%
-  );
-  pointer-events: none;
-}
-
-/* Responsive design */
 @media (max-width: 480px) {
   .offline-content {
-    padding: 40px 25px;
     margin: 20px;
     border-radius: 20px;
   }
-  
+
   .offline-title {
     font-size: 1.8rem;
+    margin: 0.5rem;
+    margin-bottom: 15px;
   }
-  
+
   .offline-message {
     font-size: 1rem;
+    margin-bottom: 10px;
   }
-  
-  .offline-icon {
-    font-size: 3.5rem;
+
+  .offline-tips {
+    font-size: 0.9rem;
+    padding-left: 10px;
+    margin: 0;
   }
-  
-  .wifi-symbol {
-    width: 60px;
-    height: 60px;
-  }
-  
-  .wifi-circle.first {
-    width: 60px;
-    height: 60px;
-  }
-  
-  .wifi-circle.second {
-    width: 45px;
-    height: 45px;
-    top: 7.5px;
-    left: 7.5px;
-  }
-  
-  .wifi-circle.third {
-    width: 30px;
-    height: 30px;
-    top: 15px;
-    left: 15px;
+
+  .offline-tips li {
+    margin-bottom: 5px !important;
+    padding: 0 !important;
   }
 }
 
-/* Dark mode scrollbar */
-.offline-container::-webkit-scrollbar {
-  width: 8px;
+.globe-internet {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
 }
 
-.offline-container::-webkit-scrollbar-track {
-  background: rgba(30, 30, 30, 0.8);
-}
-
-.offline-container::-webkit-scrollbar-thumb {
-  background: rgba(100, 100, 100, 0.6);
-  border-radius: 4px;
-}
-
-.offline-container::-webkit-scrollbar-thumb:hover {
-  background: rgba(120, 120, 120, 0.8);
+@media (max-width: 480px) {
+  .globe-internet {
+    margin-bottom: 5px;
+  }
 }

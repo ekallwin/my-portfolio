@@ -40,9 +40,10 @@ ul,
 li {
   margin: 0;
   padding: 0;
+}
+nav li *{
   list-style: none;
 }
-
 .icons {
   margin-right: 10px;
 }

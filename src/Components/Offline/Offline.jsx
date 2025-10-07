@@ -1,31 +1,21 @@
 import './Offline.css';
+import { PiGlobeXLight } from "react-icons/pi";
 
 const OfflinePage = () => {
-  const handleRetry = () => {
-    window.location.reload();
-  };
-
   return (
     <div className="offline-container">
       <div className="offline-content">
-        <div className="offline-icon">🌐</div>
-        <h1 className="offline-title">Connection Lost</h1>
-        <p className="offline-message">
-          It seems you're offline. Please check your internet connection and try again.
-        </p>
-        <div className="offline-animation">
-          <div className="wifi-symbol">
-            <div className="wifi-circle first"></div>
-            <div className="wifi-circle second"></div>
-            <div className="wifi-circle third"></div>
-          </div>
+        <div className='globe-internet'>
+          <PiGlobeXLight size={70} />
         </div>
-        <button 
-          onClick={handleRetry}
-          className="retry-button"
-        >
-          Retry Connection
-        </button>
+
+        <h2 className="offline-title">No Internet</h2>
+        <p className="offline-message">Try:</p>
+        <ul className="offline-tips">
+          <li>Checking the network cables, modem, and router</li>
+          <li>Reconnecting to Wi-Fi</li>
+          <li>Turning off Airplane mode</li>
+        </ul>
       </div>
     </div>
   );
