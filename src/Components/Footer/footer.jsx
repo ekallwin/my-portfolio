@@ -47,7 +47,7 @@ function Footer() {
           </div>
 
           <div className="footer-copyright">
-            <p style={{ fontSize: '12px' }}><Isp /></p>
+            {/* <p style={{ fontSize: '12px' }}><Isp /></p> */}
             <p>
               &copy; {currentYear} Created, Developed and maintained by
               <span
