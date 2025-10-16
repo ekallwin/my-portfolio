@@ -4,9 +4,16 @@ import Loyola2025 from './Carousel/Loyola2024.jpg';
 import SXCCE2025 from './Carousel/SXCCE.jpg';
 import Amrita2024 from './Carousel/Amrita2024.jpg';
 import AVCE2024 from './Carousel/AVCE2024.jpg';
-
+import RCET2025 from './Carousel/RCET2025.jpg';
 
 export const slides = [
+  {
+    image: RCET2025,
+    rank_no: "1",
+    event_name: "Algo Rush (Technical)",
+    college_name: "Rohini College of Engineering & Technology",
+    college_place: "Anjugramam",
+  },
   {
     image: DMI2024,
     rank_no: "1",
