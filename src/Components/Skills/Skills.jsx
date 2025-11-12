@@ -17,7 +17,7 @@ const Skills = () => {
         { name: 'JavaScript', percentage: 75, icon: <FaJs color="#f7df1e" title="JavaScript" size={28} /> },
         { name: 'React.js', percentage: 85, icon: <FaReact color="#61dafb" title="React.js" size={28} /> },
         { name: 'Node.js', percentage: 70, icon: <FaNodeJs color="#3c873a" title="Node.js" size={28} /> },
-        { name: 'Express.js', percentage: 70, icon: <SiExpress color="#000" title="Express.js" size={28} /> },
+        { name: 'Express.js', percentage: 70, icon: <SiExpress color="#fff" title="Express.js" size={28} /> },
         { name: 'MongoDB', percentage: 70, icon: <SiMongodb color="#47A248" title="MongoDB" size={28} /> },
         { name: 'Git', percentage: 75, icon: <FaGitAlt color="#f34f29" title="Git" size={28} /> },
     ];
@@ -172,6 +172,11 @@ const Skills = () => {
                                 opacity: 0,
                                 borderRadius: 2,
                                 transform: 'translateY(20px)',
+                                background: 'rgba(255, 255, 255, 0.05)',
+                                backdropFilter: 'blur(12px) saturate(160%)',
+                                WebkitBackdropFilter: 'blur(12px) saturate(160%)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
                                 '&.show': {
                                     opacity: 1,
                                     transform: 'translateY(0)'
@@ -188,7 +193,8 @@ const Skills = () => {
                                 sx={{
                                     display: 'flex',
                                     alignItems: 'center',
-                                    mb: 2
+                                    mb: 2,
+                                    color: 'text.primary'
                                 }}
                             >
                                 <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
@@ -200,11 +206,13 @@ const Skills = () => {
                                     sx={{
                                         flexGrow: 1,
                                         fontWeight: 'medium',
-                                        color: 'text.primary'
+                                        color: '#ffffff',
+                                        textAlign: 'center'
                                     }}
                                 >
                                     {skill.name}
                                 </Typography>
+
                                 <Typography
                                     variant="body1"
                                     component="span"
@@ -212,7 +220,8 @@ const Skills = () => {
                                         fontWeight: 'bold',
                                         color: 'primary.main',
                                         minWidth: '48px',
-                                        textAlign: 'right'
+                                        textAlign: 'right',
+                                        color: '#ffffff'
                                     }}
                                 >
                                     {animatedPercentages[index]}%
@@ -226,7 +235,7 @@ const Skills = () => {
                                     sx={{
                                         height: 8,
                                         borderRadius: 4,
-                                        backgroundColor: 'grey.800',
+                                        backgroundColor: 'grey.500',
                                         '& .MuiLinearProgress-bar': {
                                             borderRadius: 4,
                                             transition: 'transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)'

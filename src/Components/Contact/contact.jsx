@@ -515,7 +515,7 @@ const ContactForm = () => {
             maxWidth: 500,
             width: "100%",
             mx: "auto",
-            background: "rgba(255, 255, 255, 0.95)",
+            background: "rgba(255, 255, 255, 0.9)",
             backdropFilter: "blur(20px)",
             borderRadius: 4,
             boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
