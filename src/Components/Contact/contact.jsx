@@ -184,6 +184,7 @@ const ContactForm = () => {
         ...prev,
         [name]: capitalizedValue,
       }));
+
     } else if (name === "email") {
       setFormData((prev) => ({
         ...prev,
@@ -203,6 +204,23 @@ const ContactForm = () => {
       }));
     }
   };
+
+  const handleNameBlur = () => {
+  const raw = formData.name || "";
+  const cleaned = raw.replace(/\s+/g, " ").trim();
+
+  const capitalized = cleaned
+    .split(" ")
+    .filter(Boolean)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+
+  setFormData(prev => ({ ...prev, name: capitalized }));
+  if (errors.name) {
+    setErrors(prev => ({ ...prev, name: "" }));
+  }
+};
+
 
   const validatePhoneNumber = (phone) => {
     const cleanPhone = phone.replace(/\s/g, "");
@@ -515,7 +533,7 @@ const ContactForm = () => {
             maxWidth: 500,
             width: "100%",
             mx: "auto",
-            background: "rgba(255, 255, 255, 0.9)",
+            background: "rgba(255, 255, 255, 0.93)",
             backdropFilter: "blur(20px)",
             borderRadius: 4,
             boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
@@ -548,6 +566,7 @@ const ContactForm = () => {
                     label="Name"
                     name="name"
                     value={formData.name}
+                    onBlur={handleNameBlur}
                     onChange={handleChange}
                     error={!!errors.name}
                     margin="normal"
