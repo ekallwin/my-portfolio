@@ -71,7 +71,7 @@ function About() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    }, 1200);
+    }, 1500);
   };
 
   const skills = [
@@ -100,10 +100,27 @@ function About() {
         </Typography>
 
         <Card
-          sx={{ maxWidth: 900, mx: 'auto', p: { xs: 2, md: 4 }, borderRadius: 4 }}
+          sx={{
+            maxWidth: 900,
+            mx: 'auto',
+            p: { xs: 2, md: 4 },
+            borderRadius: 4,
+            background: 'rgba(255, 255, 255, 0.05)',
+            backdropFilter: 'blur(12px) saturate(160%)',
+            WebkitBackdropFilter: 'blur(12px) saturate(160%)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
+            transition: 'all 0.3s ease',
+            color: '#eee',
+            '&:hover': {
+              boxShadow: '0 12px 32px rgba(0, 0, 0, 0.35)',
+              transform: 'translateY(-2px)',
+            },
+          }}
           className="animate-child"
           data-animate
         >
+
           <CardContent>
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={4} alignItems="center">
               <Box
@@ -113,14 +130,15 @@ function About() {
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  position: 'relative'
+                  position: 'relative',
+                  color: 'white',
                 }}
               >
                 <Box
                   sx={{
                     borderRadius: '50%',
                     p: '6px',
-                    background: 'linear-gradient(135deg, #1976d2 0%, #00b4d8 100%)',
+                    background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
                     display: 'inline-block'
                   }}
                 >
@@ -131,7 +149,7 @@ function About() {
                       width: 200,
                       height: 200,
                       display: 'block',
-                      borderRadius: '50%',
+                      borderRadius: '100%',
                       backgroundColor: '#fff',
                       userSelect: 'none'
                     }}
@@ -140,13 +158,13 @@ function About() {
                   />
                 </Box>
 
-                <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+                <Box sx={{ display: 'flex', gap: 3, mt: 1 }}>
                   <a
                     href="https://github.com/ekallwin"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="GitHub"
-                    style={{ color: '#333', fontSize: 26, display: 'inline-flex', alignItems: 'center' }}
+                    style={{ color: '#fff', fontSize: 26, display: 'inline-flex', alignItems: 'center' }}
                   >
                     <FaGithub />
                   </a>
@@ -188,6 +206,11 @@ function About() {
                       label={skill}
                       className="animate-child"
                       data-animate
+                      sx={{
+                        color: 'white',
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        textAlign: 'center',
+                      }}
                     />
                   ))}
                 </Stack>

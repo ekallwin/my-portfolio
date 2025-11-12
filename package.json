@@ -22,6 +22,7 @@
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.9.1",
     "@vercel/analytics": "^1.5.0",
+    "aos": "^2.3.4",
     "bad-words": "^4.0.0",
     "bootstrap": "^5.3.8",
     "clsx": "^2.1.1",
