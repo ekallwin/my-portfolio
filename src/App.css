@@ -1,0 +1,157 @@
+:root {
+  --primary-color: #8900F9;
+  --secondary-color: #e81cff;
+  --teritary-color: #D9006D;
+  --dark-color: #000000;
+  --light-color: #ffffff;
+  --text-color: #ffffff;
+  --btn-primary: #ff0066;
+  --btn-secondary: #ff00e1;
+  --btn-teritary: #9900ff;
+}
+
+body {
+  overflow-x: hidden;
+  height: 100vh;
+}
+
+html {
+  overflow-x: hidden;
+  height: max-content;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+html,
+body {
+  -webkit-overflow-scrolling: touch;
+}
+
+body,
+ul,
+li {
+  margin: 0;
+  padding: 0;
+}
+nav li *{
+  list-style: none;
+}
+.icons {
+  margin-right: 10px;
+}
+
+.char-count {
+  font-size: 18px;
+  margin-top: -10px;
+  text-align: left;
+  color: white;
+}
+
+.char-count-max {
+  color: red;
+  font-size: 18px;
+  margin-top: -10px;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+span {
+  margin-left: 5px;
+}
+
+.menu-icon {
+  color: white;
+  display: none;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  position: relative;
+  padding: 25px 45px 25px 0;
+}
+
+.fade-in,
+.skill-fade-in,
+.fade-in-contact {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1s ease-in, transform 1s ease-in;
+}
+
+.fade-in.show,
+.fade-in-contact.show {
+  opacity: 1;
+}
+
+.skill-fade-in.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.components-container {
+  margin: 0;
+  padding: 1px 0;
+}
+
+@media (max-width: 768px) {
+  .menu-icon {
+    display: block;
+  }
+
+  .toast-container {
+    text-align: left;
+  }
+
+  .components-container h2 {
+    margin: 100px 0 10% 0;
+  }
+}
+
+div h2 {
+  margin: 100px 0 5% 0;
+  font-family: serif;
+  font-size: 45px;
+  color: white;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+footer,
+nav,
+button {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app-shell {
+  position: relative;
+  z-index: 1;
+}

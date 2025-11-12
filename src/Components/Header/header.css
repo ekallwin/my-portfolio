@@ -1,0 +1,85 @@
+.item-name,
+.titlename {
+    font-family: serif;
+    color: white;
+    text-align: left;
+    margin: 50px 0 10px 10px;
+    font-size: 45px !important;
+    user-select: none;
+}
+
+.header-text {
+    margin-top: 1rem !important;
+}
+
+.item-name h2 {
+    font-size: 40px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    margin-right: -10px;
+    text-align: left;
+}
+
+.typewriter-text {
+    font-size: 1.5rem;
+    color: #ffffff;
+}
+
+.typing-effect {
+    color: white;
+}
+
+.typewritter {
+    color: white;
+}
+
+.button {
+    color: #fff;
+    font-size: 25px;
+    font-family: serif;
+    padding: 20px 35px;
+    background: linear-gradient(110deg, var(--btn-primary), var(--btn-secondary), var(--btn-teritary));
+    border-radius: 100px;
+    border: none;
+    cursor: pointer;
+    display: block;
+    margin: 30px auto;
+
+    width: fit-content;
+    transition: transform 0.4s ease;
+    text-decoration: none;
+
+    &:hover {
+        transform: scale(1.1);
+        background: linear-gradient(100deg, var(--btn-primary), var(--btn-secondary), var(--btn-teritary));
+    }
+}
+
+
+@media (max-width: 768px) {
+    .item-name h2 {
+        font-size: 25px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        margin-top: 1px;
+        margin-right: -10px;
+        text-align: left;
+    }
+
+    .item-name,
+    .titlename {
+        font-size: 30px !important;
+        margin-top: 80px;
+    }
+
+    .typing-effect {
+        margin-top: 40px;
+        color: white;
+    }
+
+    .button {
+        margin-top: 5rem !important;
+        margin-bottom: 1rem !important;
+    }
+}

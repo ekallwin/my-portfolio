@@ -1,0 +1,140 @@
+footer {
+    bottom: 0;
+    width: 100%;
+    background: #040B44;
+    color: white;
+    padding: 5px;
+    margin-top: 50px;
+}
+
+footer h4 {
+    margin-bottom: -15px;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer-copyright {
+    text-align: center;
+    font-size: 11px;
+    margin: 25px 0 30px 0;
+}
+
+.footer-copyright a {
+    text-decoration: underline !important;
+    color: white;
+}
+
+a {
+    text-decoration: none !important;
+}
+
+footer h4 {
+    font-size: 25px;
+    margin-top: 15px;
+    padding-bottom: 10px;
+}
+
+.footer-text {
+    margin: 0 auto;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.Social {
+    position: relative;
+    padding: 10px 14px;
+    background: transparent;
+    border: 1.5px solid transparent;
+    border-radius: 100%;
+    box-shadow: none;
+    cursor: pointer;
+    overflow: hidden;
+    z-index: 1;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.Social:hover {
+    background: rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(12px) saturate(180%);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow:
+        0 8px 32px 0 rgba(31, 38, 135, 0.18),
+        0 1.5px 6px 0 rgba(255, 255, 255, 0.25),
+        0 1.5px 6px 0 rgba(0, 0, 0, 0.04);
+}
+
+.Social::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(120deg,
+            rgba(255, 255, 255, 0.35) 0%,
+            rgba(255, 255, 255, 0.15) 100%);
+    opacity: 0;
+}
+
+.Social:hover::after {
+    animation: shineSweep 0.9s forwards;
+}
+
+@keyframes shineSweep {
+    0% {
+        width: 0%;
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 0.7;
+    }
+
+    100% {
+        width: 100%;
+        opacity: 0;
+    }
+}
+
+
+
+
+@media (min-width: 768px) {
+    .Social {
+        margin: 3px;
+    }
+
+    .footer-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    h2 {
+        margin-top: 120px;
+    }
+
+    .footer-text {
+        margin: 0 auto;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    footer h4 {
+        margin-bottom: -15px;
+        font-size: 20px;
+    }
+
+    footer {
+        bottom: 0;
+        width: 100%;
+        background: #040B44;
+        color: white;
+        padding: 1px;
+    }
+
+}

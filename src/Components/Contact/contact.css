@@ -1,0 +1,12 @@
+.contact-submit:disabled {
+  background: gray !important;
+  color: white;
+}
+.modal-open .modal-navbar,
+.modal-open .modal-footer,
+.modal-open .contact-form,
+.modal-open .skills-container{
+  filter: blur(10px);
+  transition: filter 0.3s ease;
+}
+
