@@ -218,7 +218,6 @@ const Skills = () => {
                                     component="span"
                                     sx={{
                                         fontWeight: 'bold',
-                                        color: 'primary.main',
                                         minWidth: '48px',
                                         textAlign: 'right',
                                         color: '#ffffff'

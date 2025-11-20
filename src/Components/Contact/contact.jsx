@@ -19,6 +19,8 @@ import {
   Modal,
   Backdrop,
 } from "@mui/material";
+import Stack from "@mui/material/Stack";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { Send as SendIcon } from "@mui/icons-material";
 
 import emailjs from "@emailjs/browser";
@@ -206,20 +208,20 @@ const ContactForm = () => {
   };
 
   const handleNameBlur = () => {
-  const raw = formData.name || "";
-  const cleaned = raw.replace(/\s+/g, " ").trim();
+    const raw = formData.name || "";
+    const cleaned = raw.replace(/\s+/g, " ").trim();
 
-  const capitalized = cleaned
-    .split(" ")
-    .filter(Boolean)
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(" ");
+    const capitalized = cleaned
+      .split(" ")
+      .filter(Boolean)
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
 
-  setFormData(prev => ({ ...prev, name: capitalized }));
-  if (errors.name) {
-    setErrors(prev => ({ ...prev, name: "" }));
-  }
-};
+    setFormData(prev => ({ ...prev, name: capitalized }));
+    if (errors.name) {
+      setErrors(prev => ({ ...prev, name: "" }));
+    }
+  };
 
 
   const validatePhoneNumber = (phone) => {
@@ -580,7 +582,7 @@ const ContactForm = () => {
                     }}
                   />
 
-                  <FormControlLabel
+                  {/* <FormControlLabel
                     control={
                       <Checkbox
                         checked={hidePhone}
@@ -591,7 +593,7 @@ const ContactForm = () => {
                     }
                     label="Don't share phone number"
                     sx={{ mt: 1, mb: 1 }}
-                  />
+                  /> */}
 
                   {!hidePhone && (
                     <TextField
@@ -683,6 +685,13 @@ const ContactForm = () => {
                     {loading ? "Sending" : "Send Message"}
                   </Button>
                 </Box>
+
+                <Stack direction="row" spacing={1} alignItems="center" mt={2}>
+                  <LockOutlinedIcon fontSize="small" color="action" />
+                  <Typography variant="body2" color="text.secondary">
+                    Your information including your phone and email, is kept confidential.
+                  </Typography>
+                </Stack>
               </Box>
             </Fade>
           </CardContent>
