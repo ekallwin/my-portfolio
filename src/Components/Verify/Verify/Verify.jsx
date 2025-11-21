@@ -3,7 +3,9 @@ import verifyData from "./Verify.json";
 import "./Verify.css";
 import { FaCircleXmark } from "react-icons/fa6";
 import { IoIosCheckmarkCircle } from "react-icons/io";
-import { FaClock } from "react-icons/fa";
+import { FaCheckCircle } from "react-icons/fa";
+
+import { FaClock } from "react-icons/fa6";
 import { FormControl, InputLabel, Select, MenuItem, TextField, Button, Box, Typography } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import toast from "react-hot-toast";
@@ -62,12 +64,11 @@ const SocialVerification = () => {
             (p) => p.socialPlatform === platform
         );
 
-        let input = value.trim().toLowerCase();
+        let input = value.trim();
 
         if (input.includes("facebook.com/share")) {
             toast.error(
-                "This link is currently not supported.\nUse https://www.facebook.com/{username} format"
-            );
+                "Facebook share links are not supported. Please provide a profile link or username.");
             return;
         }
 
@@ -75,7 +76,7 @@ const SocialVerification = () => {
         let isValid = false;
 
         if (selected) {
-            const usernameMatch = selected.username.toLowerCase() === input;
+            const usernameMatch = selected.username === input;
 
             const normalizedInputForLink = normalizeLink(input);
 
@@ -148,6 +149,7 @@ const SocialVerification = () => {
                 />
 
                 <Button
+                    disableRipple
                     type="submit"
                     variant="contained"
                     color="primary"
@@ -175,18 +177,18 @@ const SocialVerification = () => {
                             />
                         </div>
 
-                        {(result === "success" || result === "failed") && (
-                            <div class="d-grid gap-2 col-6 mx-auto">
-                                <button
-                                    type="button"
-                                    className="sv-modal-close btn btn-primary"
-                                    onClick={closeModal}
-                                >
-                                    Close
-                                </button>
-                            </div>
+                        <div className="d-grid gap-2 col-6 mx-auto">
+                            <button
+                                type="button"
+                                className="sv-modal-close btn btn-primary"
+                                onClick={closeModal}
+                                disabled={!(result === "success" || result === "failed")}
+                            >
+                                Close
+                            </button>
 
-                        )}
+                        </div>
+
                     </div>
                 </div>
             )}
@@ -234,7 +236,7 @@ const VerificationStepper = ({ steps, currentStep, result }) => {
 
                 const subtitleText =
                     status === "completed"
-                        ? "Complete"
+                        ? "Completed"
                         : status === "failed"
                             ? "Verification failed"
                             : status === "current"
@@ -256,7 +258,9 @@ const VerificationStepper = ({ steps, currentStep, result }) => {
                             <div className="vs-icon-wrapper">
                                 {status === "completed" && (
                                     <div className="vs-icon vs-icon-complete">
-                                        <IoIosCheckmarkCircle size={32} />
+                                        {/* <IoIosCheckmarkCircle size={32} /> */}
+                                        <FaCheckCircle size={32} />
+
                                     </div>
                                 )}
 
@@ -269,7 +273,7 @@ const VerificationStepper = ({ steps, currentStep, result }) => {
                                 {status === "current" && (
                                     <div className="vs-icon vs-icon-current">
                                         <div className="vs-spinner"></div>
-                                        <FaClock size={32} className="vs-clock-icon" />
+                                        <FaClock size={26} className="vs-clock-icon" />
                                     </div>
                                 )}
 

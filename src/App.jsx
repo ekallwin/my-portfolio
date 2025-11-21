@@ -46,8 +46,8 @@ function App() {
           className: '',
           style: {
             whiteSpace: "nowrap",
-            maxWidth: '350px',
-            width: '350px',
+            maxWidth: '230px',
+            width: '230px',
             color: 'black',
             textAlign: 'left',
           },

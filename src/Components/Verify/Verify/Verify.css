@@ -68,6 +68,8 @@
     border: 1px solid #e5e7eb;
 }
 
+/* --- VERIFICATION STEPPER --- */
+
 .vs-container {
     position: relative;
     display: flex;
@@ -78,13 +80,14 @@
 .vs-container::before {
     content: "";
     position: absolute;
-    left: 15px;
+    left: 14px;
     top: 20px;
     bottom: 35px;
     width: 2px;
     background: #c2c2c2;
     z-index: 1;
 }
+
 
 .vs-step {
     display: flex;
@@ -100,8 +103,8 @@
 }
 
 .vs-icon-wrapper {
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     position: relative;
     display: flex;
     justify-content: center;
@@ -110,8 +113,8 @@
 }
 
 .vs-icon {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: 999px;
     display: flex;
     align-items: center;
@@ -120,16 +123,12 @@
     background-color: white;
 }
 
+/* COMPLETED STATE */
 .vs-icon-complete {
-    background: white;
     color: #28A745;
 }
 
-.vs-check-icon {
-    width: 20px;
-    height: 20px;
-}
-
+/* FAILED STATE */
 .vs-icon-failed {
     color: #DC3545;
 }
@@ -139,21 +138,20 @@
     height: 20px;
 }
 
+/* CURRENT (IN-PROGRESS) STATE */
 .vs-icon-current {
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     color: #ffc107;
 }
 
-.vs-clock-icon {
-    width: 20px;
-    height: 20px;
-    z-index: 2;
-}
-
+/* Spinner behind clock */
 .vs-spinner {
     position: absolute;
-    width: 32px;
-    height: 32px;
+    width: 33px;
+    height: 33px;
     border-radius: 999px;
     border: 3px solid #ffe8a3;
     border-top-color: #ffc107;
@@ -162,9 +160,43 @@
     background: white;
 }
 
+/* Center the FaClock inside the spinner */
+.vs-clock-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+
+/* UPCOMING STATE */
 .vs-icon-upcoming {
     border: 2px solid #d1d5db;
     background: white;
+}
+
+/* DYNAMIC VERTICAL LINES BETWEEN STEPS */
+.vs-line {
+    width: 2px;
+    flex-grow: 1;
+    margin-top: 4px;
+    background: #d1d5db;
+}
+
+.vs-line-completed {
+    background: #28A745;
+}
+
+.vs-line-current {
+    background: #ffc107;
+}
+
+.vs-line-failed {
+    background: #DC3545;
+}
+
+.vs-line-upcoming {
+    background: #d1d5db;
 }
 
 .vs-content {
@@ -201,6 +233,8 @@
     }
 }
 
+/* --- MODAL --- */
+
 .sv-modal-backdrop {
     position: fixed;
     inset: 0;
@@ -212,6 +246,7 @@
 }
 
 .sv-modal {
+    margin-top: 60px;
     background: #ffffff;
     border-radius: 16px;
     padding: 18px 20px;
@@ -235,4 +270,26 @@
     background: #111827;
     color: #ffffff;
     cursor: pointer;
+}
+
+.sv-modal-close:disabled {
+    background: #6b7280 !important;
+    border: none !important;
+    cursor: not-allowed !important;
+    pointer-events: auto !important;
+}
+
+@media (max-width: 786px) {
+    .sv-wrapper {
+        margin: 16px;
+        padding: 16px;
+    }
+
+    .sv-modal {
+        margin-top: -80px !important;
+        margin: 40px 16px 0 16px;
+        padding: 16px;
+        min-width: auto;
+        width: 100%;
+    }
 }
