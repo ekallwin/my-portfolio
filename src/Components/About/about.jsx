@@ -216,6 +216,7 @@ function About() {
                 </Stack>
 
                 <Button
+                disableRipple
                   variant="contained"
                   onClick={handleDownload}
                   className="animate-child"

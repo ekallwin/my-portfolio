@@ -664,6 +664,7 @@ const ContactForm = () => {
                   />
 
                   <Button
+                  disableRipple
                     className="contact-submit"
                     type="submit"
                     variant="contained"

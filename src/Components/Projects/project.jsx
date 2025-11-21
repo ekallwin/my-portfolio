@@ -186,10 +186,10 @@ function Projects() {
                     loading="lazy"
                     sx={{
                       height: { xs: 260, sm: 300 },
-                      objectFit: "contain",   
-                      backgroundColor: "#fff", 
-                      p: 1,                    
-                      borderRadius: 2          
+                      objectFit: "contain",
+                      backgroundColor: "#fff",
+                      p: 1,
+                      borderRadius: 2
                     }}
                   />
 
@@ -237,6 +237,7 @@ function Projects() {
                   >
                     <Tooltip title="View source on GitHub" arrow>
                       <Button
+                        disableRipple
                         variant="contained"
                         color="primary"
                         size="medium"
@@ -259,6 +260,7 @@ function Projects() {
 
                     <Tooltip title="Open live demo" arrow>
                       <Button
+                        disableRipple
                         variant="contained"
                         color="secondary"
                         size="medium"

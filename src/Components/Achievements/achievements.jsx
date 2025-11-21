@@ -188,6 +188,7 @@ const Achievements = () => {
                 {showControls && (
                   <>
                     <IconButton
+                    disableRipple
                       aria-label="Previous slide"
                       onClick={prevSlide}
                       sx={{
@@ -204,6 +205,7 @@ const Achievements = () => {
                     </IconButton>
 
                     <IconButton
+                    disableRipple
                       aria-label="Next slide"
                       onClick={nextSlide}
                       sx={{
@@ -256,7 +258,7 @@ const Achievements = () => {
                         border: "none",
                         padding: 0,
                         cursor: "pointer",
-                        backgroundColor: idx === currentIndex ? "grey" : "grey.400",
+                        backgroundColor: idx === currentIndex ? "grey.600" : "grey.300",
                         transition: "transform 200ms ease, background-color 200ms ease",
                         transform: idx === currentIndex ? "scale(1)" : "scale(0.75)",
                         display: "flex",
