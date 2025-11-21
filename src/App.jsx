@@ -8,6 +8,7 @@ import Achievements from "./Components/Achievements/achievements";
 import Loader from "./Components/Loader/Loader";
 import Orb from './Components/Orb/Orb.jsx';
 import OfflinePage from "./Components/Offline/Offline.jsx";
+import Verify from "./Components/Verify/Verifycontainer.jsx";
 import { Analytics } from "@vercel/analytics/react"
 
 const useOnlineStatus = () => {
@@ -54,7 +55,7 @@ function App() {
 
       <div style={{ width: '100%', height: '100%', position: 'absolute' }}>
         <Orb
-          hoverIntensity={0.5}
+          hoverIntensity={0}
           rotateOnHover={true}
           hue={0}
           forceHoverState={false}
@@ -66,6 +67,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/achievements" element={<Achievements />} />
+          <Route path="/verify" element={<Verify />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <Analytics />
