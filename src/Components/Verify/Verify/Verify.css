@@ -1,0 +1,242 @@
+.sv-wrapper {
+    margin: 24px auto;
+    margin-top: 100px;
+    padding: 20px;
+    border-radius: 16px;
+    background: #f9fafb;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    max-width: 400px;
+    width: 100%;
+}
+
+.sv-heading {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #111827;
+    text-align: center;
+}
+
+.sv-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.sv-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sv-input,
+.sv-select {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    outline: none;
+}
+
+.sv-input:focus,
+.sv-select:focus {
+    border-color: #22c55e;
+    box-shadow: 0 0 0 1px #22c55e33;
+}
+
+.sv-button {
+    margin-top: 4px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    background: #22c55e;
+    color: white;
+}
+
+.sv-stepper-card {
+    padding: 14px 12px;
+    border-radius: 12px;
+    background: white;
+    border: 1px solid #e5e7eb;
+}
+
+.vs-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+}
+
+.vs-container::before {
+    content: "";
+    position: absolute;
+    left: 15px;
+    top: 20px;
+    bottom: 20px;
+    width: 2px;
+    background: #e5e7eb;
+    z-index: 1;
+}
+
+.vs-step {
+    display: flex;
+    align-items: flex-start;
+}
+
+.vs-track {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    margin-right: 12px;
+}
+
+.vs-icon-wrapper {
+    width: 32px;
+    height: 32px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+}
+
+.vs-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.vs-icon-complete {
+    background: white;
+    color: #28A745;
+}
+
+.vs-check-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.vs-icon-failed {
+    color: #b91c1c;
+}
+
+.vs-cross-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.vs-icon-current {
+    position: relative;
+    color: #ffc107;
+}
+
+.vs-clock-icon {
+    width: 20px;
+    height: 20px;
+    z-index: 2;
+}
+
+.vs-spinner {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    border: 3px solid #ffe8a3;
+    border-top-color: #ffc107;
+    animation: vs-spin 0.9s linear infinite;
+    box-sizing: border-box;
+    background: white;
+}
+
+.vs-icon-upcoming {
+    border: 2px solid #d1d5db;
+    background: white;
+}
+
+.vs-content {
+    padding-top: 2px;
+}
+
+.vs-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.vs-subtitle {
+    font-size: 12px;
+    margin-top: 2px;
+    color: #6b7280;
+}
+
+.vs-subtitle-complete {
+    color: #28A745;
+}
+
+.vs-subtitle-failed {
+    color: #DC3545;
+}
+
+.vs-subtitle-current {
+    color: #ffc107;
+}
+
+@keyframes vs-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.sv-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.sv-modal {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 18px 20px;
+    min-width: 320px;
+    max-width: 420px;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.25);
+}
+
+.sv-modal-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #111827;
+    text-align: center;
+}
+
+.sv-modal-close {
+    margin: 14px auto 0;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: none;
+    background: #111827;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: block;
+}

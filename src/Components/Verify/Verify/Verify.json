@@ -1,0 +1,50 @@
+{
+    "socialPlatforms": [
+        {
+        "socialPlatform": "Facebook",
+         "links": [
+            "https://www.facebook.com/ekallwin",
+            "https://www.facebook.com/share/17fwXtkdfE"
+        ],
+        "username": "ekallwin"
+        },
+        {
+        "socialPlatform": "Instagram",
+        "links": [
+            "https://www.instagram.com/ekallwin"
+        ],
+        "username": "ekallwin"
+        },
+        {
+        "socialPlatform": "X (Twitter)",
+        "links": [
+            "https://www.twitter.com/ekallwin"
+        ],
+        "username": "ekallwin"
+        },
+        {
+        "socialPlatform": "Threads",
+        "links": [
+            "https://www.threads.net/@ekallwin",
+            "https://www.threads.net/ekallwin",
+            "https://www.threads.com/@ekallwin",
+            "https://www.threads.com/ekallwin"
+        ],
+        "username": "ekallwin"
+        },
+        {
+        "socialPlatform": "GitHub",
+        "links": [
+            "https://www.github.com/ekallwin"
+        ],
+        "username": "ekallwin"
+        },
+        {
+        "socialPlatform": "LinkedIn",
+        "links": [
+            "https://www.linkedin.com/in/ekallwin"
+        ],
+        "username": "ekallwin"
+        }
+    ]
+}
