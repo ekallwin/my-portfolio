@@ -11,9 +11,11 @@ import toast from "react-hot-toast";
 function normalizeLink(url) {
     return url
         .toLowerCase()
+        .replace(/^https?:\/\/(www\.)?/, "https://")
         .replace(/[#?].*$/, "")
         .replace(/\/+$/, "");
 }
+
 
 async function resolveRedirect(url) {
     try {
@@ -94,8 +96,8 @@ const SocialVerification = () => {
             setTimeout(() => {
                 setResult(isValid ? "success" : "failed");
                 setCurrentStep(2);
-            }, 1800);
-        }, 900);
+            }, 2500);
+        }, 1500);
     };
 
     const steps = stepsTemplate.map((s) => {
@@ -105,10 +107,10 @@ const SocialVerification = () => {
             ...s,
             title:
                 result === "failed"
-                    ? "This profile is invalid"
+                    ? "This profile is invalid <br/> or does not belong to me"
                     : result === "success"
-                        ? "This profile is valid"
-                        : "Pending"
+                        ? "This profile is valid and <br/> belongs to me"
+                        : ""
         };
     });
 
@@ -174,13 +176,16 @@ const SocialVerification = () => {
                         </div>
 
                         {(result === "success" || result === "failed") && (
-                            <button
-                                type="button"
-                                className="sv-modal-close"
-                                onClick={closeModal}
-                            >
-                                Close
-                            </button>
+                            <div class="d-grid gap-2 col-6 mx-auto">
+                                <button
+                                    type="button"
+                                    className="sv-modal-close btn btn-primary"
+                                    onClick={closeModal}
+                                >
+                                    Close
+                                </button>
+                            </div>
+
                         )}
                     </div>
                 </div>
@@ -282,8 +287,12 @@ const VerificationStepper = ({ steps, currentStep, result }) => {
                         </div>
 
                         <div className="vs-content">
-                            <div className="vs-title">{step.title}</div>
                             <div className={subtitleClass}>{subtitleText}</div>
+                            <div
+                                className="vs-title"
+                                dangerouslySetInnerHTML={{ __html: step.title }}
+                            ></div>
+
                         </div>
                     </div>
                 );

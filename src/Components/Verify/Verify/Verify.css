@@ -80,9 +80,9 @@
     position: absolute;
     left: 15px;
     top: 20px;
-    bottom: 20px;
+    bottom: 35px;
     width: 2px;
-    background: #e5e7eb;
+    background: #c2c2c2;
     z-index: 1;
 }
 
@@ -131,7 +131,7 @@
 }
 
 .vs-icon-failed {
-    color: #b91c1c;
+    color: #DC3545;
 }
 
 .vs-cross-icon {
@@ -229,14 +229,10 @@
 }
 
 .sv-modal-close {
-    margin: 14px auto 0;
-    padding: 6px 14px;
-    border-radius: 999px;
+    margin-top: 14px;
+    border-radius: 999px !important;
     border: none;
     background: #111827;
     color: #ffffff;
-    font-size: 13px;
-    font-weight: 500;
     cursor: pointer;
-    display: block;
 }
