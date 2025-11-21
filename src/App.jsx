@@ -45,8 +45,9 @@ function App() {
         toastOptions={{
           className: '',
           style: {
-            maxWidth: '250px',
-            width: '250px',
+            whiteSpace: "nowrap",
+            maxWidth: '350px',
+            width: '350px',
             color: 'black',
             textAlign: 'left',
           },
