@@ -6,7 +6,26 @@ import { IoIosCheckmarkCircle } from "react-icons/io";
 import { FaClock } from "react-icons/fa";
 import { FormControl, InputLabel, Select, MenuItem, TextField, Button, Box, Typography } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
+
+function normalizeLink(url) {
+    return url
+        .toLowerCase()
+        .replace(/[#?].*$/, "")
+        .replace(/\/+$/, "");
+}
+
+async function resolveRedirect(url) {
+    try {
+        const response = await fetch(url, {
+            method: "GET",
+            redirect: "follow"
+        });
+        return response.url || url;
+    } catch (e) {
+        return url;
+    }
+}
 
 const stepsTemplate = [
     { id: "init", title: "Verification initialized" },
@@ -16,12 +35,11 @@ const stepsTemplate = [
 
 const SocialVerification = () => {
     const [platform, setPlatform] = useState("");
-
     const [value, setValue] = useState("");
     const [currentStep, setCurrentStep] = useState(-1);
     const [result, setResult] = useState(null);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         let hasError = false;
@@ -42,15 +60,25 @@ const SocialVerification = () => {
             (p) => p.socialPlatform === platform
         );
 
-        const input = value.trim().toLowerCase();
+        let input = value.trim().toLowerCase();
+
+        if (input.includes("facebook.com/share")) {
+            toast.error(
+                "This link is currently not supported.\nUse https://www.facebook.com/{username} format"
+            );
+            return;
+        }
+
+
         let isValid = false;
 
         if (selected) {
             const usernameMatch = selected.username.toLowerCase() === input;
-            const normalizedInputForLink = input.replace(/\/+$/, "");
+
+            const normalizedInputForLink = normalizeLink(input);
 
             const linkMatch = selected.links.some((link) => {
-                const normalizedLink = link.toLowerCase().replace(/\/+$/, "");
+                const normalizedLink = normalizeLink(link);
                 return normalizedLink === normalizedInputForLink;
             });
 
@@ -69,8 +97,6 @@ const SocialVerification = () => {
             }, 1800);
         }, 900);
     };
-
-
 
     const steps = stepsTemplate.map((s) => {
         if (s.id !== "result") return s;
@@ -94,8 +120,6 @@ const SocialVerification = () => {
     return (
         <div className="sv-wrapper">
             <h3 className="sv-heading">Verify my social handles</h3>
-
-
 
             <form className="sv-form" onSubmit={handleSubmit}>
                 <FormControl fullWidth>
