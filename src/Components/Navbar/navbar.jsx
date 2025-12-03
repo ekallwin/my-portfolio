@@ -7,11 +7,10 @@ import { IoMenu, IoClose } from "react-icons/io5";
 const navItems = [
   { label: 'Home', href: '#Home', isHash: true },
   { label: 'About', href: '#About', isHash: true },
-  // { label: 'Skills', href: '#Skills', isHash: true },
+  { label: 'Skills', href: '#Skills', isHash: true },
   { label: 'Achievements', href: '/achievements', isHash: false },
   { label: 'Projects', href: '/projects', isHash: false },
   { label: 'Contact me', href: '#contact', isHash: true },
-  { label: 'Verify social profiles', href: '/verify', isHash: false },
 ];
 
 function Navbar(props) {
