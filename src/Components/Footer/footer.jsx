@@ -83,7 +83,7 @@ export default function Footer() {
               </IconButton>
             ))}
           </Stack>
-
+{/* 
           <Button
             disableRipple
             className="contact-submit"
@@ -101,7 +101,7 @@ export default function Footer() {
             })}
           >
             Verify my social medias
-          </Button>
+          </Button> */}
 
           <Typography
             variant="body2"
