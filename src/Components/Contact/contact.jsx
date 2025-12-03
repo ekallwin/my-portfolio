@@ -23,11 +23,13 @@ import Stack from "@mui/material/Stack";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { Send as SendIcon } from "@mui/icons-material";
 
-import emailjs from "@emailjs/browser";
 import moment from "moment";
 import Error from './Component/Error';
 import Success from './Component/Success';
 import Progress from './Component/Progress';
+
+const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL;
+
 const ContactForm = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -368,8 +370,40 @@ const ContactForm = () => {
     }, 500);
   };
 
+  const submitToGoogleSheets = async (data) => {
+    try {
+      const submissionData = {
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        message: data.message,
+        timestamp: new Date().toLocaleString()
+      };
 
-  const handleSubmit = (e) => {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(submissionData),
+      });
+
+      return { success: true, message: 'Message sent successfully!' };
+
+    } catch (error) {
+      console.error('Submission error:', error);
+
+      if (import.meta.env.DEV) {
+        console.warn('Development mode: Simulating success');
+        return { success: true, message: 'Development mode - submission simulated' };
+      }
+
+      throw new Error(`Message submission failed. Please try again.`);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
@@ -387,84 +421,25 @@ const ContactForm = () => {
 
     const submittedData = { ...formData, hidePhone };
 
-    const serviceID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-    const templateID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-    const templateIDAdmin = import.meta.env.VITE_EMAILJS_TEMPLATE_ID_ADMIN;
-    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+    try {
+      await submitToGoogleSheets(submittedData);
 
-    const templateParams = {
-      name: submittedData.name,
-      user_email: submittedData.email,
-      maskedphone: submittedData.hidePhone
-        ? "Not Available"
-        : (() => {
-          const rawPhone = (submittedData.phone || "").trim();
-          const raw = rawPhone.startsWith("+") ? rawPhone : `+${rawPhone}`;
-          const m = raw.match(/^(\+\d{1,4})/);
-          const dialCode = m ? `+${m[1]}` : "";
-          const local = (dialCode ? raw.slice(dialCode.length) : raw.replace(/^\+/, "")).replace(/\s+/g, "");
-          const last4 = local.slice(-4);
-          const starsCount = Math.max(local.length - 4, 0);
-          const stars = "*".repeat(starsCount);
-          return `${dialCode} ${stars}${last4}`.trim();
-        })(),
-
-      maskedemail: (() => {
-        const email = (submittedData.email || "").trim();
-        const atIndex = email.indexOf("@");
-
-        if (atIndex <= 4) return email;
-
-        const username = email.slice(0, atIndex);
-        const domain = email.slice(atIndex);
-
-        const firstTwo = username.slice(0, 2);
-        const lastTwo = username.slice(-2);
-
-        const starsCount = Math.max(username.length - 4, 1);
-        const stars = "*".repeat(starsCount);
-
-        const safeDomain = domain.replace("@", "\u200B@").replace(/\./g, "\u200B.");
-
-        return `${firstTwo}${stars}${lastTwo}${safeDomain}`;
-      })(),
-      message: submittedData.message,
-      timestamp: moment().add(2, "seconds").format("DD-MM-YYYY [at] hh:mm:ss A"),
-    };
-
-    const templateParamsAdmin = {
-      name: submittedData.name,
-      phone: submittedData.hidePhone ? "Hidden by user" : submittedData.phone.startsWith("+") ? submittedData.phone : `+${submittedData.phone}`,
-      whatsapp: submittedData.hidePhone ? "Hidden by user" : submittedData.phone.startsWith("+") ? submittedData.phone.slice(1) : submittedData.phone,
-      email: submittedData.email,
-      message: submittedData.message,
-      timestamp: moment().add(2, "seconds").format("DD-MM-YYYY [at] hh:mm:ss A"),
-    };
-
-    Promise.all([
-      emailjs.send(serviceID, templateID, templateParams, publicKey),
-      emailjs.send(serviceID, templateIDAdmin, templateParamsAdmin, publicKey),
-    ])
-      .then(() => {
-        console.log("Emails sent successfully");
-        setSubmittedData(submittedData);
-        setSubmissionStatus("success");
-        setFormData({
-          name: "",
-          phone: isIndia ? "+91 " : `${countryCode} `,
-          email: "",
-          message: "",
-        });
-        setHidePhone(false);
-        setLoading(false);
-      })
-      .catch((emailError) => {
-        console.error("Email sending failed:", emailError);
-        setSubmissionStatus("error");
-        setLoading(false);
+      console.log("Message sent successfully");
+      setSubmittedData(submittedData);
+      setSubmissionStatus("success");
+      setFormData({
+        name: "",
+        phone: isIndia ? "+91 " : `${countryCode} `,
+        email: "",
+        message: "",
       });
-
-
+      setHidePhone(false);
+    } catch (error) {
+      console.error("Submission failed:", error);
+      setSubmissionStatus("error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -664,7 +639,7 @@ const ContactForm = () => {
                   />
 
                   <Button
-                  disableRipple
+                    disableRipple
                     className="contact-submit"
                     type="submit"
                     variant="contained"
