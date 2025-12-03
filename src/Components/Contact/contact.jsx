@@ -424,7 +424,6 @@ const ContactForm = () => {
     try {
       await submitToGoogleSheets(submittedData);
 
-      console.log("Message sent successfully");
       setSubmittedData(submittedData);
       setSubmissionStatus("success");
       setFormData({
