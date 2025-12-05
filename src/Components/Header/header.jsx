@@ -5,11 +5,13 @@ import { useTheme } from '@mui/material/styles';
 import SplitText from '../SplitText/SplitText';
 import './header.css';
 import moment from 'moment';
+import ShinyText from '../ShinyText/ShinyText';
+
 
 function Header() {
   const theme = useTheme();
   const buttonRef = useRef(null);
-  
+
   const LinkedIn = () => {
     window.open('https://www.linkedin.com/in/ekallwin/', '_blank');
   };
@@ -56,19 +58,15 @@ function Header() {
       <div className="item-name" >
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <h2 className="titlename">Good {greeting}!</h2>
-          <SplitText
+
+          <ShinyText
             text="I'm Allwin E K"
-            className="titlename font-semibold header-text"
-            delay={100}
-            duration={1}
-            ease="power3.out"
-            splitType="chars"
-            from={{ opacity: 0, y: 40 }}
-            to={{ opacity: 1, y: 0 }}
-            threshold={0.1}
-            rootMargin="-100px"
-            textAlign="left"
+            delay={150}
+            animateBy="words"
+            direction="top"
+            className="titlename font-semibold header-text text-2xl mb-8"
           />
+
         </div>
         <div className="typing-effect" style={{ display: 'flex', flexDirection: 'column', color: 'white', marginLeft: '10px' }}>
           <h2 className="typewritter"><Typewriter
@@ -82,9 +80,9 @@ function Header() {
           />
           </h2>
         </div>
-        <button 
-          className="button" 
-          onClick={LinkedIn} 
+        <button
+          className="button"
+          onClick={LinkedIn}
           ref={buttonRef}
           style={{
             background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`
