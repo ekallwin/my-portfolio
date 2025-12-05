@@ -1,4 +1,4 @@
-import Typewriter from "typewriter-effect";
+import Typewriter from './Typewriter';
 import { toast } from "react-toastify";
 import { useEffect, useRef } from "react";
 import { useTheme } from '@mui/material/styles';
