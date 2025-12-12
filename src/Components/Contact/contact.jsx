@@ -726,6 +726,7 @@ const ContactForm = () => {
 
                 <Button
                   variant="contained"
+                  disableRipple
                   onClick={handleFeedbackSubmit}
                   disabled={!rating}
                   fullWidth
@@ -733,7 +734,6 @@ const ContactForm = () => {
                     py: 1.5,
                     fontWeight: "bold",
                     borderRadius: 2,
-                    disableRipple
                   }}
                 >
                   Submit
@@ -751,6 +751,7 @@ const ContactForm = () => {
 
                 <Button
                   variant="contained"
+                  disableRipple
                   onClick={handleFeedbackClose}
                   sx={{
                     mt: 3,
@@ -758,7 +759,6 @@ const ContactForm = () => {
                     py: 1,
                     fontWeight: "bold",
                     borderRadius: 2,
-                    disableRipple
                   }}
                 >
                   Close
