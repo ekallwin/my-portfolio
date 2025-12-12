@@ -733,6 +733,7 @@ const ContactForm = () => {
                     py: 1.5,
                     fontWeight: "bold",
                     borderRadius: 2,
+                    disableRipple
                   }}
                 >
                   Submit
@@ -757,6 +758,7 @@ const ContactForm = () => {
                     py: 1,
                     fontWeight: "bold",
                     borderRadius: 2,
+                    disableRipple
                   }}
                 >
                   Close
