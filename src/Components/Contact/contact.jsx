@@ -13,11 +13,15 @@ import {
   Slide,
   useTheme,
   CircularProgress,
+  Modal,
+  Backdrop,
+  Rating,
+  IconButton,
 } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { Send as SendIcon } from "@mui/icons-material";
-
+import { Send as SendIcon, Close as CloseIcon, CheckCircle as CheckCircleIcon } from "@mui/icons-material";
+import GreenTickSuccess from "./Component/Success";
 import moment from "moment";
 
 const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL;
@@ -37,6 +41,12 @@ const ContactForm = () => {
   const [isIndia, setIsIndia] = useState(false);
   const [userCountry, setUserCountry] = useState("");
   const [isp, setIsp] = useState("");
+
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [feedbackComment, setFeedbackComment] = useState("");
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+
   const theme = useTheme();
   const contactRef = useRef(null);
 
@@ -370,7 +380,6 @@ const ContactForm = () => {
     const submittedData = { ...formData, hidePhone };
 
     const submissionPromise = submitToGoogleSheets(submittedData);
-
     toast.promise(submissionPromise, {
       loading: 'Sending your message...',
       success: (data) => {
@@ -382,6 +391,11 @@ const ContactForm = () => {
         });
         setHidePhone(false);
         setErrors({});
+
+        setTimeout(() => {
+          setFeedbackOpen(true);
+        }, 1500);
+
         return `Message sent successfully!`;
       },
       error: 'Failed to send message. Please try again.',
@@ -394,6 +408,19 @@ const ContactForm = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFeedbackSubmit = () => {
+    setFeedbackSubmitted(true);
+  };
+
+  const handleFeedbackClose = () => {
+    setFeedbackOpen(false);
+    setTimeout(() => {
+      setFeedbackSubmitted(false);
+      setRating(0);
+      setFeedbackComment("");
+    }, 500);
   };
 
   useEffect(() => {
@@ -627,7 +654,120 @@ const ContactForm = () => {
           </CardContent>
         </Card>
       </Slide>
-    </Box>
+
+      <Modal
+        open={feedbackOpen}
+        onClose={(event, reason) => {
+          if (reason === "backdropClick") return;
+          handleFeedbackClose();
+        }}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backdropFilter: 'blur(5px)',
+        }}
+      >
+        <Fade in={feedbackOpen}>
+          <Box
+            sx={{
+              bgcolor: "background.paper",
+              borderRadius: 3,
+              boxShadow: 24,
+              p: 4,
+              width: { xs: "90%", sm: 450 },
+              position: 'relative',
+              textAlign: "center",
+            }}
+          >
+            {!feedbackSubmitted ? (
+              <>
+                <IconButton
+                  onClick={handleFeedbackClose}
+                  sx={{
+                    position: 'absolute',
+                    right: 8,
+                    top: 8,
+                    color: 'text.secondary',
+                  }}
+                >
+                  <CloseIcon />
+                </IconButton>
+
+                <Typography variant="h5" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
+                  Rate this portfolio
+                </Typography>
+
+                <Rating
+                  name="simple-controlled"
+                  value={rating}
+                  onChange={(event, newValue) => {
+                    setRating(newValue);
+                  }}
+                  size="large"
+                  sx={{ mb: 3 }}
+                />
+
+                <TextField
+                  fullWidth
+                  label="Commands / Feedback"
+                  multiline
+                  rows={3}
+                  variant="outlined"
+                  value={feedbackComment}
+                  onChange={(e) => setFeedbackComment(e.target.value)}
+                  sx={{ mb: 3 }}
+                />
+
+                <Button
+                  variant="contained"
+                  onClick={handleFeedbackSubmit}
+                  disabled={!rating}
+                  fullWidth
+                  sx={{
+                    py: 1.5,
+                    fontWeight: "bold",
+                    borderRadius: 2,
+                  }}
+                >
+                  Submit
+                </Button>
+              </>
+            ) : (
+              <>
+                <Box sx={{ mb: 2, color: 'success.main', display: 'flex', justifyContent: 'center' }}>
+                  <GreenTickSuccess />
+                </Box>
+
+                <Typography variant="h5" fontWeight="bold" sx={{ mb: 1, color: 'text.primary' }}>
+                  Thanks for your feedback
+                </Typography>
+
+                <Button
+                  variant="contained"
+                  onClick={handleFeedbackClose}
+                  sx={{
+                    mt: 3,
+                    px: 4,
+                    py: 1,
+                    fontWeight: "bold",
+                    borderRadius: 2,
+                  }}
+                >
+                  Close
+                </Button>
+              </>
+            )}
+          </Box>
+        </Fade>
+      </Modal>
+
+    </Box >
   );
 };
 
