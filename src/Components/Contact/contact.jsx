@@ -699,8 +699,12 @@ const ContactForm = () => {
                   <CloseIcon />
                 </IconButton>
 
-                <Typography variant="h5" fontWeight="bold" sx={{ mb: 2, color: 'text.primary' }}>
+                <Typography variant="h5" fontWeight="bold" sx={{ mb: 0.5, color: 'text.primary' }}>
                   Rate this portfolio
+                </Typography>
+
+                <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+                  Your rating for this portfolio
                 </Typography>
 
                 <Rating
@@ -736,7 +740,7 @@ const ContactForm = () => {
                     borderRadius: 2,
                   }}
                 >
-                  
+
                   Submit
                 </Button>
               </>
