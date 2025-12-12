@@ -68,7 +68,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/achievements" element={<Achievements />} />
-          <Route path="/verify" element={<Verify />} />
+          {/* <Route path="/verify" element={<Verify />} /> */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <Analytics />

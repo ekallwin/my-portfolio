@@ -9,24 +9,16 @@ import {
   Typography,
   Card,
   CardContent,
-  FormControlLabel,
-  Checkbox,
   Fade,
   Slide,
   useTheme,
-  useMediaQuery,
   CircularProgress,
-  Modal,
-  Backdrop,
 } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { Send as SendIcon } from "@mui/icons-material";
 
 import moment from "moment";
-import Error from './Component/Error';
-import Success from './Component/Success';
-import Progress from './Component/Progress';
 
 const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL;
 
@@ -44,25 +36,9 @@ const ContactForm = () => {
   const [isLoadingCountry, setIsLoadingCountry] = useState(true);
   const [isIndia, setIsIndia] = useState(false);
   const [userCountry, setUserCountry] = useState("");
-  const [openModal, setOpenModal] = useState(false);
-  const [submissionStatus, setSubmissionStatus] = useState("");
-  const [submittedData, setSubmittedData] = useState(null);
   const [isp, setIsp] = useState("");
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const contactRef = useRef(null);
-
-  useEffect(() => {
-    if (openModal) {
-      document.body.classList.add('modal-open');
-    } else {
-      document.body.classList.remove('modal-open');
-    }
-
-    return () => {
-      document.body.classList.remove('modal-open');
-    };
-  }, [openModal]);
 
   useEffect(() => {
     const fetchCountryData = async () => {
@@ -345,31 +321,6 @@ const ContactForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-
-  const handleCloseModalSuccess = () => {
-    setOpenModal(false);
-    setTimeout(() => {
-      setSubmissionStatus("");
-      setSubmittedData(null);
-      setFormData({
-        name: "",
-        phone: isIndia ? "+91 " : `${countryCode} `,
-        email: "",
-        message: "",
-      });
-      setHidePhone(false);
-      setErrors({});
-    }, 500);
-  };
-
-  const handleCloseModalError = () => {
-    setOpenModal(false);
-    setTimeout(() => {
-      setSubmissionStatus("");
-      setSubmittedData(null);
-    }, 500);
-  };
-
   const submitToGoogleSheets = async (data) => {
     try {
       const submissionData = {
@@ -416,26 +367,30 @@ const ContactForm = () => {
       return;
     }
 
-    setSubmissionStatus("processing");
-    setOpenModal(true);
-
     const submittedData = { ...formData, hidePhone };
 
-    try {
-      await submitToGoogleSheets(submittedData);
+    const submissionPromise = submitToGoogleSheets(submittedData);
 
-      setSubmittedData(submittedData);
-      setSubmissionStatus("success");
-      setFormData({
-        name: "",
-        phone: isIndia ? "+91 " : `${countryCode} `,
-        email: "",
-        message: "",
-      });
-      setHidePhone(false);
+    toast.promise(submissionPromise, {
+      loading: 'Sending your message...',
+      success: (data) => {
+        setFormData({
+          name: "",
+          phone: isIndia ? "+91 " : `${countryCode} `,
+          email: "",
+          message: "",
+        });
+        setHidePhone(false);
+        setErrors({});
+        return `Message sent successfully!`;
+      },
+      error: 'Failed to send message. Please try again.',
+    });
+
+    try {
+      await submissionPromise;
     } catch (error) {
       console.error("Submission failed:", error);
-      setSubmissionStatus("error");
     } finally {
       setLoading(false);
     }
@@ -672,116 +627,6 @@ const ContactForm = () => {
           </CardContent>
         </Card>
       </Slide>
-
-      <Modal
-        open={openModal}
-        onClose={(event, reason) => {
-          if (submissionStatus === "processing") return;
-          if (submissionStatus === "success") {
-            handleCloseModalSuccess();
-          } else if (submissionStatus === "error") {
-            handleCloseModalError();
-          } else {
-            setOpenModal(false);
-          }
-        }}
-
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
-        sx={{
-          backdropFilter: 'none',
-        }}
-      >
-        <Fade in={openModal}>
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: { xs: "90%", sm: 400 },
-              bgcolor: "background.paper",
-              borderRadius: 3,
-              boxShadow: 24,
-              p: 4,
-              textAlign: "center",
-            }}
-          >
-            {submissionStatus === "processing" ? (
-              <>
-                <Typography variant="h6" fontWeight="bold" sx={{ mt: 1, mb: 1, color: 'black' }}>
-                  Sending your message
-                </Typography>
-                <Typography variant="body2" sx={{ color: 'text.secondary', marginBottom: '20px' }}>
-                  Please don't close this page.
-                </Typography>
-                <Progress />
-              </>
-            ) : submissionStatus === "success" ? (
-              <>
-                <Success />
-                <Typography variant="body1" fontWeight="bold" sx={{ mt: 2, mb: 1, color: 'black' }}>
-                  Message sent successfully!
-                </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{ mt: 2, mb: 3, color: 'black', textAlign: "justify", textIndent: '25px' }}
-                >
-                  Thank you <strong>{submittedData?.name || "there"}</strong>, your message has been sent successfully.
-                  You will get email confirmation shortly at <strong>{submittedData?.email || "your email"}</strong>
-                </Typography>
-                <Button
-                  variant="contained"
-                  onClick={handleCloseModalSuccess}
-                  fullWidth
-                  sx={{
-                    mx: "auto",
-                    mt: 2,
-                    py: 1,
-                    fontWeight: "bold",
-                    borderRadius: 2,
-                  }}
-                >
-                  Close
-                </Button>
-              </>
-            ) : submissionStatus === "error" ? (
-              <>
-                <Error />
-                <Typography variant="body1" fontWeight="bold" sx={{ mt: 2, mb: 1, color: 'black' }}>
-                  Failed to send message
-                </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{ mt: 2, mb: 3, color: 'black', textAlign: "justify", textIndent: '25px' }}
-                >
-                  Sorry, but there was an error sending your message.
-                  Please try again later.
-                </Typography>
-                <Button
-                  variant="contained"
-                  onClick={handleCloseModalError}
-                  fullWidth
-                  sx={{
-                    mx: "auto",
-                    mt: 2,
-                    py: 1,
-                    fontWeight: "bold",
-                    borderRadius: 2,
-                  }}
-                >
-                  Close
-                </Button>
-              </>
-            ) : null}
-
-          </Box>
-        </Fade>
-      </Modal>
-
     </Box>
   );
 };
