@@ -321,9 +321,11 @@ const ContactForm = () => {
     if (!formData.message || !formData.message.trim()) {
       toast.error("Message cannot be empty");
       newErrors.message = "Message cannot be empty";
+    } else if (formData.message.trim().length > 500) {
       toast.error("Message must be less than 500 characters");
       newErrors.message = "Message must be less than 500 characters";
-    } else if (hasEmojis(formData.message)) {
+    }
+    else if (hasEmojis(formData.message)) {
       toast.error("Emogies are not allowed in message");
       newErrors.message = "Emogies are not allowed in message";
     } else {
