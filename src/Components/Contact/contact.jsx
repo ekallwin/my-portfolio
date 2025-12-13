@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import './contact.css';
 import toast from 'react-hot-toast';
 import { Filter } from 'bad-words';
+import { FaInfoCircle } from "react-icons/fa";
 import {
   Box,
   TextField,
@@ -19,6 +20,7 @@ import {
   IconButton,
 } from "@mui/material";
 import Stack from "@mui/material/Stack";
+import Tooltip from '@mui/material/Tooltip';
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { Send as SendIcon, Close as CloseIcon, CheckCircle as CheckCircleIcon } from "@mui/icons-material";
 import GreenTickSuccess from "./Component/Success";
@@ -672,9 +674,12 @@ const ContactForm = () => {
                 </Box>
 
                 <Stack direction="row" spacing={1} alignItems="center" mt={2}>
+
                   <LockOutlinedIcon fontSize="small" color="action" />
-                  <Typography variant="body2" color="text.secondary">
-                    Your information including your phone and email, is kept confidential.
+                  <Typography variant="body2" color="text.secondary" >
+                    Your information including your phone and email, is kept confidential. <Tooltip title="Your personal information, including your phone number and email address, is kept strictly confidential. It is not stored on servers or any other electronic forms and is used solely to contact you when necessary." arrow>
+                      <FaInfoCircle color="#0d6efd" className="contact-info"/>
+                    </Tooltip>
                   </Typography>
                 </Stack>
               </Box>

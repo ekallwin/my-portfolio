@@ -2,12 +2,17 @@
   background: gray !important;
   color: white;
 }
+
 .modal-open .modal-navbar,
 .modal-open .modal-footer,
 .modal-open .contact-form,
 .modal-open .orb-container,
-.modal-open .skills-container{
+.modal-open .skills-container {
   filter: blur(10px);
   transition: filter 0.3s ease;
 }
 
+.contact-info {
+  vertical-align: middle;
+  cursor: pointer;
+}
