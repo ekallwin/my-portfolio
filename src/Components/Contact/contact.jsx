@@ -327,10 +327,11 @@ const ContactForm = () => {
       toast.error("Message must be less than 500 characters");
       newErrors.message = "Message must be less than 500 characters";
     }
-    else if (hasEmojis(formData.message)) {
-      toast.error("Emogies are not allowed in message");
-      newErrors.message = "Emogies are not allowed in message";
-    } else {
+    // else if (hasEmojis(formData.message)) {
+    //   toast.error("Emogies are not allowed in message");
+    //   newErrors.message = "Emogies are not allowed in message";
+    // } 
+    else {
       const filter = new Filter();
       if (filter.isProfane(formData.message)) {
         toast.error("Message contains inappropriate language");
@@ -423,10 +424,10 @@ const ContactForm = () => {
   };
 
   const handleFeedbackSubmit = async () => {
-    if (hasEmojis(feedbackComment)) {
-      toast.error("Emogies are not allowed");
-      return;
-    }
+    // if (hasEmojis(feedbackComment)) {
+    //   toast.error("Emogies are not allowed");
+    //   return;
+    // }
 
     setFeedbackLoading(true);
 
@@ -768,7 +769,7 @@ const ContactForm = () => {
                   onClick={handleFeedbackSubmit}
                   disabled={!rating || feedbackLoading}
                   fullWidth
-                  startIcon={feedbackLoading ? <CircularProgress size={16} color="inherit" /> : null}
+                  endIcon={feedbackLoading ? <CircularProgress size={16} color="inherit" /> : null}
                   sx={{
                     py: 1.5,
                     fontWeight: "bold",
