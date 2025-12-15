@@ -677,9 +677,10 @@ const ContactForm = () => {
 
                   <LockOutlinedIcon fontSize="small" color="action" />
                   <Typography variant="body2" color="text.secondary" >
-                    Your information including your phone and email, is kept confidential. <Tooltip title="Your personal information, including your phone number and email address, is kept strictly confidential. It is not stored on servers or any other electronic forms and is used solely to contact you when necessary." arrow>
+                    Your information including your phone and email, is kept confidential. 
+                    {/* <Tooltip title="Your personal information, including your phone number and email address, is kept strictly confidential. It is not stored on servers or any other electronic forms and is used solely to contact you when necessary." arrow>
                       <FaInfoCircle color="#0d6efd" className="contact-info"/>
-                    </Tooltip>
+                    </Tooltip> */}
                   </Typography>
                 </Stack>
               </Box>
