@@ -15,11 +15,11 @@ const Skills = () => {
     const skillsData = [
         { name: 'HTML/CSS', percentage: 95, icon: <><FaHtml5 color="#e34c26" title="HTML5" size={28} style={{ marginRight: 2 }} /><FaCss3Alt color="#1572B6" title="CSS3" size={28} /></> },
         { name: 'JavaScript', percentage: 75, icon: <FaJs color="#f7df1e" title="JavaScript" size={28} /> },
-        { name: 'React.js', percentage: 85, icon: <FaReact color="#61dafb" title="React.js" size={28} /> },
-        { name: 'Node.js', percentage: 70, icon: <FaNodeJs color="#3c873a" title="Node.js" size={28} /> },
-        { name: 'Express.js', percentage: 70, icon: <SiExpress color="#fff" title="Express.js" size={28} /> },
-        { name: 'MongoDB', percentage: 70, icon: <SiMongodb color="#47A248" title="MongoDB" size={28} /> },
-        { name: 'Git', percentage: 75, icon: <FaGitAlt color="#f34f29" title="Git" size={28} /> },
+        { name: 'React.js', percentage: 90, icon: <FaReact color="#61dafb" title="React.js" size={28} /> },
+        { name: 'Node.js', percentage: 75, icon: <FaNodeJs color="#3c873a" title="Node.js" size={28} /> },
+        { name: 'Express.js', percentage: 75, icon: <SiExpress color="#fff" title="Express.js" size={28} /> },
+        { name: 'MongoDB', percentage: 75, icon: <SiMongodb color="#47A248" title="MongoDB" size={28} /> },
+        { name: 'Git', percentage: 85, icon: <FaGitAlt color="#f34f29" title="Git" size={28} /> },
     ];
 
     const [animatedPercentages, setAnimatedPercentages] = useState(skillsData.map(() => 0));
@@ -207,13 +207,13 @@ const Skills = () => {
                                         flexGrow: 1,
                                         fontWeight: 'medium',
                                         color: '#ffffff',
-                                        textAlign: 'center'
+                                        textAlign: 'right'
                                     }}
                                 >
                                     {skill.name}
                                 </Typography>
 
-                                <Typography
+                                {/* <Typography
                                     variant="body1"
                                     component="span"
                                     sx={{
@@ -224,7 +224,7 @@ const Skills = () => {
                                     }}
                                 >
                                     {animatedPercentages[index]}%
-                                </Typography>
+                                </Typography> */}
                             </Box>
 
                             <Box className="skill-bar" sx={{ width: '100%' }}>
