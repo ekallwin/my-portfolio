@@ -5,6 +5,7 @@ import { useTheme } from '@mui/material/styles';
 import toast from 'react-hot-toast';
 import { FaDownload, FaCircleCheck, FaSpinner, FaGithub, FaLinkedin } from 'react-icons/fa6';
 import './about.css';
+import { scale } from 'motion';
 
 function About() {
   const theme = useTheme();
@@ -210,6 +211,15 @@ function About() {
                         color: 'white',
                         background: 'rgba(255, 255, 255, 0.2)',
                         textAlign: 'center',
+                        padding: '5px 10px',
+                        borderRadius: '50',
+                        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          transform: 'translateY(-2px)',
+                          boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
+                          
+                        },
                       }}
                     />
                   ))}
@@ -219,7 +229,7 @@ function About() {
                 disableRipple
                   variant="contained"
                   onClick={handleDownload}
-                  className="animate-child"
+                  className="animate-child buttons"
                   data-animate
                   sx={{
                     mt: 3,
@@ -230,7 +240,7 @@ function About() {
                     color: 'white',
                     mx: { xs: 'auto', md: 0 },
                     display: { xs: 'block', md: 'inline-flex' },
-                    background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                    // background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
                     boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
                     '&:hover': {
                       transform: 'translateY(-2px)',

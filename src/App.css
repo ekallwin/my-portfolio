@@ -5,11 +5,13 @@
   --dark-color: #000000;
   --light-color: #ffffff;
   --text-color: #ffffff;
-  --btn-primary: #ff0066;
+  --btn-primary: #f51770;
   --btn-secondary: #ff00e1;
-  --btn-teritary: #9900ff;
+  --btn-tertiary: #9900ff;
 }
-
+.buttons {
+  background: linear-gradient(110deg, var(--btn-primary), var(--btn-secondary), var(--btn-tertiary));
+}
 body {
   overflow-x: hidden;
   height: 100vh;

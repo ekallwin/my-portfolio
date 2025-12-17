@@ -652,7 +652,7 @@ const ContactForm = () => {
 
                   <Button
                     disableRipple
-                    className="contact-submit"
+                    className="contact-submit buttons"
                     type="submit"
                     variant="contained"
                     size="medium"
@@ -663,7 +663,7 @@ const ContactForm = () => {
                       py: 1,
                       px: 4,
                       borderRadius: 2,
-                      background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                      // background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
                       fontSize: "0.95rem",
                       fontWeight: "600",
                       textTransform: "none",

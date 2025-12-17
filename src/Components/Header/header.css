@@ -39,7 +39,7 @@
     font-size: 25px;
     font-family: serif;
     padding: 20px 35px;
-    background: linear-gradient(110deg, var(--btn-primary), var(--btn-secondary), var(--btn-teritary));
+    background: linear-gradient(110deg, var(--btn-primary), var(--btn-secondary), var(--btn-tertiary));
     border-radius: 100px;
     border: none;
     cursor: pointer;
@@ -52,7 +52,7 @@
 
     &:hover {
         transform: scale(1.1);
-        background: linear-gradient(100deg, var(--btn-primary), var(--btn-secondary), var(--btn-teritary));
+        background: linear-gradient(100deg, var(--btn-primary), var(--btn-secondary), var(--btn-tertiary));
     }
 }
 

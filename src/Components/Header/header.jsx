@@ -84,9 +84,9 @@ function Header() {
           className="button"
           onClick={LinkedIn}
           ref={buttonRef}
-          style={{
-            background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`
-          }}
+          // style={{
+          //   background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`
+          // }}
         >
           Let's connect
         </button>

@@ -7,8 +7,8 @@ import Projects from "./Components/Projects/project";
 import Achievements from "./Components/Achievements/achievements";
 import Loader from "./Components/Loader/Loader";
 import Orb from './Components/Orb/Orb.jsx';
+import FloatingLines from './Components/FloatingLines/FloatingLines';
 import OfflinePage from "./Components/Offline/Offline.jsx";
-import Verify from "./Components/Verify/Verifycontainer.jsx";
 import { Analytics } from "@vercel/analytics/react"
 
 const useOnlineStatus = () => {
@@ -54,12 +54,22 @@ function App() {
         }}
       />
 
-      <div style={{ width: '100%', height: '100%', position: 'absolute' }}>
-        <Orb
+      <div style={{ width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: -1 }}>
+        {/* <Orb
           hoverIntensity={0}
           rotateOnHover={true}
           hue={0}
           forceHoverState={false}
+        /> */}
+        <FloatingLines
+          enabledWaves={['top', 'middle', 'bottom']}
+          lineCount={[10, 15, 20]}
+          lineDistance={[8, 6, 4]}
+          bendRadius={5.0}
+          bendStrength={-0.5}
+          interactive={true}
+          parallax={true}
+          mixBlendMode="normal"
         />
       </div>
 
