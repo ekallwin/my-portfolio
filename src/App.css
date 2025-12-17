@@ -9,9 +9,7 @@
   --btn-secondary: #ff00e1;
   --btn-tertiary: #9900ff;
 }
-.buttons {
-  background: linear-gradient(110deg, var(--btn-primary), var(--btn-secondary), var(--btn-tertiary));
-}
+
 body {
   overflow-x: hidden;
   height: 100vh;
@@ -42,9 +40,11 @@ li {
   margin: 0;
   padding: 0;
 }
-nav li *{
+
+nav li * {
   list-style: none;
 }
+
 .icons {
   margin-right: 10px;
 }
@@ -141,7 +141,12 @@ input[type=number] {
 }
 
 *::-webkit-scrollbar {
-  display: none;
+  display: none !important;
+
+}
+
+* {
+  scrollbar-width: none;
 }
 
 footer,
@@ -151,6 +156,10 @@ button {
   -webkit-user-select: none;
   -ms-user-select: none;
   -webkit-tap-highlight-color: transparent;
+}
+
+.buttons {
+  background: linear-gradient(110deg, var(--btn-primary), var(--btn-secondary), var(--btn-tertiary));
 }
 
 .app-shell {

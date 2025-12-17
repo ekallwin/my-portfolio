@@ -170,7 +170,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
         baseUv,
         mouseUv,
         interactive
-      );
+      ) * 0.6;
     }
   }
 
