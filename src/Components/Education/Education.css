@@ -85,9 +85,9 @@
     }
 
     .edu-img-container {
-        width: 160px;
-        height: 160px;
-        margin-bottom: 15px;
+        width: 220px;
+        height: 220px;
+        /* margin-bottom: 15px; */
     }
 
     .education-card .row {
