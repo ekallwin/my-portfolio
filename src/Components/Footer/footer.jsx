@@ -1,131 +1,78 @@
-import React from "react";
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
-import Stack from "@mui/material/Stack";
-import Link from "@mui/material/Link";
-import { Button } from "@mui/material";
-
-import { useNavigate } from "react-router-dom";
-
-import { FaLinkedin } from "react-icons/fa";
-import GitHubIcon from "@mui/icons-material/GitHub";
+import React, { useState, useEffect } from "react";
+import "./footer.css";
+import { FaLinkedin, FaFacebook, FaInstagram } from "react-icons/fa";
 import { FaSquareXTwitter, FaThreads } from "react-icons/fa6";
-import { FaInstagram, FaFacebook } from "react-icons/fa";
-
+import GitHubIcon from "@mui/icons-material/GitHub";
 import { useScrollToSection } from "./Scroll";
+import moment from "moment";
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
+  const [currentYear, setCurrentYear] = useState(moment().year());
   const scrollToSection = useScrollToSection();
 
-  // ✅ React Router navigation hook
-  const navigate = useNavigate();
+  useEffect(() => {
+    const fetchYear = async () => {
+      try {
+        const response = await fetch("https://timeapi.io/api/Time/current/zone?timeZone=Asia/Kolkata");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.year) {
+            setCurrentYear(data.year);
+          }
+        }
+      } catch (error) {
+      }
+    };
+
+    fetchYear();
+  }, []);
 
   const socials = [
-    { icon: <FaFacebook size={25} />, label: "Facebook", href: "https://www.facebook.com/ekallwin" },
-    { icon: <FaInstagram size={25} />, label: "Instagram", href: "https://www.instagram.com/ekallwin" },
-    { icon: <FaSquareXTwitter size={25} />, label: "X (Twitter)", href: "https://www.twitter.com/ekallwin" },
-    { icon: <FaThreads size={25} />, label: "Threads", href: "https://www.threads.net/@ekallwin" },
-    { icon: <FaLinkedin size={25} />, label: "LinkedIn", href: "https://www.linkedin.com/in/ekallwin/" },
-    { icon: <GitHubIcon fontSize="medium" />, label: "GitHub", href: "https://github.com/ekallwin" },
+    { icon: <FaFacebook />, label: "Facebook", href: "https://www.facebook.com/ekallwin" },
+    { icon: <FaInstagram />, label: "Instagram", href: "https://www.instagram.com/ekallwin" },
+    { icon: <FaSquareXTwitter />, label: "X (Twitter)", href: "https://www.twitter.com/ekallwin" },
+    { icon: <FaThreads />, label: "Threads", href: "https://www.threads.net/@ekallwin" },
+    { icon: <FaLinkedin />, label: "LinkedIn", href: "https://www.linkedin.com/in/ekallwin/" },
+    { icon: <GitHubIcon />, label: "GitHub", href: "https://github.com/ekallwin" },
   ];
 
   return (
-    <Box
-      component="footer"
-      sx={{
-        width: "100%",
-        bgcolor: "#040B44",
-        color: "common.white",
-        mt: "auto",
-        py: { xs: 3, md: 4 },
-      }}
-      className="modal-footer"
-    >
-      <Container maxWidth="lg">
-        <Stack direction="column" alignItems="center" spacing={2}>
+    <footer className="footer">
+      <div className="footer-container">
 
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            My social medias
-          </Typography>
+        <div className="footer-header">
+          <h3 className="footer-title">Connect with me</h3>
+          <div className="footer-divider"></div>
+        </div>
 
-          <Stack direction="row" spacing={1} alignItems="center">
-            {socials.map((s) => (
-              <IconButton
-                key={s.label}
-                aria-label={s.label}
-                component={Link}
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={{
-                  bgcolor: "transparent",
-                  p: 1.25,
-                  borderRadius: "50%",
-                  transition: "all 0.22s ease",
-                  color: "inherit",
-                  border: "1px solid transparent",
-                  "&:hover": {
-                    bgcolor: "action.hover",
-                    transform: "translateY(-3px)",
-                    boxShadow: (theme) =>
-                      `0 8px 28px ${theme.palette.mode === "dark"
-                        ? "rgba(31,38,135,0.18)"
-                        : "rgba(0,0,0,0.12)"
-                      }`,
-                    borderColor: (theme) => theme.palette.divider,
-                  },
-                }}
-              >
-                {s.icon}
-              </IconButton>
-            ))}
-          </Stack>
-{/* 
-          <Button
-            disableRipple
-            className="contact-submit"
-            onClick={() => navigate("/verify")}
-            sx={(theme) => ({
-              mt: 2,
-              py: 1,
-              px: 2,
-              borderRadius: 2,
-              backgroundColor: theme.palette.primary.main,
-              color: "#fff",
-              fontSize: "0.95rem",
-              textTransform: "none",
+        <div className="social-links">
+          {socials.map((s) => (
+            <a
+              key={s.label}
+              href={s.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="social-icon"
+              aria-label={s.label}
+            >
+              {s.icon}
+            </a>
+          ))}
+        </div>
 
-            })}
-          >
-            Verify my social medias
-          </Button> */}
-
-          <Typography
-            variant="body2"
-            align="center"
-            sx={{ fontSize: 12, mt: 1 }}
-          >
-            &copy; {currentYear} Created, Developed and maintained by{" "}
-            <Link
-              component="button"
-              variant="body2"
+        <div className="footer-copyright">
+          <p>
+            &copy; {currentYear} Created & Maintained by{" "}
+            <button
+              className="footer-author-btn"
               onClick={() => scrollToSection("About")}
-              sx={{
-                textDecoration: "underline",
-                color: "inherit",
-                ml: 0.5,
-                fontWeight: 600,
-              }}
             >
               Allwin E K
-            </Link>
-          </Typography>
+            </button>
+          </p>
+        </div>
 
-        </Stack>
-      </Container>
-    </Box>
+      </div>
+    </footer>
   );
 }

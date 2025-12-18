@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import './Education.css';
 import { Container, Row, Col, Card } from 'react-bootstrap';
 import Typography from '@mui/material/Typography';
+import Footer from '../Footer/footer';
 
 const Education = () => {
     const [educationData, setEducationData] = useState([]);
@@ -26,6 +27,7 @@ const Education = () => {
     }
 
     return (
+        <>
         <Container className="education-section mt-5 pt-3">
             <Typography
                 variant="h4"
@@ -83,6 +85,8 @@ const Education = () => {
                 ))}
             </div>
         </Container>
+        <Footer />
+        </>
     );
 };
 

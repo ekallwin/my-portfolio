@@ -167,4 +167,5 @@ button {
   z-index: 1;
   height: 100vh;
   overflow-y: auto;
+  scroll-behavior: smooth;
 }

@@ -47,7 +47,7 @@ const ScrollProgress = () => {
                 background: "#4f46e5",
                 width: `${scrollWidth}%`,
                 zIndex: 9999,
-                transition: "width 0.1s ease-out"
+                transition: "width 0.3s ease-out"
             }}
         />
     );
