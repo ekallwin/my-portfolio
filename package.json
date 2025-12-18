@@ -52,7 +52,6 @@
     "react-router-dom": "^7.10.1",
     "react-router-hash-link": "^2.4.3",
     "react-scroll": "^1.9.3",
-    "react-scroll-progress-bar": "^2.0.3",
     "react-select": "^5.10.1",
     "react-toastify": "^11.0.5",
     "react-world-flags": "^1.6.0",
