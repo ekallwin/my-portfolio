@@ -54,11 +54,11 @@ const Skills = () => {
             sx={{
                 py: 8,
                 px: isMobile ? 2 : 4,
-                minHeight: '100vh',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center'
+                // minHeight: '100vh',
+                // display: 'flex',
+                // flexDirection: 'column',
+                // alignItems: 'center',
+                // justifyContent: 'center'
             }}
         >
             <Typography

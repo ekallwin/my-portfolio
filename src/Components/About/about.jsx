@@ -81,7 +81,7 @@ function About() {
   ];
 
   return (
-    <Box id="About" ref={sectionRef} sx={{ minHeight: '100vh', py: 8 }}>
+    <Box id="About" ref={sectionRef} sx={{ minHeight: '100vh',  }}>
       <Container maxWidth="lg">
         <Typography
           variant="h2"
