@@ -52,9 +52,9 @@ const Skills = () => {
             id="Skills"
             ref={skillsRef}
             sx={{
-                py: 8,
+                py: 4,
                 px: isMobile ? 2 : 4,
-                minHeight: '90vh',
+                scrollMarginTop: '85px',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
