@@ -107,7 +107,6 @@ const Achievements = () => {
         bgcolor: "transparent",
       }}
     >
-      <Navbar />
       <Box
         component="main"
         sx={{
@@ -188,7 +187,7 @@ const Achievements = () => {
                 {showControls && (
                   <>
                     <IconButton
-                    disableRipple
+                      disableRipple
                       aria-label="Previous slide"
                       onClick={prevSlide}
                       sx={{
@@ -205,7 +204,7 @@ const Achievements = () => {
                     </IconButton>
 
                     <IconButton
-                    disableRipple
+                      disableRipple
                       aria-label="Next slide"
                       onClick={nextSlide}
                       sx={{

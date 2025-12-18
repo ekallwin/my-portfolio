@@ -4,7 +4,7 @@ import {
     Typography,
     Grid,
     Card,
-    LinearProgress,
+    Tooltip,
     useTheme,
     useMediaQuery
 } from '@mui/material';
@@ -12,25 +12,23 @@ import { FaHtml5, FaCss3Alt, FaJs, FaReact, FaNodeJs, FaGitAlt } from 'react-ico
 import { SiExpress, SiMongodb } from 'react-icons/si';
 
 const Skills = () => {
-    const skillsData = [
-        { name: 'HTML/CSS', percentage: 95, icon: <><FaHtml5 color="#e34c26" title="HTML5" size={28} style={{ marginRight: 2 }} /><FaCss3Alt color="#1572B6" title="CSS3" size={28} /></> },
-        { name: 'JavaScript', percentage: 75, icon: <FaJs color="#f7df1e" title="JavaScript" size={28} /> },
-        { name: 'React.js', percentage: 90, icon: <FaReact color="#61dafb" title="React.js" size={28} /> },
-        { name: 'Node.js', percentage: 80, icon: <FaNodeJs color="#3c873a" title="Node.js" size={28} /> },
-        { name: 'Express.js', percentage: 80, icon: <SiExpress color="#fff" title="Express.js" size={28} /> },
-        { name: 'MongoDB', percentage: 80, icon: <SiMongodb color="#47A248" title="MongoDB" size={28} /> },
-        { name: 'Git', percentage: 90, icon: <FaGitAlt color="#f34f29" title="Git" size={28} /> },
-    ];
-
-    const [animatedPercentages, setAnimatedPercentages] = useState(skillsData.map(() => 0));
-    const [hasAnimated, setHasAnimated] = useState(skillsData.map(() => false));
-
     const skillsRef = useRef(null);
     const skillBoxRefs = useRef([]);
-    const animationRefs = useRef([]);
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+    const skillsData = [
+        { name: 'HTML', percentage: 95, icon: <FaHtml5 color="#e34c26" title="HTML5" size={60} /> },
+        { name: 'CSS', percentage: 95, icon: <FaCss3Alt color="#ebebeb" title="CSS3" size={60} /> },
+        { name: 'JavaScript', percentage: 75, icon: <FaJs color="#f7df1e" title="JavaScript" size={60} /> },
+        { name: 'React.js', percentage: 90, icon: <FaReact color="#61dafb" title="React.js" size={60} /> },
+        { name: 'Node.js', percentage: 80, icon: <FaNodeJs color="#3c873a" title="Node.js" size={60} /> },
+        { name: 'Express.js', percentage: 80, icon: <SiExpress color="#fff" title="Express.js" size={60} /> },
+        { name: 'MongoDB', percentage: 80, icon: <SiMongodb color="#47A248" title="MongoDB" size={60} /> },
+        { name: 'Git', percentage: 90, icon: <FaGitAlt color="#f34f29" title="Git" size={60} /> },
+        
+    ];
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -39,17 +37,10 @@ const Skills = () => {
                     if (!entry.isIntersecting) return;
 
                     const index = skillBoxRefs.current.findIndex(ref => ref === entry.target);
-                    if (index === -1) {
-                        observer.unobserve(entry.target);
-                        return;
-                    }
-
-                    if (!hasAnimated[index]) {
+                    if (index !== -1) {
                         entry.target.classList.add("show");
-                        animatePercentage(index);
+                        observer.unobserve(entry.target);
                     }
-
-                    observer.unobserve(entry.target);
                 });
             },
             {
@@ -66,44 +57,8 @@ const Skills = () => {
             skillBoxRefs.current.forEach((el) => {
                 if (el) try { observer.unobserve(el); } catch (e) { }
             });
-            animationRefs.current.forEach(raf => raf && cancelAnimationFrame(raf));
         };
     }, []);
-
-    const animatePercentage = (index) => {
-        if (hasAnimated[index]) return;
-
-        const duration = 1800;
-        const startTime = performance.now();
-        const endValue = skillsData[index].percentage;
-
-        const step = (currentTime) => {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-            const currentValue = Math.round(easeOutQuart * endValue);
-
-            setAnimatedPercentages(prev => {
-                if (prev[index] === currentValue) return prev;
-                const copy = [...prev];
-                copy[index] = currentValue;
-                return copy;
-            });
-
-            if (progress < 1) {
-                animationRefs.current[index] = requestAnimationFrame(step);
-            } else {
-                setHasAnimated(prev => {
-                    const copy = [...prev];
-                    copy[index] = true;
-                    return copy;
-                });
-                animationRefs.current[index] = null;
-            }
-        };
-
-        animationRefs.current[index] = requestAnimationFrame(step);
-    };
 
     const getDelayStyle = (index) => ({
         transitionDelay: `${index * 0.08}s`
@@ -136,19 +91,18 @@ const Skills = () => {
 
             <Grid
                 container
-                spacing={3}
+                spacing={isMobile ? 1 : 3}
                 sx={{
                     maxWidth: '1200px',
                     margin: '0 auto',
-                    justifyContent: 'center',
-                    width: isMobile ? '320px' : '100%',
+                    width: isMobile ? '100%' : '100%',
                     borderRadius: 8,
                 }}
             >
                 {skillsData.map((skill, index) => (
                     <Grid
                         item
-                        xs={12}
+                        xs={4}
                         sm={6}
                         md={4}
                         key={index}
@@ -157,92 +111,54 @@ const Skills = () => {
                             justifyContent: 'center'
                         }}
                     >
-                        <Card
-                            className="skill-fade-in"
-                            ref={el => {
-                                if (el) skillBoxRefs.current[index] = el;
-                            }}
-                            style={getDelayStyle(index)}
-                            sx={{
-                                p: 3,
-                                width: isMobile ? '320px' : '500px',
-                                maxWidth: '320px',
-                                backgroundColor: 'background.paper',
-                                transition: 'all 0.3s ease-in-out',
-                                opacity: 0,
-                                borderRadius: 2,
-                                transform: 'translateY(20px)',
-                                background: 'rgba(255, 255, 255, 0.05)',
-                                backdropFilter: 'blur(12px) saturate(160%)',
-                                WebkitBackdropFilter: 'blur(12px) saturate(160%)',
-                                border: '1px solid rgba(255, 255, 255, 0.5)',
-                                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
-                                '&.show': {
-                                    opacity: 1,
-                                    transform: 'translateY(0)'
-                                },
-                                '&:hover': {
-                                    transform: isMobile ? 'none' : 'translateY(-5px)',
-                                    boxShadow: isMobile ? 2 : 6
-                                }
-                            }}
-                        >
-                            <Box
-                                className="skill-info"
-                                title={skill.name}
+                        <Tooltip title={skill.name} arrow placement="top">
+                            <Card
+                                className="skill-fade-in"
+                                ref={el => {
+                                    if (el) skillBoxRefs.current[index] = el;
+                                }}
+                                style={getDelayStyle(index)}
                                 sx={{
+                                    padding: '5px',
+                                    width: isMobile ? '85px' : '120px',
+                                    height: isMobile ? '85px' : '120px',
+                                    maxWidth: '320px',
+                                    backgroundColor: 'background.paper',
+                                    transition: 'all 0.3s ease-in-out',
+                                    opacity: 0,
+                                    borderRadius: '100%',
+                                    transform: 'translateY(20px)',
+                                    background: 'rgba(255, 255, 255, 0.05)',
+                                    backdropFilter: 'blur(12px) saturate(160%)',
+                                    WebkitBackdropFilter: 'blur(12px) saturate(160%)',
+                                    border: '1px solid rgba(255, 255, 255, 0.5)',
+                                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
                                     display: 'flex',
                                     alignItems: 'center',
-                                    mb: 2,
-                                    color: 'text.primary'
+                                    justifyContent: 'center',
+                                    '&.show': {
+                                        opacity: 1,
+                                        transform: 'translateY(0)'
+                                    },
+                                    '&:hover': {
+                                        transform: 'scale(1.05)',
+                                    }
                                 }}
                             >
-                                <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
+                                <Box
+                                    className="skill-icon-container"
+                                    sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: '4rem',
+                                        color: '#fff'
+                                    }}
+                                >
                                     {skill.icon}
                                 </Box>
-                                <Typography
-                                    variant="h6"
-                                    component="span"
-                                    sx={{
-                                        flexGrow: 1,
-                                        fontWeight: 'medium',
-                                        color: '#ffffff',
-                                        textAlign: 'right'
-                                    }}
-                                >
-                                    {skill.name}
-                                </Typography>
-
-                                {/* <Typography
-                                    variant="body1"
-                                    component="span"
-                                    sx={{
-                                        fontWeight: 'bold',
-                                        minWidth: '48px',
-                                        textAlign: 'right',
-                                        color: '#ffffff'
-                                    }}
-                                >
-                                    {animatedPercentages[index]}%
-                                </Typography> */}
-                            </Box>
-
-                            <Box className="skill-bar" sx={{ width: '100%' }}>
-                                <LinearProgress
-                                    variant="determinate"
-                                    value={animatedPercentages[index]}
-                                    sx={{
-                                        height: 8,
-                                        borderRadius: 4,
-                                        backgroundColor: 'grey.500',
-                                        '& .MuiLinearProgress-bar': {
-                                            borderRadius: 4,
-                                            transition: 'transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-                                        }
-                                    }}
-                                />
-                            </Box>
-                        </Card>
+                            </Card>
+                        </Tooltip>
                     </Grid>
                 ))}
             </Grid>

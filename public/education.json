@@ -1,0 +1,24 @@
+[
+    {
+        "year": "2022 - 2026",
+        "course": "B.E in Computer Science and Engineering",
+        "institution": "Ponjesly College of Engineering, Nagercoil",
+        "university": "Anna University",
+        "percentage": "7.6 CGPA",
+        "image": "./images/PJCE.jpg"
+    },
+    {
+        "year": "May 2022",
+        "course": "Higher Secondary",
+        "institution": "Good Shepherd Matriculation Higher Secondary School, Marthandam",
+        "percentage": "69 %",
+        "image": "./images/GSMHSS.jpg"
+    },
+    {
+        "year": "March 2020",
+        "course": "Secondary School Leaving Certificate",
+        "institution": "Mount Carmel Matriculation School, Muzhucode",
+        "percentage": "68 %",
+        "image": "./images/MCMS.jpg"
+    }
+]

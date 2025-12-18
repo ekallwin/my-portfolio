@@ -2,14 +2,11 @@ import { useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
-import Navbar from "../Navbar/navbar";
 import Footer from "../Footer/footer";
 import "./project.css";
-
 import Railway from "./Project Images/Railway.png";
 import Instagram from "./Project Images/Instagram.png";
 import Dine from "./Project Images/Dine.png";
-
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -99,7 +96,6 @@ function Projects() {
 
   return (
     <>
-      <Navbar />
 
       <Container
         maxWidth="lg"

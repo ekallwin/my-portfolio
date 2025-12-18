@@ -1,15 +1,18 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense, lazy } from "react";
 import "./App.css";
 import toast, { Toaster } from 'react-hot-toast';
-import Home from "./Home";
-import Projects from "./Components/Projects/project";
-import Achievements from "./Components/Achievements/achievements";
 import Loader from "./Components/Loader/Loader";
-import Orb from './Components/Orb/Orb.jsx';
-import FloatingLines from './Components/FloatingLines/FloatingLines';
+import SimpleBackground from './Components/SimpleBackground/SimpleBackground';
 import OfflinePage from "./Components/Offline/Offline.jsx";
 import { Analytics } from "@vercel/analytics/react"
+import Navbar from "./Components/Navbar/navbar.jsx";
+import ScrollToTop from "./Components/ScrollToTop/ScrollToTop.jsx";
+
+const Home = lazy(() => import("./Home"));
+const Projects = lazy(() => import("./Components/Projects/project.jsx"));
+const Achievements = lazy(() => import("./Components/Achievements/achievements"));
+const Education = lazy(() => import("./Components/Education/Education"));
 
 const useOnlineStatus = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -33,6 +36,8 @@ const useOnlineStatus = () => {
 function App() {
   const isOnline = useOnlineStatus();
 
+  const [initialLoad, setInitialLoad] = useState(true);
+
   if (!isOnline) {
     return <OfflinePage />;
   }
@@ -54,33 +59,24 @@ function App() {
         }}
       />
 
+      {initialLoad && <Loader onFinish={() => setInitialLoad(false)} />}
+
       <div style={{ width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: -1 }}>
-        {/* <Orb
-          hoverIntensity={0}
-          rotateOnHover={true}
-          hue={0}
-          forceHoverState={false}
-        /> */}
-        <FloatingLines
-          enabledWaves={['top', 'middle', 'bottom']}
-          lineCount={[10, 15, 20]}
-          lineDistance={[8, 6, 4]}
-          bendRadius={5.0}
-          bendStrength={-0.5}
-          interactive={true}
-          parallax={true}
-          mixBlendMode="normal"
-        />
+        <SimpleBackground />
       </div>
 
       <div className="app-shell">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/achievements" element={<Achievements />} />
-          {/* <Route path="/verify" element={<Verify />} /> */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <ScrollToTop />
+        <Suspense fallback={<Loader />}>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/education" element={<Education />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/achievements" element={<Achievements />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
         <Analytics />
       </div>
     </>

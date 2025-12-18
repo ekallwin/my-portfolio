@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, Container, Typography, Card, CardContent, Avatar, Button, Chip, Stack } from '@mui/material';
-import Allwin from "../Images/Allwin.jpg";
+import Allwin from "./Images/Allwin.jpg";
 import { useTheme } from '@mui/material/styles';
 import toast from 'react-hot-toast';
 import { FaDownload, FaCircleCheck, FaSpinner, FaGithub, FaLinkedin } from 'react-icons/fa6';
@@ -174,7 +174,7 @@ function About() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="LinkedIn"
-                    style={{ color: '#0a66c2', fontSize: 26, display: 'inline-flex', alignItems: 'center' }}
+                    style={{ color: '#ffffff', fontSize: 26, display: 'inline-flex', alignItems: 'center' }}
                   >
                     <FaLinkedin />
                   </a>
@@ -218,7 +218,7 @@ function About() {
                         '&:hover': {
                           transform: 'translateY(-2px)',
                           boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
-                          
+
                         },
                       }}
                     />
@@ -226,7 +226,7 @@ function About() {
                 </Stack>
 
                 <Button
-                disableRipple
+                  disableRipple
                   variant="contained"
                   onClick={handleDownload}
                   className="animate-child buttons"

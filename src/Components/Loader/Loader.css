@@ -4,64 +4,16 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
+    width: 100vw;
     background-color: #000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
 }
 
 .loader-wrapper p {
     color: white;
     font-size: 18px;
-}
-
-.spinner {
-    width: 80px;
-    height: 80px;
-    animation: rotate 2s linear infinite;
-}
-
-.path {
-    stroke-dasharray: 1, 200;
-    stroke-dashoffset: 0;
-    stroke-linecap: round;
-    animation: dash 1.5s ease-in-out infinite, colors 4.5s ease-in-out infinite;
-}
-
-@keyframes rotate {
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes dash {
-    0% {
-        stroke-dasharray: 1, 200;
-        stroke-dashoffset: 0;
-    }
-
-    50% {
-        stroke-dasharray: 90, 200;
-        stroke-dashoffset: -35px;
-    }
-
-    100% {
-        stroke-dasharray: 90, 200;
-        stroke-dashoffset: -124px;
-    }
-}
-
-@keyframes colors {
-    0% {
-        stroke: var(--btn-primary);
-    }
-
-    33% {
-        stroke: var(--btn-secondary);
-    }
-
-    66% {
-        stroke: var(--btn-teritary);
-    }
-
-    100% {
-        stroke: var(--btn-primary);
-    }
+    text-align: center;
 }
