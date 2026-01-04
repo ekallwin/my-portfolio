@@ -4,9 +4,6 @@ import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import Footer from "../Footer/footer";
 import "./project.css";
-import Railway from "./Project Images/Railway.png";
-import Instagram from "./Project Images/Instagram.png";
-import Dine from "./Project Images/Dine.png";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -20,9 +17,22 @@ import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
 
+import Railway from "./Project Images/Railway.png";
+import Instagram from "./Project Images/Instagram.png";
+import Dine from "./Project Images/Dine.png";
+import NVSP from './Project Images/Nvsp.png'
 const projects = [
   {
     id: 1,
+    title: "Voter's Services Portal (MERN)",
+    image: NVSP,
+    alt: "Voter's Services Portal Screenshot",
+    skills: ["Node.js", "React.js", "Express.js", "MongoDB"],
+    githubUrl: "https://github.com/ekallwin/nvsp",
+    demoUrl: "https://nvsp-nine-bavs-udfrs.vercel.app"
+  },
+  {
+    id: 2,
     title: "Railway Reservation Site (MERN)",
     image: Railway,
     alt: "Railway Reservation System Screenshot",
@@ -31,7 +41,7 @@ const projects = [
     demoUrl: "https://railway-reservation-frontend.onrender.com"
   },
   {
-    id: 2,
+    id: 3,
     title: "Instagram Clone (React.js)",
     image: Instagram,
     alt: "Instagram Clone Screenshot",
@@ -40,7 +50,7 @@ const projects = [
     demoUrl: "https://instagram-clone-ekallwin.vercel.app"
   },
   {
-    id: 3,
+    id: 4,
     title: "Food Ordering Website (Front-End)",
     image: Dine,
     alt: "Food Ordering Website Screenshot",
@@ -250,7 +260,7 @@ function Projects() {
                           px: { xs: 2, sm: 3 }
                         }}
                       >
-                        GITHUB
+                        GitHub
                       </Button>
                     </Tooltip>
 
@@ -273,7 +283,7 @@ function Projects() {
                           px: { xs: 2, sm: 3 }
                         }}
                       >
-                        LIVE DEMO
+                        Live Demo
                       </Button>
                     </Tooltip>
                   </CardActions>

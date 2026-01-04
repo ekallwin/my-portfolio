@@ -9,9 +9,9 @@ const navItems = [
   { label: 'Home', href: '#Home', isHash: true },
   { label: 'About', href: '#About', isHash: true },
   { label: 'Skills', href: '#Skills', isHash: true },
-  { label: 'Education', href: '/education', isHash: false },
   { label: 'Achievements', href: '/achievements', isHash: false },
   { label: 'Projects', href: '/projects', isHash: false },
+  { label: 'Education', href: '/education', isHash: false },
   { label: 'Contact me', href: '#contact', isHash: true },
 ];
 
