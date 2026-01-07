@@ -20,8 +20,18 @@ import Tooltip from "@mui/material/Tooltip";
 import Railway from "./Project Images/Railway.png";
 import Instagram from "./Project Images/Instagram.png";
 import Dine from "./Project Images/Dine.png";
-import NVSP from './Project Images/Nvsp.png'
+import NVSP from './Project Images/Nvsp.png';
+import Billing from './Project Images/Billing.png';
 const projects = [
+  {
+    id: 5,
+    title: "Billing Management System (MERN)",
+    image: Billing,
+    alt: "Billing management system Screenshot",
+    skills: ["Node.js", "React.js", "Express.js", "Firebase (Auth & Firestore)"],
+    githubUrl: "https://github.com/ekallwin/billing-management-system",
+    demoUrl: "https://ekallwin-bill-management-system.vercel.app"
+  },
   {
     id: 1,
     title: "Voter's Services Portal (MERN)",
@@ -162,9 +172,7 @@ function Projects() {
                 item
                 key={project.id}
                 xs={12}
-                sm={10}
-                md={6}
-                lg={4}
+                md={10}
                 sx={{ display: "flex", justifyContent: "center" }}
               >
                 <Card
@@ -172,11 +180,12 @@ function Projects() {
                   className="project-card"
                   sx={{
                     width: "100%",
-                    maxWidth: 560,
                     borderRadius: 3,
-                    overflow: "visible",
+                    overflow: "hidden",
                     transition: "transform 0.35s ease, box-shadow 0.35s ease",
                     boxShadow: 6,
+                    display: 'flex',
+                    flexDirection: { xs: 'column', md: 'row' },
                     "&:hover": {
                       transform: "translateY(-8px)",
                       boxShadow: 12
@@ -191,102 +200,96 @@ function Projects() {
                     onError={handleImageError}
                     loading="lazy"
                     sx={{
-                      height: { xs: 260, sm: 300 },
-                      objectFit: "contain",
+                      width: { xs: '100%', md: '45%' },
+                      minHeight: { xs: 260, md: '100%' },
+                      objectFit: "cover",
                       backgroundColor: "#fff",
-                      p: 1,
-                      borderRadius: 2
+                      p: 0,
                     }}
                   />
 
+                  <Box sx={{ display: 'flex', flexDirection: 'column', width: { xs: '100%', md: '55%' }, p: 1 }}>
+                    <CardContent sx={{ flex: '1 0 auto', textAlign: "left", py: 3, px: { md: 4 } }}>
+                      <Typography variant="h5" component="h3" sx={{ fontWeight: 700, mb: 2 }}>
+                        {project.title}
+                      </Typography>
 
-                  <CardContent sx={{ textAlign: "center", py: 3 }}>
-                    <Typography variant="h5" component="h3" sx={{ fontWeight: 700, mb: 1 }}>
-                      {project.title}
-                    </Typography>
+                      <Typography variant="subtitle1" sx={{ color: "text.secondary", mb: 1.5 }}>
+                        Technologies Used
+                      </Typography>
 
-                    <Typography variant="subtitle1" sx={{ color: "text.secondary", mb: 1 }}>
-                      Technologies Used
-                    </Typography>
+                      <Stack
+                        direction="row"
+                        spacing={1}
+                        justifyContent={{ xs: "center", md: "flex-start" }}
+                        flexWrap="wrap"
+                        sx={{ gap: 1, mb: 2 }}
+                      >
+                        {project.skills.map((skill, i) => (
+                          <Chip
+                            key={i}
+                            label={skill}
+                            variant="outlined"
+                            size="medium"
+                            sx={{ fontSize: "0.95rem", px: 1 }}
+                          />
+                        ))}
+                      </Stack>
+                    </CardContent>
 
-                    <Stack
-                      direction="row"
-                      spacing={1}
-                      justifyContent="center"
-                      flexWrap="wrap"
-                      sx={{ gap: 1, mb: 1 }}
+                    <CardActions
+                      sx={{
+                        display: "flex",
+                        justifyContent: { xs: "center", md: "flex-start" },
+                        alignItems: "center",
+                        gap: 2,
+                        pb: 3,
+                        px: { xs: 2, md: 4 }
+                      }}
                     >
-                      {project.skills.map((skill, i) => (
-                        <Chip
-                          key={i}
-                          label={skill}
-                          variant="outlined"
+                      <Tooltip title="View source on GitHub" arrow>
+                        <Button
+                          disableRipple
+                          variant="contained"
+                          color="primary"
                           size="medium"
-                          sx={{ fontSize: "0.95rem", px: 1 }}
-                        />
-                      ))}
-                    </Stack>
-                  </CardContent>
+                          startIcon={<FontAwesomeIcon icon={faGithub} />}
+                          onClick={(e) => handleLinkClick(e, project.githubUrl)}
+                          aria-label={`Open ${project.title} on GitHub`}
+                          sx={{
+                            textTransform: "none",
+                            fontWeight: 700,
+                            borderRadius: 10,
+                            whiteSpace: "nowrap",
+                            minWidth: 120,
+                          }}
+                        >
+                          GitHub
+                        </Button>
+                      </Tooltip>
 
-                  <CardActions
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      gap: { xs: 1.5, sm: 2 },
-                      pb: 3,
-                      position: "relative",
-                      zIndex: 30,
-                      flexDirection: { xs: "column", sm: "row" },
-                      px: { xs: 2, sm: 0 }
-                    }}
-                  >
-                    <Tooltip title="View source on GitHub" arrow>
-                      <Button
-                        disableRipple
-                        variant="contained"
-                        color="primary"
-                        size="medium"
-                        startIcon={<FontAwesomeIcon icon={faGithub} />}
-                        onClick={(e) => handleLinkClick(e, project.githubUrl)}
-                        aria-label={`Open ${project.title} on GitHub`}
-                        sx={{
-                          textTransform: "none",
-                          fontWeight: 700,
-                          borderRadius: 10,
-                          whiteSpace: "nowrap",
-                          width: { xs: "100%", sm: "auto" },
-                          minWidth: { sm: 140 },
-                          px: { xs: 2, sm: 3 }
-                        }}
-                      >
-                        GitHub
-                      </Button>
-                    </Tooltip>
-
-                    <Tooltip title="Open live demo" arrow>
-                      <Button
-                        disableRipple
-                        variant="contained"
-                        color="secondary"
-                        size="medium"
-                        startIcon={<FontAwesomeIcon icon={faLink} />}
-                        onClick={(e) => handleLinkClick(e, project.demoUrl)}
-                        aria-label={`Open live demo of ${project.title}`}
-                        sx={{
-                          textTransform: "none",
-                          fontWeight: 700,
-                          borderRadius: 10,
-                          whiteSpace: "nowrap",
-                          width: { xs: "100%", sm: "auto" },
-                          minWidth: { sm: 140 },
-                          px: { xs: 2, sm: 3 }
-                        }}
-                      >
-                        Live Demo
-                      </Button>
-                    </Tooltip>
-                  </CardActions>
+                      <Tooltip title="Open live demo" arrow>
+                        <Button
+                          disableRipple
+                          variant="contained"
+                          color="secondary"
+                          size="medium"
+                          startIcon={<FontAwesomeIcon icon={faLink} />}
+                          onClick={(e) => handleLinkClick(e, project.demoUrl)}
+                          aria-label={`Open live demo of ${project.title}`}
+                          sx={{
+                            textTransform: "none",
+                            fontWeight: 700,
+                            borderRadius: 10,
+                            whiteSpace: "nowrap",
+                            minWidth: 120,
+                          }}
+                        >
+                          Live Demo
+                        </Button>
+                      </Tooltip>
+                    </CardActions>
+                  </Box>
                 </Card>
               </Grid>
             ))}
