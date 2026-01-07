@@ -39,7 +39,7 @@ const projects = [
     alt: "Voter's Services Portal Screenshot",
     skills: ["Node.js", "React.js", "Express.js", "MongoDB"],
     githubUrl: "https://github.com/ekallwin/nvsp",
-    demoUrl: "https://nvsp-nine-bavs-udfrs.vercel.app"
+    demoUrl: "https://ekallwin-nvsp.vercel.app"
   },
   {
     id: 2,
