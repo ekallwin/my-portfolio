@@ -2,7 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
 
-export default function LinearDeterminate({ duration = 6000 }) {
+export default function LinearDeterminate({ duration = 2000, onComplete }) {
   const [progress, setProgress] = React.useState(0);
 
   React.useEffect(() => {
@@ -12,18 +12,19 @@ export default function LinearDeterminate({ duration = 6000 }) {
 
     const timer = setInterval(() => {
       setProgress((oldProgress) => {
-        if (oldProgress < 100) {
-          return Math.min(oldProgress + increment, 100);
+        if (oldProgress >= 100) {
+          clearInterval(timer);
+          if (onComplete) onComplete();
+          return 100;
         }
-        clearInterval(timer);
-        return 100;
+        return Math.min(oldProgress + increment, 100);
       });
     }, intervalTime);
 
     return () => {
       clearInterval(timer);
     };
-  }, [duration]);
+  }, [duration, onComplete]);
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -33,7 +34,7 @@ export default function LinearDeterminate({ duration = 6000 }) {
         sx={{
           height: 8,
           borderRadius: '50px',
-          backgroundColor: 'transparent',
+          backgroundColor: 'rgba(255, 255, 255, 0.2)',
           '& .MuiLinearProgress-bar': {
             background: '#007bff',
             borderRadius: '50px',

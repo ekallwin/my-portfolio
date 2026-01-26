@@ -9,7 +9,7 @@ import {
     useMediaQuery
 } from '@mui/material';
 import { FaHtml5, FaCss3Alt, FaJs, FaReact, FaNodeJs, FaGitAlt } from 'react-icons/fa';
-import { SiExpress, SiMongodb } from 'react-icons/si';
+import { SiExpress, SiMongodb, SiFirebase } from 'react-icons/si';
 
 const Skills = () => {
     const skillsRef = useRef(null);
@@ -26,6 +26,7 @@ const Skills = () => {
         { name: 'Node.js', icon: <FaNodeJs color="#3c873a" size={60} /> },
         { name: 'Express.js', icon: <SiExpress color="#fff" size={60} /> },
         { name: 'MongoDB', icon: <SiMongodb color="#47A248" size={60} /> },
+        { name: 'Firebase', icon: <SiFirebase color="#F5820D" size={60} /> },
         { name: 'Git', icon: <FaGitAlt color="#f34f29" size={60} /> }
     ];
 

@@ -5,13 +5,15 @@ import { useTheme } from '@mui/material/styles';
 import toast from 'react-hot-toast';
 import { FaDownload, FaCircleCheck, FaSpinner, FaGithub, FaLinkedin } from 'react-icons/fa6';
 import GreenTickSuccess from '../Contact/Component/Success.jsx';
+import LinearDeterminate from '../Contact/Component/Progress.jsx';
 import './about.css';
 import { scale } from 'motion';
 
 function About() {
   const theme = useTheme();
   const sectionRef = useRef(null);
-  const hasDownloadedRef = useRef(false);
+  const [hasDownloaded, setHasDownloaded] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [buttonText, setButtonText] = useState(
     <>Download Resume <FaDownload style={{ fontSize: '1em', marginLeft: 6 }} /></>
@@ -51,30 +53,25 @@ function About() {
   }, []);
 
   const handleDownload = () => {
-    if (hasDownloadedRef.current) {
+    if (hasDownloaded) {
       toast.error("You've already initiated the resume download. Please check your Downloads folder!", { duration: 5000 });
       return;
     }
-    hasDownloadedRef.current = true;
-    setButtonText(<>Download Processing <FaSpinner className="spinning" style={{ fontSize: '1em', marginLeft: 6 }} /></>);
+    setHasDownloaded(true);
+    setIsDownloading(true);
+  };
 
-    setTimeout(() => {
-      const link = document.createElement('a');
-      link.href = '/Resume.pdf';
-      link.download = 'Allwin E K - Resume.pdf';
+  const handleDownloadComplete = () => {
+    const link = document.createElement('a');
+    link.href = '/Resume.pdf';
+    link.download = 'Allwin E K - Resume.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-      const handleClick = () => {
-        setTimeout(() => {
-          setIsModalOpen(true);
-          setButtonText(<>Download Successful <FaCircleCheck style={{ fontSize: '1em', marginLeft: 6 }} /></>);
-        }, 500);
-      };
-
-      link.addEventListener('click', handleClick, { once: true });
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }, 1500);
+    setIsDownloading(false);
+    setIsModalOpen(true);
+    setButtonText(<>Download Successful <FaCircleCheck style={{ fontSize: '1em', marginLeft: 6 }} /></>);
   };
 
   const skills = [
@@ -228,32 +225,40 @@ function About() {
                     ))}
                   </Stack>
 
-                  <Button
-                    disableRipple
-                    variant="contained"
-                    onClick={handleDownload}
-                    className="animate-child buttons"
-                    data-animate
-                    sx={{
-                      mt: 3,
-                      px: 4,
-                      py: 1.5,
-                      fontWeight: 'bold',
-                      borderRadius: 3,
-                      color: 'white',
-                      mx: { xs: 'auto', md: 0 },
-                      display: { xs: 'block', md: 'inline-flex' },
-                      // background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
-                      boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
-                      '&:hover': {
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 6px 20px rgba(0,0,0,0.3)',
-                      },
-                      transition: 'all 0.3s ease',
-                    }}
-                  >
-                    {buttonText}
-                  </Button>
+                  {isDownloading ? (
+                    <Box sx={{ mt: 3, width: '100%', maxWidth: 300, mx: { xs: 'auto', md: 0 } }}>
+                      <LinearDeterminate onComplete={handleDownloadComplete} />
+                      <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)', mt: 1, display: 'block', textAlign: 'center' }}>
+                        Downloading...
+                      </Typography>
+                    </Box>
+                  ) : (
+                    <Button
+                      disableRipple
+                      variant="contained"
+                      onClick={handleDownload}
+                      className={`buttons ${!hasDownloaded ? 'animate-child' : ''}`}
+                      data-animate={!hasDownloaded ? true : undefined}
+                      sx={{
+                        mt: 3,
+                        px: 4,
+                        py: 1.5,
+                        fontWeight: 'bold',
+                        borderRadius: 3,
+                        color: 'white',
+                        mx: { xs: 'auto', md: 0 },
+                        display: { xs: 'block', md: 'inline-flex' },
+                        boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+                        '&:hover': {
+                          transform: 'translateY(-2px)',
+                          boxShadow: '0 6px 20px rgba(0,0,0,0.3)',
+                        },
+                        transition: 'all 0.3s ease',
+                      }}
+                    >
+                      {buttonText}
+                    </Button>
+                  )}
                 </Box>
               </Stack>
             </CardContent>
