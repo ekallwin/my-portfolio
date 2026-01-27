@@ -71,7 +71,7 @@ function About() {
 
     setIsDownloading(false);
     setIsModalOpen(true);
-    setButtonText(<>Download Successful <FaCircleCheck style={{ fontSize: '1em', marginLeft: 6 }} /></>);
+    setButtonText(<>Resume Downloaded <FaCircleCheck style={{ fontSize: '1em', marginLeft: 6 }} /></>);
   };
 
   const skills = [
