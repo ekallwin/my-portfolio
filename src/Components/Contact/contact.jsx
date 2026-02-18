@@ -486,10 +486,10 @@ const ContactForm = () => {
     }
 
     if (isIndia) {
-      return `Detected country: ${countryCode} - ${userCountry}`;
+      return `Detected country: ${countryCode} ${userCountry}`;
     }
 
-    return `Detected country: ${countryCode} - ${userCountry}`;
+    return `Detected country: ${countryCode} ${userCountry}`;
   };
 
   const getPhoneMaxLength = () => {
