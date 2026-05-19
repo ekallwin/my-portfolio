@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import './contact.css';
 import toast from 'react-hot-toast';
 import { Filter } from 'bad-words';
-import { FaInfoCircle } from "react-icons/fa";
 import {
   Box,
   TextField,
@@ -18,13 +17,19 @@ import {
   Backdrop,
   Rating,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import Tooltip from '@mui/material/Tooltip';
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { Send as SendIcon, Close as CloseIcon, CheckCircle as CheckCircleIcon } from "@mui/icons-material";
+import { Send as SendIcon, Close as CloseIcon } from "@mui/icons-material";
 import GreenTickSuccess from "./Component/Success";
 import moment from "moment";
+import { parsePhoneNumberFromString, AsYouType, getCountries, getCountryCallingCode } from "libphonenumber-js";
+import ReactSelect from "react-select";
+import ReactCountryFlag from "react-country-flag";
 
 const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL;
 
@@ -39,66 +44,85 @@ const ContactForm = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [countryCode, setCountryCode] = useState("+91");
+  const [countryIso, setCountryIso] = useState("IN");
   const [isLoadingCountry, setIsLoadingCountry] = useState(true);
-  const [isIndia, setIsIndia] = useState(false);
   const [userCountry, setUserCountry] = useState("");
-  const [isp, setIsp] = useState("");
-
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [rating, setRating] = useState(0);
   const [feedbackComment, setFeedbackComment] = useState("");
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const [feedbackLoading, setFeedbackLoading] = useState(false);
+  const [countryModalOpen, setCountryModalOpen] = useState(false);
+  const [isManuallySelected, setIsManuallySelected] = useState(false);
+
+  const countryOptions = useMemo(() => {
+    const displayNames = new Intl.DisplayNames(["en"], { type: "region" });
+    return getCountries()
+      .map((iso) => {
+        const calling = `+${getCountryCallingCode(iso)}`;
+        const name = displayNames.of(iso) || iso;
+        const flag = iso.toUpperCase().split("").map((c) =>
+          String.fromCodePoint(127397 + c.charCodeAt(0))
+        ).join("");
+        return { value: iso, label: `${flag}  ${name}`, name, calling };
+      })
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, []);
+
+  const handleCountrySelect = (option) => {
+    if (!option) return;
+    setCountryCode(option.calling);
+    setCountryIso(option.value);
+    setUserCountry(option.name);
+    setFormData((prev) => ({ ...prev, phone: option.calling + " " }));
+    setErrors((prev) => ({ ...prev, phone: "" }));
+    setIsManuallySelected(true);
+    setCountryModalOpen(false);
+  };
 
   const theme = useTheme();
   const contactRef = useRef(null);
-
-  const hasEmojis = (str) => {
-    const emojiRegex = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{2300}-\u{23FF}]/u;
-    return emojiRegex.test(str);
-  };
 
   useEffect(() => {
     const fetchCountryData = async () => {
       try {
         setIsLoadingCountry(true);
 
-        const response = await fetch("https://ipwho.is/");
-        const data = await response.json();
+        let callingCode = null;
+        let isoCode = null;
+        let countryName = null;
 
-        if (data.success) {
-          const userCallingCode = `+${data.calling_code}`;
-          const userCountryName = data.country;
-          const isUserInIndia = data.country_code === "IN";
-          const userISP = data.connection?.isp || "Anonymous ISP";
+        try {
+          const res = await fetch("https://ipapi.co/json/");
+          const d = await res.json();
+          if (d.country_code && d.country_calling_code) {
+            isoCode = d.country_code;
+            callingCode = d.country_calling_code;
+            countryName = d.country_name;
+          }
+        } catch { }
 
-          setCountryCode(userCallingCode);
-          setUserCountry(userCountryName);
-          setIsIndia(isUserInIndia);
-          setIsp(userISP);
-
-          if (!formData.phone) {
-            if (isUserInIndia) {
-              setFormData((prev) => ({
-                ...prev,
-                phone: "+91 ",
-              }));
-            } else {
-              setFormData((prev) => ({
-                ...prev,
-                phone: userCallingCode + " ",
-              }));
-            }
+        if (!isoCode) {
+          const res = await fetch("https://freeipapi.com/api/json");
+          const d = await res.json();
+          if (d.countryCode && d.phoneCode) {
+            isoCode = d.countryCode;
+            callingCode = `+${d.phoneCode}`;
+            countryName = d.countryName;
           }
         }
-      } catch (error) {
-        console.log("Could not fetch country data, using default +91");
-        setCountryCode("+91");
-        setIsIndia(true);
-        setUserCountry("India");
-        if (!formData.phone) {
-          setFormData((prev) => ({ ...prev, phone: "+91 " }));
+
+        if (isoCode && callingCode) {
+          setCountryCode(callingCode);
+          setCountryIso(isoCode);
+          setUserCountry(countryName || isoCode);
+          setFormData((prev) => ({ ...prev, phone: "" }));
         }
+      } catch {
+        setCountryCode("+91");
+        setCountryIso("IN");
+        setUserCountry("India");
+        setFormData((prev) => ({ ...prev, phone: "" }));
       } finally {
         setIsLoadingCountry(false);
       }
@@ -108,62 +132,41 @@ const ContactForm = () => {
   }, []);
 
   const handlePhoneChange = (e) => {
-    const value = e.target.value;
+    const raw = e.target.value;
 
-    if (isIndia) {
-      const cleanedValue = value.replace(/\D/g, "");
-      let formattedValue = cleanedValue;
-      if (!cleanedValue.startsWith("91") && cleanedValue) {
-        formattedValue = "91" + cleanedValue;
-      }
-
-      if (formattedValue.length > 12) {
-        return;
-      }
-
-      let displayValue = "+91 ";
-      const localNumber = formattedValue.slice(2);
-
-      if (localNumber.length > 0) {
-        if (localNumber.length <= 5) {
-          displayValue += localNumber;
-        } else {
-          displayValue += localNumber.slice(0, 5) + " " + localNumber.slice(5, 10);
-        }
-      }
-
-      setFormData((prev) => ({
-        ...prev,
-        phone: displayValue,
-      }));
-    } else {
-      let formattedValue = value;
-
-      if (!value.startsWith("+") && value) {
-        formattedValue = countryCode + " " + value.replace(/\D/g, "");
-      }
-
-      formattedValue = formattedValue.replace(/[^\d+\s]/g, "");
-
-      let displayValue = formattedValue;
-      if (formattedValue.startsWith("+") && !formattedValue.includes(" ") && formattedValue.length > 3) {
-        const codeMatch = formattedValue.match(/^(\+\d{1,4})(\d+)/);
-        if (codeMatch) {
-          displayValue = codeMatch[1] + " " + codeMatch[2];
-        }
-      }
-
-      setFormData((prev) => ({
-        ...prev,
-        phone: displayValue,
-      }));
+    if (!formData.phone && raw) {
+      const digit = raw.replace(/\D/g, "");
+      if (!digit) return;
+      const formatter = new AsYouType(countryIso);
+      const formatted = formatter.input(countryCode + digit);
+      setFormData((prev) => ({ ...prev, phone: formatted }));
+      return;
     }
 
+    const localDigits = raw.replace(/\D/g, "").replace(
+      new RegExp("^" + countryCode.replace("+", "")),
+      ""
+    );
+
+    const internationalInput = countryCode + localDigits;
+    const formatter = new AsYouType(countryIso);
+    const formatted = formatter.input(internationalInput);
+    const display = formatted.startsWith(countryCode) ? formatted : countryCode + " ";
+
+    const current = parsePhoneNumberFromString(formData.phone.trim(), countryIso);
+    if (current && current.isPossible() && current.isValid()) {
+      if (raw.length >= formData.phone.length) return;
+    }
+
+    if (!raw || raw === "") {
+      setFormData((prev) => ({ ...prev, phone: "" }));
+      return;
+    }
+
+    setFormData((prev) => ({ ...prev, phone: display }));
+
     if (errors.phone) {
-      setErrors((prev) => ({
-        ...prev,
-        phone: "",
-      }));
+      setErrors((prev) => ({ ...prev, phone: "" }));
     }
   };
 
@@ -173,97 +176,54 @@ const ContactForm = () => {
     if (name === "phone") {
       handlePhoneChange(e);
     } else if (name === "name") {
-      const capitalizedValue = value
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(' ');
-
-      setFormData((prev) => ({
-        ...prev,
-        [name]: capitalizedValue,
-      }));
-
+      const capitalized = value
+        .split(" ")
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+        .join(" ");
+      setFormData((prev) => ({ ...prev, [name]: capitalized }));
     } else if (name === "email") {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value.toLowerCase(),
-      }));
+      setFormData((prev) => ({ ...prev, [name]: value.toLowerCase() }));
     } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
 
     if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
   const handleNameBlur = () => {
-    const raw = formData.name || "";
-    const cleaned = raw.replace(/\s+/g, " ").trim();
-
+    const cleaned = (formData.name || "").replace(/\s+/g, " ").trim();
     const capitalized = cleaned
       .split(" ")
       .filter(Boolean)
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
       .join(" ");
-
-    setFormData(prev => ({ ...prev, name: capitalized }));
-    if (errors.name) {
-      setErrors(prev => ({ ...prev, name: "" }));
-    }
+    setFormData((prev) => ({ ...prev, name: capitalized }));
+    if (errors.name) setErrors((prev) => ({ ...prev, name: "" }));
   };
 
-
   const validatePhoneNumber = (phone) => {
-    const cleanPhone = phone.replace(/\s/g, "");
+    const trimmed = phone.trim();
+    if (!trimmed) return "Phone number is required";
 
-    if (isIndia) {
-      if (!cleanPhone.startsWith("+91")) {
-        return "Indian numbers must start with +91";
+    const parsed = parsePhoneNumberFromString(trimmed, countryIso);
+
+    if (!parsed) return "Invalid phone number";
+
+    if (!parsed.isPossible()) {
+      try {
+        return `Invalid phone number for ${userCountry || "this country"}`;
+      } catch {
+        return "Phone number length is invalid";
       }
+    }
 
-      const localNumber = cleanPhone.slice(3);
-
-      if (localNumber.length !== 10) {
-        return "Indian phone number must be 10 digits";
-      }
-
-      const firstDigit = localNumber.charAt(0);
-      if (!["6", "7", "8", "9"].includes(firstDigit)) {
-        return "Invalid Indian phone number";
-      }
-
-      if (!/^\d+$/.test(localNumber)) {
-        return "Phone number must contain only digits";
-      }
-    } else {
-      if (!cleanPhone.startsWith("+")) {
-        return "Phone number must start with country code";
-      }
-
-      const countryCodeMatch = cleanPhone.match(/^\+(\d{1,4})/);
-      if (!countryCodeMatch) {
-        return "Invalid country code format";
-      }
-
-      const localNumber = cleanPhone.slice(countryCodeMatch[0].length);
-
-      if (localNumber.length < 5) {
-        return "Phone number is too short";
-      }
-
-      if (localNumber.length > 15) {
-        return "Phone number is too long";
-      }
-
-      if (!/^\d+$/.test(localNumber)) {
-        return "Phone number must contain only digits after country code";
+    if (!parsed.isValid()) {
+      try {
+        return `Invalid ${userCountry || "phone"} number`;
+      } catch {
+        return "Invalid phone number";
       }
     }
 
@@ -274,35 +234,23 @@ const ContactForm = () => {
     const newErrors = {};
 
     if (!formData.name || !formData.name.trim()) {
-      toast.error("Name is required");
       newErrors.name = "Name is required";
     } else if (formData.name.trim().length < 2) {
-      toast.error("Name must be at least 2 characters long");
       newErrors.name = "Name must be at least 2 characters long";
     } else if (!/^[a-zA-Z\s]+$/.test(formData.name)) {
-      toast.error("Name can only contain letters and spaces");
       newErrors.name = "Name can only contain letters and spaces";
     }
 
     if (!hidePhone) {
-      if (!formData.phone || !formData.phone.trim()) {
-        toast.error("Phone number is required");
-        newErrors.phone = "Phone number is required";
-      } else {
-        const phoneError = validatePhoneNumber(formData.phone);
-        if (phoneError) {
-          toast.error(phoneError);
-          newErrors.phone = phoneError;
-        }
-      }
+      const phoneError = validatePhoneNumber(formData.phone || "");
+      if (phoneError) newErrors.phone = phoneError;
     }
 
     if (!formData.email || !formData.email.trim()) {
-      toast.error("Email address is required");
       newErrors.email = "Email address is required";
     } else if (
-      ["demo", "example", "test", "invalid", "fake", "sample", "dummy", "user"].some(word =>
-        formData.email.includes(word)
+      ["demo", "example", "test", "invalid", "fake", "sample", "dummy", "user"].some((w) =>
+        formData.email.includes(w)
       ) ||
       !formData.email.includes("@") ||
       !formData.email.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9]+(\.[a-zA-Z]{2,})?$/) ||
@@ -310,37 +258,26 @@ const ContactForm = () => {
         /\.(com|net|org|info|biz|co|me|site|online|website|store|space|io|app|dev|tech|ai|so|cloud|systems|digital|solutions|company|enterprises|agency|firm|group|international|consulting|edu|edu\.in|ac\.in|university|school|college|institute|in|co\.in|gov\.in|mil\.in|uk|us|ca|au|nz|ph|sg|id|de|fr|it|jp|tv|fm|radio|press|news|media)$/
       )
     ) {
-      toast.error("Please enter a valid email address");
       newErrors.email = "Please enter a valid email address";
     } else {
       const filter = new Filter();
       if (filter.isProfane(formData.email)) {
-        toast.error("Email contains inappropriate language");
         newErrors.email = "Email contains inappropriate language";
       }
     }
 
     if (!formData.message || !formData.message.trim()) {
-      toast.error("Message cannot be empty");
       newErrors.message = "Message cannot be empty";
     } else if (formData.message.trim().length > 500) {
-      toast.error("Message must be less than 500 characters");
       newErrors.message = "Message must be less than 500 characters";
-    }
-    // else if (hasEmojis(formData.message)) {
-    //   toast.error("Emogies are not allowed in message");
-    //   newErrors.message = "Emogies are not allowed in message";
-    // } 
-    else {
+    } else {
       const filter = new Filter();
       if (filter.isProfane(formData.message)) {
-        toast.error("Message contains inappropriate language");
         newErrors.message = "Message contains inappropriate language";
       }
     }
 
-    setErrors({});
-
+    setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
@@ -351,29 +288,23 @@ const ContactForm = () => {
         email: data.email,
         phone: data.phone,
         message: data.message,
-        timestamp: new Date().toLocaleString()
+        timestamp: new Date().toLocaleString(),
       };
 
       await fetch(GOOGLE_SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(submissionData),
       });
 
-      return { success: true, message: 'Message sent successfully!' };
-
+      return { success: true, message: "Message sent successfully!" };
     } catch (error) {
-      console.error('Submission error:', error);
-
+      console.error("Submission error:", error);
       if (import.meta.env.DEV) {
-        console.warn('Development mode: Simulating success');
-        return { success: true, message: 'Development mode - submission simulated' };
+        return { success: true, message: "Development mode - submission simulated" };
       }
-
-      throw new Error(`Message submission failed. Please try again.`);
+      throw new Error("Message submission failed. Please try again.");
     }
   };
 
@@ -384,8 +315,8 @@ const ContactForm = () => {
     const isValid = validateForm();
     if (!isValid) {
       setLoading(false);
-      Object.values(errors).forEach(error => {
-        if (error) toast.error(error);
+      toast.error("Please fix the errors in the form before sending.", {
+        duration: 3000,
       });
       return;
     }
@@ -394,24 +325,20 @@ const ContactForm = () => {
 
     const submissionPromise = submitToGoogleSheets(submittedData);
     toast.promise(submissionPromise, {
-      loading: 'Sending your message...',
-      success: (data) => {
+      loading: "Sending your message...",
+      success: () => {
         setFormData({
           name: "",
-          phone: isIndia ? "+91 " : `${countryCode} `,
+          phone: countryCode + " ",
           email: "",
           message: "",
         });
         setHidePhone(false);
         setErrors({});
-
-        setTimeout(() => {
-          setFeedbackOpen(true);
-        }, 1500);
-
-        return `Message sent successfully!`;
+        setTimeout(() => setFeedbackOpen(true), 1500);
+        return "Message sent successfully!";
       },
-      error: 'Failed to send message. Please try again.',
+      error: "Failed to send message. Please try again.",
     });
 
     try {
@@ -424,19 +351,9 @@ const ContactForm = () => {
   };
 
   const handleFeedbackSubmit = async () => {
-    // if (hasEmojis(feedbackComment)) {
-    //   toast.error("Emogies are not allowed");
-    //   return;
-    // }
-
     setFeedbackLoading(true);
-
     try {
-      await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve();
-        }, 1200);
-      });
+      await new Promise((resolve) => setTimeout(resolve, 1200));
       setFeedbackSubmitted(true);
     } catch (error) {
       console.error(error);
@@ -456,49 +373,35 @@ const ContactForm = () => {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("show");
-          }
-        });
-      },
+      (entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add("show")),
       { threshold: 0.3 }
     );
-
-    const contactElement = contactRef.current;
-    if (contactElement) {
-      observer.observe(contactElement);
-    }
-
-    return () => {
-      if (contactElement) {
-        observer.unobserve(contactElement);
-      }
-    };
+    const el = contactRef.current;
+    if (el) observer.observe(el);
+    return () => { if (el) observer.unobserve(el); };
   }, []);
 
   const getPhoneHelperText = () => {
     if (errors.phone) return errors.phone;
-
-    if (isLoadingCountry) {
-      return "Detecting your country...";
-    }
-
-    if (isIndia) {
-      return `Detected country: ${countryCode} ${userCountry}`;
-    }
-
-    return `Detected country: ${countryCode} ${userCountry}`;
+    if (isLoadingCountry) return "Detecting your country...";
+    return (
+      <span style={{ margin: '0rem' }}>
+        {isManuallySelected ? "Selected country:" : "Detected country:"}{" "}
+        <strong>{userCountry}</strong>{" "}
+        <span
+          onClick={() => setCountryModalOpen(true)}
+          style={{
+            color: "#667eea",
+            cursor: "pointer",
+            fontWeight: 600,
+            textDecoration: "underline",
+          }}
+        >
+          Change
+        </span>
+      </span>
+    );
   };
-
-  const getPhoneMaxLength = () => {
-    if (isIndia) {
-      return 15;
-    }
-    return 25;
-  };
-
 
   return (
     <Box
@@ -513,8 +416,6 @@ const ContactForm = () => {
         alignItems: "center",
         justifyContent: "center",
       }}
-
-
     >
       <Slide in direction="up" timeout={800}>
         <Card
@@ -558,29 +459,13 @@ const ContactForm = () => {
                     onBlur={handleNameBlur}
                     onChange={handleChange}
                     error={!!errors.name}
+                    helperText={errors.name || ""}
                     margin="normal"
                     variant="outlined"
                     size="small"
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: 2,
-
-                      },
-                    }}
+                    FormHelperTextProps={{ sx: { mx: 0.5 } }}
+                    sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
                   />
-
-                  {/* <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={hidePhone}
-                        onChange={(e) => setHidePhone(e.target.checked)}
-                        color="primary"
-                        size="small"
-                      />
-                    }
-                    label="Don't share phone number"
-                    sx={{ mt: 1, mb: 1 }}
-                  /> */}
 
                   {!hidePhone && (
                     <TextField
@@ -588,7 +473,6 @@ const ContactForm = () => {
                       label="Phone Number"
                       name="phone"
                       type="tel"
-                      inputMode="numeric"
                       value={formData.phone}
                       onChange={handleChange}
                       error={!!errors.phone}
@@ -596,15 +480,11 @@ const ContactForm = () => {
                       variant="outlined"
                       helperText={getPhoneHelperText()}
                       size="small"
-                      inputProps={{
-                        maxLength: getPhoneMaxLength(),
-                      }}
+                      inputProps={{ maxLength: 25 }}
+                      FormHelperTextProps={{ sx: { mx: 0.5 } }}
                       sx={{
-                        "& .MuiOutlinedInput-root": {
-                          borderRadius: 2,
-                        },
+                        "& .MuiOutlinedInput-root": { borderRadius: 2 },
                       }}
-                      placeholder={isIndia ? "+91 98765 43210" : `${countryCode} 123 456 7890`}
                     />
                   )}
 
@@ -616,14 +496,12 @@ const ContactForm = () => {
                     value={formData.email}
                     onChange={handleChange}
                     error={!!errors.email}
+                    helperText={errors.email || ""}
                     margin="normal"
                     variant="outlined"
                     size="small"
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: 2,
-                      },
-                    }}
+                    FormHelperTextProps={{ sx: { mx: 0.5 } }}
+                    sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
                   />
 
                   <TextField
@@ -633,20 +511,16 @@ const ContactForm = () => {
                     value={formData.message}
                     onChange={handleChange}
                     error={!!errors.message}
-                    helperText={`${formData.message.length}/500 characters`}
+                    helperText={errors.message || `${formData.message.length}/500 characters`}
                     margin="normal"
                     variant="outlined"
                     multiline
                     rows={1.5}
                     size="small"
+                    FormHelperTextProps={{ sx: { mx: 0.5 } }}
                     sx={{
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: 2,
-                        alignItems: "flex-start",
-                      },
-                      "& .MuiInputBase-inputMultiline": {
-                        minHeight: "80px",
-                      },
+                      "& .MuiOutlinedInput-root": { borderRadius: 2, alignItems: "flex-start" },
+                      "& .MuiInputBase-inputMultiline": { minHeight: "80px" },
                     }}
                   />
 
@@ -663,7 +537,6 @@ const ContactForm = () => {
                       py: 1,
                       px: 4,
                       borderRadius: 2,
-                      // background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
                       fontSize: "0.95rem",
                       fontWeight: "600",
                       textTransform: "none",
@@ -674,21 +547,84 @@ const ContactForm = () => {
                   </Button>
                 </Box>
 
-                <Stack direction="row" spacing={1} alignItems="center" mt={2}>
-
+                {/* <Stack direction="row" spacing={1} alignItems="center" mt={2}>
                   <LockOutlinedIcon fontSize="small" color="action" />
-                  <Typography variant="body2" color="text.secondary" >
+                  <Typography variant="body2" color="text.secondary">
                     Your information including your phone and email, is kept confidential.
-                    {/* <Tooltip title="Your personal information, including your phone number and email address, is kept strictly confidential. It is not stored on servers or any other electronic forms and is used solely to contact you when necessary." arrow>
-                      <FaInfoCircle color="#0d6efd" className="contact-info"/>
-                    </Tooltip> */}
                   </Typography>
-                </Stack>
+                </Stack> */}
+
               </Box>
             </Fade>
           </CardContent>
         </Card>
       </Slide>
+
+      <Dialog
+        open={countryModalOpen}
+        onClose={() => setCountryModalOpen(false)}
+        fullWidth
+        maxWidth="xs"
+        PaperProps={{
+          sx: { borderRadius: 3, p: 1, minHeight: 420 },
+        }}
+      >
+        <DialogTitle sx={{ fontWeight: "bold", pb: 1 }}>
+          Select Country
+          <IconButton
+            onClick={() => setCountryModalOpen(false)}
+            sx={{ position: "absolute", right: 8, top: 8, color: "text.secondary" }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent sx={{ pt: 0, overflow: "visible" }}>
+          <ReactSelect
+            autoFocus
+            openMenuOnFocus
+            options={countryOptions}
+            onChange={handleCountrySelect}
+            placeholder="Search country..."
+            menuPortalTarget={document.body}
+            menuPosition="fixed"
+            value={countryOptions.find((o) => o.value === countryIso) || null}
+            formatOptionLabel={(opt) => (
+              <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <ReactCountryFlag
+                  countryCode={opt.value}
+                  svg
+                  style={{ width: "1.4em", height: "1.4em", borderRadius: 2, flexShrink: 0 }}
+                />
+                <span style={{ flex: 1 }}>{opt.name}</span>
+                <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "#888" }}>{opt.calling}</span>
+              </span>
+            )}
+            styles={{
+              control: (base, state) => ({
+                ...base,
+                borderColor: state.isFocused ? "#667eea" : "#ddd",
+                boxShadow: state.isFocused ? "0 0 0 2px rgba(102,126,234,0.25)" : "none",
+                borderRadius: 8,
+                "&:hover": { borderColor: "#667eea" },
+              }),
+              option: (base, state) => ({
+                ...base,
+                backgroundColor: state.isSelected
+                  ? "rgba(102,126,234,0.15)"
+                  : state.isFocused
+                    ? "rgba(102,126,234,0.08)"
+                    : "white",
+                color: state.isSelected ? "#667eea" : "#333",
+                fontWeight: state.isSelected ? 600 : 400,
+                cursor: "pointer",
+              }),
+              menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+              menuList: (base) => ({ ...base, maxHeight: 300 }),
+              menu: (base) => ({ ...base, marginTop: 4 }),
+            }}
+          />
+        </DialogContent>
+      </Dialog>
 
       <Modal
         open={feedbackOpen}
@@ -698,14 +634,12 @@ const ContactForm = () => {
         }}
         closeAfterTransition
         BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
+        BackdropProps={{ timeout: 500 }}
         sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backdropFilter: 'blur(5px)',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backdropFilter: "blur(5px)",
         }}
       >
         <Fade in={feedbackOpen}>
@@ -716,7 +650,7 @@ const ContactForm = () => {
               boxShadow: 24,
               p: 4,
               width: { xs: "90%", sm: 450 },
-              position: 'relative',
+              position: "relative",
               textAlign: "center",
             }}
           >
@@ -724,37 +658,30 @@ const ContactForm = () => {
               <>
                 <IconButton
                   onClick={handleFeedbackClose}
-                  sx={{
-                    position: 'absolute',
-                    right: 8,
-                    top: 8,
-                    color: 'text.secondary',
-                  }}
+                  sx={{ position: "absolute", right: 8, top: 8, color: "text.secondary" }}
                 >
                   <CloseIcon />
                 </IconButton>
 
-                <Typography variant="h5" fontWeight="bold" sx={{ mb: 0.5, color: 'text.primary' }}>
+                <Typography variant="h5" fontWeight="bold" sx={{ mb: 0.5, color: "text.primary" }}>
                   Rate this portfolio
                 </Typography>
 
-                <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+                <Typography variant="body2" sx={{ mb: 2, color: "text.secondary" }}>
                   Your rating for this portfolio
                 </Typography>
 
                 <Rating
                   name="simple-controlled"
                   value={rating}
-                  onChange={(event, newValue) => {
-                    setRating(newValue);
-                  }}
+                  onChange={(event, newValue) => setRating(newValue)}
                   size="large"
                   sx={{ mb: 3 }}
                 />
 
                 <TextField
                   fullWidth
-                  label="Commands / Feedback"
+                  label="Comments / Feedback"
                   multiline
                   rows={3}
                   variant="outlined"
@@ -770,22 +697,18 @@ const ContactForm = () => {
                   disabled={!rating || feedbackLoading}
                   fullWidth
                   endIcon={feedbackLoading ? <CircularProgress size={16} color="inherit" /> : null}
-                  sx={{
-                    py: 1.5,
-                    fontWeight: "bold",
-                    borderRadius: 2,
-                  }}
+                  sx={{ py: 1.5, fontWeight: "bold", borderRadius: 2 }}
                 >
                   {feedbackLoading ? "Submitting..." : "Submit"}
                 </Button>
               </>
             ) : (
               <>
-                <Box sx={{ mb: 2, color: 'success.main', display: 'flex', justifyContent: 'center' }}>
+                <Box sx={{ mb: 2, color: "success.main", display: "flex", justifyContent: "center" }}>
                   <GreenTickSuccess />
                 </Box>
 
-                <Typography variant="h5" fontWeight="bold" sx={{ mb: 1, color: 'text.primary' }}>
+                <Typography variant="h5" fontWeight="bold" sx={{ mb: 1, color: "text.primary" }}>
                   Thanks for your feedback
                 </Typography>
 
@@ -793,13 +716,7 @@ const ContactForm = () => {
                   variant="contained"
                   disableRipple
                   onClick={handleFeedbackClose}
-                  sx={{
-                    mt: 3,
-                    px: 4,
-                    py: 1,
-                    fontWeight: "bold",
-                    borderRadius: 2,
-                  }}
+                  sx={{ mt: 3, px: 4, py: 1, fontWeight: "bold", borderRadius: 2 }}
                 >
                   Close
                 </Button>
@@ -808,8 +725,7 @@ const ContactForm = () => {
           </Box>
         </Fade>
       </Modal>
-
-    </Box >
+    </Box>
   );
 };
 
