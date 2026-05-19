@@ -221,7 +221,7 @@ const ContactForm = () => {
 
     if (!parsed.isValid()) {
       try {
-        return `Invalid ${userCountry || "phone"} number`;
+        return `Invalid phone number for ${userCountry || "this country"}`;
       } catch {
         return "Invalid phone number";
       }
