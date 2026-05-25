@@ -88,34 +88,67 @@ const ContactForm = () => {
       try {
         setIsLoadingCountry(true);
 
+        // Check if country data is already cached in this session to prevent redundant requests
+        const cachedData = sessionStorage.getItem("user_country_code");
+        if (cachedData) {
+          const parsed = JSON.parse(cachedData);
+          if (parsed.isoCode && parsed.callingCode) {
+            setCountryCode(parsed.callingCode);
+            setCountryIso(parsed.isoCode);
+            setUserCountry(parsed.countryName || parsed.isoCode);
+            setFormData((prev) => ({ ...prev, phone: "" }));
+            setIsLoadingCountry(false);
+            return;
+          }
+        }
+
         let callingCode = null;
         let isoCode = null;
         let countryName = null;
 
         try {
-          const res = await fetch("https://ipapi.co/json/");
-          const d = await res.json();
-          if (d.country_code && d.country_calling_code) {
-            isoCode = d.country_code;
-            callingCode = d.country_calling_code;
-            countryName = d.country_name;
+          const res = await fetch("https://ipwho.is/");
+          if (res.ok) {
+            const d = await res.json();
+            if (d.success && d.country_code && d.country_phone) {
+              isoCode = d.country_code;
+              callingCode = d.country_phone.startsWith("+") ? d.country_phone : `+${d.country_phone}`;
+              countryName = d.country;
+            }
           }
         } catch { }
 
         if (!isoCode) {
-          const res = await fetch("https://freeipapi.com/api/json");
-          const d = await res.json();
-          if (d.countryCode && d.phoneCode) {
-            isoCode = d.countryCode;
-            callingCode = `+${d.phoneCode}`;
-            countryName = d.countryName;
-          }
+          try {
+            const res = await fetch("https://ipinfo.io/json");
+            if (res.ok) {
+              const d = await res.json();
+              if (d.country) {
+                isoCode = d.country;
+                callingCode = `+${getCountryCallingCode(d.country)}`;
+                const displayNames = new Intl.DisplayNames(["en"], { type: "region" });
+                countryName = displayNames.of(d.country) || d.country;
+              }
+            }
+          } catch { }
         }
 
         if (isoCode && callingCode) {
           setCountryCode(callingCode);
           setCountryIso(isoCode);
-          setUserCountry(countryName || isoCode);
+          const name = countryName || isoCode;
+          setUserCountry(name);
+          setFormData((prev) => ({ ...prev, phone: "" }));
+
+          sessionStorage.setItem("user_country_code", JSON.stringify({
+            isoCode,
+            callingCode,
+            countryName: name
+          }));
+        } else {
+          setCountryCode("+91");
+          setCountryIso("IN");
+          setUserCountry("India");
           setFormData((prev) => ({ ...prev, phone: "" }));
         }
       } catch {

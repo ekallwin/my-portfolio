@@ -92,10 +92,7 @@ const Skills = () => {
                 {skillsData.map((skill, index) => (
                     <Grid
                         key={index}
-                        item={!isMobile}
-                        xs={4}
-                        sm={6}
-                        md={4}
+                        size={!isMobile ? { xs: 4, sm: 6, md: 4 } : undefined}
                         sx={{ display: 'flex', justifyContent: 'center' }}
                     >
                         <Tooltip title={skill.name} arrow>

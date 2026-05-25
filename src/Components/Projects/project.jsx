@@ -55,7 +55,7 @@ const projects = [
     title: "Instagram Clone (React.js)",
     image: Instagram,
     alt: "Instagram Clone Screenshot",
-    skills: ["React.js", "Vite"],
+    skills: ["React.js", "Vite", "Rest API"],
     githubUrl: "https://github.com/ekallwin/instagram-clone",
     demoUrl: "https://instagram-clone-ekallwin.vercel.app"
   },
@@ -169,10 +169,8 @@ function Projects() {
           >
             {projects.map((project, index) => (
               <Grid
-                item
                 key={project.id}
-                xs={12}
-                md={10}
+                size={{ xs: 12, md: 10 }}
                 sx={{ display: "flex", justifyContent: "center" }}
               >
                 <Card

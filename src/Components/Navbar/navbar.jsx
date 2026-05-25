@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { Box, IconButton, Typography, Drawer, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IoMenu, IoClose } from "react-icons/io5";
+import { motion } from "motion/react";
 import ScrollProgress from "../ScrollProgress/ScrollProgress";
 
 const navItems = [
@@ -14,6 +15,44 @@ const navItems = [
   { label: 'Education', href: '/education', isHash: false },
   { label: 'Contact me', href: '#contact', isHash: true },
 ];
+
+const containerVariants = {
+  hidden: { 
+    opacity: 0,
+    transition: {
+      staggerChildren: 0.05,
+      staggerDirection: -1,
+    }
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { 
+    x: -30, 
+    opacity: 0,
+    transition: {
+      type: "tween",
+      duration: 0.2,
+      ease: "easeIn"
+    }
+  },
+  visible: {
+    x: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 120,
+      damping: 15,
+    },
+  },
+};
 
 function Navbar(props) {
   const { window } = props;
@@ -62,18 +101,50 @@ function Navbar(props) {
       <Typography variant="h6" sx={{ my: 2, marginLeft: -2, color: '#fff', fontWeight: 'bold', fontFamily: 'serif', fontSize: '1.2rem', textTransform: 'capitalize' }}>
         Allwin's Portfolio
       </Typography>
-      <List>
+      <List
+        component={motion.ul}
+        variants={containerVariants}
+        initial="hidden"
+        animate={mobileOpen ? "visible" : "hidden"}
+      >
         {navItems.map(({ label, href, isHash }) => (
-          <ListItem key={href} >
+          <ListItem
+            key={href}
+            component={motion.li}
+            variants={itemVariants}
+            disablePadding
+          >
             <ListItemButton
+              component={motion.div}
+              whileHover={{ 
+                scale: 1.05, 
+                backgroundColor: "rgba(255, 255, 255, 0.12)",
+                borderLeft: "4px solid #fff",
+                paddingLeft: "24px"
+              }}
+              whileTap={{ scale: 0.95 }}
               onClick={(e) => handleClick(e, href, isHash)}
               sx={{
                 justifyContent: 'center',
                 color: '#fff',
-                '&:hover': { textDecoration: 'underline' }
+                py: 1.5,
+                transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                borderLeft: '4px solid transparent',
+                borderRadius: '0 8px 8px 0',
+                mx: 1,
+                mb: 0.5,
               }}
             >
-              <ListItemText primary={label} />
+              <ListItemText 
+                primary={label} 
+                primaryTypographyProps={{
+                  sx: {
+                    fontFamily: 'serif',
+                    fontSize: '1.1rem',
+                    fontWeight: 500,
+                  }
+                }}
+              />
             </ListItemButton>
           </ListItem>
         ))}

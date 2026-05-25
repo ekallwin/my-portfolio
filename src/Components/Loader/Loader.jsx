@@ -9,7 +9,6 @@ function Loader({ onFinish }) {
         const timer = setInterval(() => {
             setProgress((oldProgress) => {
                 if (oldProgress >= 90) {
-                    if (onFinish) onFinish();
                     return 100;
                 }
                 const diff = Math.random() * 10;
@@ -21,6 +20,12 @@ function Loader({ onFinish }) {
             clearInterval(timer);
         };
     }, []);
+
+    React.useEffect(() => {
+        if (progress === 100 && onFinish) {
+            onFinish();
+        }
+    }, [progress, onFinish]);
 
     return (
         <div className="loader-wrapper">
