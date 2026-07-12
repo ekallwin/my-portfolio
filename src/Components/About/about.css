@@ -1,0 +1,111 @@
+html {
+  scroll-behavior: smooth;
+}
+
+.animate-child {
+  opacity: 0;
+  transform: translateY(12px);
+  will-change: opacity, transform;
+  animation-name: none;
+  animation-duration: var(--duration, 0.75s);
+  animation-delay: var(--delay, 0s);
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: both;
+  backface-visibility: hidden;
+}
+
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translateY(3px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-child.animate-in {
+  animation-name: fadeUp;
+}
+
+/* heading variant: slightly longer for presence */
+.animate-child.heading {
+  --duration: 0.85s;
+}
+
+.animate-child--left {
+  transform: translateX(-8px);
+}
+
+.animate-child--right {
+  transform: translateX(8px);
+}
+
+.animate-child.animate-in.animate-child--left,
+.animate-child.animate-in.animate-child--right {
+  animation-name: fadeUp;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+#About {
+  position: relative;
+  overflow: hidden;
+}
+
+.MuiCard-root {
+  transition: transform 1s ease, box-shadow 1s ease;
+}
+
+.MuiCard-root:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.MuiAvatar-root:hover {
+  transform: scale(1.05);
+  transition: transform 1s ease;
+}
+
+.about-icons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.icon-link {
+  font-size: 1.6rem;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.icon-link.github {
+  color: #333;
+}
+
+.icon-link.linkedin {
+  color: #0077b5;
+}
+
+.icon-link:hover {
+  transform: scale(1.1);
+}

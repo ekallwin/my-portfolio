@@ -1,0 +1,39 @@
+html {
+  scroll-behavior: smooth;
+}
+
+.project-card {
+  opacity: 0;
+  transform: translateY(32px) scale(0.995);
+  transition:
+    opacity 600ms cubic-bezier(.2,.8,.2,1),
+    transform 600ms cubic-bezier(.2,.8,.2,1),
+    box-shadow 300ms ease;
+  will-change: opacity, transform;
+  position: relative;
+  z-index: 10;
+}
+
+.project-card.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.project-card .MuiCardActions-root {
+  position: relative;
+  z-index: 30;
+}
+
+.project-card .MuiButton-root {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+}
+
+footer, .site-footer {
+  z-index: 5 !important;
+}
+
+@media (max-width: 600px) {
+  .project-card {
+    transform: translateY(18px) scale(0.998);
+  }
+}
