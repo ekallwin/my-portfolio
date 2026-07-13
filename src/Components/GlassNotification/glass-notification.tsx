@@ -10,6 +10,7 @@ interface Notification {
   title: string
   description?: string
   duration?: number
+  leaving?: boolean
 }
 
 /* ------------------------------------------------------------------ */
@@ -40,9 +41,11 @@ function genId() {
   return Math.random().toString(36).substring(2, 9)
 }
 
+const EXIT_DURATION = 220 // ms — must match the glassToastOut CSS animation below
+
 function scheduleDismiss(id: string, duration?: number, type?: NotificationType) {
   if (duration === 0 || type === "loading") return
-  setTimeout(() => removeNotification(id), duration ?? 5000)
+  setTimeout(() => beginRemoval(id), duration ?? 5000)
 }
 
 function addNotification(notification: Omit<Notification, "id"> & { id?: string }) {
@@ -69,9 +72,24 @@ function removeNotification(id: string) {
   emitChange()
 }
 
-function dismissAll() {
-  notifications = []
+/**
+ * Begin the close sequence for a single toast: mark it as "leaving" so it
+ * plays its exit animation, then remove it from the store once that
+ * animation has finished. This is the ONLY path that should end a toast's
+ * life — the auto-dismiss timer, the manual X button, and `toast.dismiss(id)`
+ * all funnel through here so closing is always tied to that toast's own
+ * timeline, never to another toast's state.
+ */
+function beginRemoval(id: string) {
+  const exists = notifications.some((n) => n.id === id)
+  if (!exists) return
+  notifications = notifications.map((n) => (n.id === id ? { ...n, leaving: true } : n))
   emitChange()
+  setTimeout(() => removeNotification(id), EXIT_DURATION)
+}
+
+function dismissAll() {
+  notifications.forEach((n) => beginRemoval(n.id))
 }
 
 function useNotificationStore() {
@@ -111,7 +129,7 @@ export const toast = {
   info: (title: string, opts?: ToastOptions) => addNotification(normalize("info", title, opts)),
   loading: (title: string, opts?: ToastOptions) =>
     addNotification({ ...normalize("loading", title, opts), duration: 0 }),
-  dismiss: (id?: string) => (id ? removeNotification(id) : dismissAll()),
+  dismiss: (id?: string) => (id ? beginRemoval(id) : dismissAll()),
   promise: <T,>(promise: Promise<T>, msgs: PromiseMessages<T>, opts?: ToastOptions): Promise<T> => {
     const id = addNotification({ ...normalize("loading", msgs.loading, opts), duration: 0 })
     promise
@@ -257,6 +275,10 @@ function ensureStylesInjected() {
   from { opacity: 0; transform: translateY(-8px) scale(0.96); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
+@keyframes glassToastOut {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(-6px) scale(0.96); }
+}
 @keyframes glassToastSpin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -296,7 +318,7 @@ function GlassNotificationContainer({ position = "bottom-right" }: { position?: 
         <GlassNotificationItem
           key={notification.id}
           notification={notification}
-          onClose={() => removeNotification(notification.id)}
+          onClose={() => beginRemoval(notification.id)}
           style={{
             transform: `scale(${1 - index * 0.02})`,
           }}
@@ -318,9 +340,10 @@ function GlassNotificationItem({ notification, onClose, style }: GlassNotificati
   const [progress, setProgress] = React.useState(100)
   const duration = notification.duration || 5000
   const isPersistent = notification.duration === 0 || notification.type === "loading"
+  const isLeaving = !!notification.leaving
 
   React.useEffect(() => {
-    if (isPersistent) return
+    if (isPersistent || isLeaving) return
 
     setProgress(100)
     const interval = setInterval(() => {
@@ -331,14 +354,14 @@ function GlassNotificationItem({ notification, onClose, style }: GlassNotificati
     }, 100)
 
     return () => clearInterval(interval)
-  }, [duration, isPersistent, notification.type, notification.title])
+  }, [duration, isPersistent, isLeaving, notification.type, notification.title])
 
   return (
     <div
       style={{
-        pointerEvents: "auto",
+        pointerEvents: isLeaving ? "none" : "auto",
         width: "100%",
-        animation: "glassToastIn 0.25s ease-out",
+        animation: isLeaving ? "glassToastOut 0.22s ease-in forwards" : "glassToastIn 0.25s ease-out",
         ...style,
       }}
       role="alert"
