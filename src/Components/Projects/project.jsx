@@ -138,7 +138,7 @@ function Projects() {
               fontWeight: 700,
               mt: 7,
               mb: 4,
-              fontFamily: 'serif',
+              fontFamily: 'Times New Roman',
               color: 'white',
               fontSize: { xs: '2rem', md: '3rem' }
             }}
@@ -180,46 +180,65 @@ function Projects() {
                     width: "100%",
                     borderRadius: 3,
                     overflow: "hidden",
+                    position: "relative",
+                    background: `
+                      linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.05) 100%),
+                      rgba(18, 18, 28, 0.55)
+                    `,
+                    backdropFilter: "blur(20px) saturate(160%)",
+                    WebkitBackdropFilter: "blur(20px) saturate(160%)",
+                    border: "1px solid rgba(255,255,255,0.14)",
+                    boxShadow: "0 20px 50px rgba(0,0,0,0.35), inset 0 1px 1px rgba(255,255,255,0.12)",
                     transition: "transform 0.35s ease, box-shadow 0.35s ease",
-                    boxShadow: 6,
                     display: 'flex',
                     flexDirection: { xs: 'column', md: 'row' },
                     "&:hover": {
                       transform: "translateY(-8px)",
-                      boxShadow: 12
+                      boxShadow: "0 28px 64px rgba(0,0,0,0.45), inset 0 1px 1px rgba(255,255,255,0.18)"
                     },
                     ...getDelayStyle(index)
                   }}
                 >
-                  <CardMedia
-                    component="img"
-                    image={project.image}
-                    alt={project.alt}
-                    onError={handleImageError}
-                    loading="lazy"
+                  <Box
                     sx={{
                       width: { xs: '100%', md: '45%' },
-                      minHeight: { xs: 260, md: '100%' },
-                      objectFit: "cover",
-                      backgroundColor: "#fff",
-                      p: 0,
+                      minHeight: { xs: 220, md: 340 },
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: 'linear-gradient(160deg, #f4f4f8 0%, #e7e7f0 100%)',
+                      p: 2,
                     }}
-                  />
+                  >
+                    <CardMedia
+                      component="img"
+                      image={project.image}
+                      alt={project.alt}
+                      onError={handleImageError}
+                      loading="lazy"
+                      sx={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "contain",
+                        borderRadius: 2,
+                      }}
+                    />
+                  </Box>
 
                   <Box sx={{ display: 'flex', flexDirection: 'column', width: { xs: '100%', md: '55%' }, p: 1 }}>
                     <CardContent sx={{ flex: '1 0 auto', textAlign: "left", py: 3, px: { md: 4 } }}>
-                      <Typography variant="h5" component="h3" sx={{ fontWeight: 700, mb: 2 }}>
+                      <Typography variant="h5" component="h3" sx={{ fontWeight: 700, mb: 2, color: '#fff' }}>
                         {project.title}
                       </Typography>
 
-                      <Typography variant="subtitle1" sx={{ color: "text.secondary", mb: 1.5 }}>
+                      <Typography variant="subtitle1" sx={{ color: "rgba(255,255,255,0.6)", mb: 1.5 }}>
                         Technologies Used
                       </Typography>
 
                       <Stack
                         direction="row"
                         spacing={1}
-                        justifyContent={{ xs: "center", md: "flex-start" }}
+                        justifyContent={{ xs: "flex-start", md: "flex-start" }}
                         flexWrap="wrap"
                         sx={{ gap: 1, mb: 2 }}
                       >
@@ -229,7 +248,14 @@ function Projects() {
                             label={skill}
                             variant="outlined"
                             size="medium"
-                            sx={{ fontSize: "0.95rem", px: 1 }}
+                            sx={{
+                              fontSize: "0.95rem",
+                              px: 1,
+                              color: '#fff',
+                              borderColor: 'rgba(255,255,255,0.3)',
+                              background: 'rgba(255,255,255,0.06)',
+                              backdropFilter: 'blur(6px)',
+                            }}
                           />
                         ))}
                       </Stack>
@@ -260,6 +286,9 @@ function Projects() {
                             borderRadius: 10,
                             whiteSpace: "nowrap",
                             minWidth: 120,
+                            backdropFilter: "blur(8px)",
+                            border: "1px solid rgba(255,255,255,0.25)",
+                            boxShadow: "0 6px 16px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.3)",
                           }}
                         >
                           GitHub
@@ -281,6 +310,9 @@ function Projects() {
                             borderRadius: 10,
                             whiteSpace: "nowrap",
                             minWidth: 120,
+                            backdropFilter: "blur(8px)",
+                            border: "1px solid rgba(255,255,255,0.25)",
+                            boxShadow: "0 6px 16px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.3)",
                           }}
                         >
                           Live Demo

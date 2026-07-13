@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect, Suspense, lazy } from "react";
 import "./App.css";
-import toast, { Toaster } from 'react-hot-toast';
+import { GlassToaster } from "./Components/GlassNotification/glass-notification";
 import Loader from "./Components/Loader/Loader";
 import SimpleBackground from './Components/SimpleBackground/SimpleBackground';
 import OfflinePage from "./Components/Offline/Offline.jsx";
@@ -45,20 +45,7 @@ function App() {
 
   return (
     <>
-      <Toaster
-        position="top-center"
-        reverseOrder={true}
-        toastOptions={{
-          className: '',
-          style: {
-            whiteSpace: "nowrap",
-            // maxWidth: '230px',
-            // width: '230px',
-            color: 'black',
-            textAlign: 'left',
-          },
-        }}
-      />
+      <GlassToaster position="top-center" />
 
       {initialLoad && <Loader onFinish={() => setInitialLoad(false)} />}
 

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Box, Container, Typography, Card, CardContent, Avatar, Button, Chip, Stack, Modal, Backdrop, Fade } from '@mui/material';
 import Allwin from "./Images/Allwin.jpg";
 import { useTheme } from '@mui/material/styles';
-import toast from 'react-hot-toast';
+import { toast } from '../GlassNotification/glass-notification';
 import { FaDownload, FaCircleCheck, FaSpinner, FaGithub, FaLinkedin } from 'react-icons/fa6';
 import GreenTickSuccess from '../Contact/Component/Success.jsx';
 import LinearDeterminate from '../Contact/Component/Progress.jsx';
@@ -106,15 +106,19 @@ function About() {
               mx: 'auto',
               p: { xs: 2, md: 4 },
               borderRadius: 4,
-              background: 'rgba(255, 255, 255, 0.05)',
-              backdropFilter: 'blur(12px) saturate(160%)',
-              WebkitBackdropFilter: 'blur(12px) saturate(160%)',
-              border: '1px solid rgba(255, 255, 255, 0.5)',
-              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
-              transition: 'all 0.3s ease',
+              position: 'relative',
+              background: `
+                linear-gradient(160deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.05) 100%),
+                rgba(18, 18, 28, 0.5)
+              `,
+              backdropFilter: 'blur(20px) saturate(160%)',
+              WebkitBackdropFilter: 'blur(20px) saturate(160%)',
+              border: '1px solid rgba(255, 255, 255, 0.16)',
+              boxShadow: '0 20px 50px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.15)',
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
               color: '#eee',
               '&:hover': {
-                boxShadow: '0 12px 32px rgba(0, 0, 0, 0.35)',
+                boxShadow: '0 24px 56px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.2)',
                 transform: 'translateY(-2px)',
               },
             }}
@@ -159,25 +163,69 @@ function About() {
                     />
                   </Box>
 
-                  <Box sx={{ display: 'flex', gap: 3, mt: 1 }}>
-                    <a
+                  <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+                    <Box
+                      component="a"
                       href="https://github.com/ekallwin"
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label="GitHub"
-                      style={{ color: '#fff', fontSize: 26, display: 'inline-flex', alignItems: 'center' }}
+                      sx={{
+                        width: 46,
+                        height: 46,
+                        borderRadius: '50%',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#fff',
+                        fontSize: 22,
+                        textDecoration: 'none',
+                        background: 'rgba(255,255,255,0.08)',
+                        backdropFilter: 'blur(10px) saturate(160%)',
+                        WebkitBackdropFilter: 'blur(10px) saturate(160%)',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.25)',
+                        transition: 'transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease',
+                        '&:hover': {
+                          transform: 'translateY(-3px) scale(1.08)',
+                          background: 'rgba(255,255,255,0.14)',
+                          boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.3), 0 6px 16px rgba(0,0,0,0.35)',
+                        },
+                      }}
                     >
                       <FaGithub />
-                    </a>
-                    <a
+                    </Box>
+                    <Box
+                      component="a"
                       href="https://www.linkedin.com/in/ekallwin/"
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label="LinkedIn"
-                      style={{ color: '#ffffff', fontSize: 26, display: 'inline-flex', alignItems: 'center' }}
+                      sx={{
+                        width: 46,
+                        height: 46,
+                        borderRadius: '50%',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#fff',
+                        fontSize: 22,
+                        textDecoration: 'none',
+                        background: 'rgba(255,255,255,0.08)',
+                        backdropFilter: 'blur(10px) saturate(160%)',
+                        WebkitBackdropFilter: 'blur(10px) saturate(160%)',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.25)',
+                        transition: 'transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease',
+                        '&:hover': {
+                          transform: 'translateY(-3px) scale(1.08)',
+                          background: 'rgba(255,255,255,0.14)',
+                          boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.3), 0 6px 16px rgba(0,0,0,0.35)',
+                        },
+                      }}
                     >
                       <FaLinkedin />
-                    </a>
+                    </Box>
                   </Box>
                 </Box>
 
@@ -188,7 +236,7 @@ function About() {
                   </Typography>
 
                   <Typography paragraph className="animate-child" data-animate>
-                    Currently pursuing <strong>B.E</strong> in <strong>Computer Science and Engineering</strong> at
+                    Studied <strong>B.E</strong> in <strong>Computer Science and Engineering</strong> at
                     <strong> Ponjesly College of Engineering, Nagercoil</strong>.
                   </Typography>
 
@@ -209,15 +257,18 @@ function About() {
                         data-animate
                         sx={{
                           color: 'white',
-                          background: 'rgba(255, 255, 255, 0.2)',
+                          background: 'rgba(255, 255, 255, 0.08)',
+                          backdropFilter: 'blur(8px)',
+                          border: '1px solid rgba(255,255,255,0.18)',
                           textAlign: 'center',
                           padding: '5px 10px',
                           borderRadius: '50',
-                          boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
+                          boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.15)',
                           transition: 'all 0.3s ease',
                           '&:hover': {
                             transform: 'translateY(-2px)',
-                            boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
+                            background: 'rgba(255, 255, 255, 0.14)',
+                            boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255,255,255,0.25)',
 
                           },
                         }}
@@ -248,10 +299,14 @@ function About() {
                         color: 'white',
                         mx: { xs: 'auto', md: 0 },
                         display: { xs: 'block', md: 'inline-flex' },
-                        boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+                        background: 'linear-gradient(135deg, rgba(102,126,234,0.85), rgba(118,75,162,0.85))',
+                        backdropFilter: 'blur(12px)',
+                        border: '1px solid rgba(255,255,255,0.25)',
+                        boxShadow: '0 8px 24px rgba(102,126,234,0.35), inset 0 1px 1px rgba(255,255,255,0.4)',
                         '&:hover': {
                           transform: 'translateY(-2px)',
-                          boxShadow: '0 6px 20px rgba(0,0,0,0.3)',
+                          background: 'linear-gradient(135deg, rgba(102,126,234,0.95), rgba(118,75,162,0.95))',
+                          boxShadow: '0 10px 28px rgba(102,126,234,0.45), inset 0 1px 1px rgba(255,255,255,0.5)',
                         },
                         transition: 'all 0.3s ease',
                       }}
@@ -287,9 +342,12 @@ function About() {
         <Fade in={isModalOpen}>
           <Box
             sx={{
-              bgcolor: "background.paper",
+              background: 'rgba(20, 20, 30, 0.75)',
+              backdropFilter: 'blur(24px) saturate(160%)',
+              WebkitBackdropFilter: 'blur(24px) saturate(160%)',
+              border: '1px solid rgba(255,255,255,0.16)',
               borderRadius: 3,
-              boxShadow: 24,
+              boxShadow: '0 20px 50px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.2)',
               p: 4,
               width: { xs: "90%", sm: 450 },
               position: 'relative',
@@ -302,11 +360,11 @@ function About() {
               <GreenTickSuccess size={100} />
             </Box>
 
-            <Typography variant="h5" fontWeight="bold" textAlign="center" sx={{ mb: 1, color: 'text.primary' }}>
+            <Typography variant="h5" fontWeight="bold" textAlign="center" sx={{ mb: 1, color: '#fff' }}>
               Resume downloaded !
             </Typography>
 
-            <Typography variant="body2" textAlign="justify" sx={{ mb: 3, color: 'text.secondary', lineHeight: 1.6 }}>
+            <Typography variant="body2" textAlign="justify" sx={{ mb: 3, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
               My resume has been successfully downloaded in your device. Kindly check in your downloaded file named as <strong>"Allwin E K - Resume.pdf"</strong>
             </Typography>
 
@@ -322,6 +380,15 @@ function About() {
                 fontWeight: "bold",
                 borderRadius: 2,
                 textTransform: 'none',
+                color: '#fff',
+                background: 'linear-gradient(135deg, rgba(102,126,234,0.85), rgba(118,75,162,0.85))',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255,255,255,0.25)',
+                boxShadow: '0 8px 24px rgba(102,126,234,0.35), inset 0 1px 1px rgba(255,255,255,0.4)',
+                '&:hover': {
+                  background: 'linear-gradient(135deg, rgba(102,126,234,0.95), rgba(118,75,162,0.95))',
+                  boxShadow: '0 10px 28px rgba(102,126,234,0.45), inset 0 1px 1px rgba(255,255,255,0.5)',
+                },
               }}
             >
               Close

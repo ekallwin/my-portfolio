@@ -2,7 +2,9 @@
   background: gray !important;
   color: white;
 }
-
+.contact-submit {
+  color: white !important;
+}
 .modal-open .modal-navbar,
 .modal-open .modal-footer,
 .modal-open .contact-form,

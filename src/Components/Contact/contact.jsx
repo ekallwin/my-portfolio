@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import './contact.css';
-import toast from 'react-hot-toast';
+import { toast } from '../GlassNotification/glass-notification';
 import { Filter } from 'bad-words';
 import {
   Box,
@@ -349,7 +349,7 @@ const ContactForm = () => {
     if (!isValid) {
       setLoading(false);
       toast.error("Please fix the errors in the form before sending.", {
-        duration: 3000,
+        duration: 4000,
       });
       return;
     }
@@ -368,7 +368,7 @@ const ContactForm = () => {
         });
         setHidePhone(false);
         setErrors({});
-        setTimeout(() => setFeedbackOpen(true), 1500);
+        setTimeout(() => setFeedbackOpen(true), 2500);
         return "Message sent successfully!";
       },
       error: "Failed to send message. Please try again.",
@@ -436,6 +436,38 @@ const ContactForm = () => {
     );
   };
 
+  const glassFieldSx = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: 2,
+      background: "rgba(255,255,255,0.06)",
+      backdropFilter: "blur(10px)",
+      transition: "background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease",
+      "& fieldset": { borderColor: "rgba(255,255,255,0.22)" },
+      "&:hover fieldset": { borderColor: "rgba(255,255,255,0.42)" },
+      "&.Mui-focused fieldset": { borderColor: "#8ab4ff", borderWidth: "1.5px" },
+      "&.Mui-focused": { boxShadow: "0 0 0 3px rgba(138,180,255,0.15)" },
+      "&.Mui-error fieldset": { borderColor: "#ff8a8a !important" },
+    },
+    "& .MuiInputBase-input": { color: "#fff" },
+    "& .MuiInputLabel-root": { color: "rgba(255,255,255,0.65)" },
+    "& .MuiInputLabel-root.Mui-focused": { color: "#8ab4ff" },
+    "& .MuiInputLabel-root.Mui-error": { color: "#ff8a8a" },
+    "& .MuiFormHelperText-root": { color: "rgba(255,255,255,0.55)" },
+    "& .MuiFormHelperText-root.Mui-error": { color: "#ff8a8a" },
+  };
+
+  const glassButtonSx = {
+    color: "#fff",
+    background: "linear-gradient(135deg, rgba(102,126,234,0.85), rgba(118,75,162,0.85))",
+    backdropFilter: "blur(12px)",
+    border: "1px solid rgba(255,255,255,0.25)",
+    boxShadow: "0 8px 24px rgba(102,126,234,0.35), inset 0 1px 1px rgba(255,255,255,0.4)",
+    "&:hover": {
+      background: "linear-gradient(135deg, rgba(102,126,234,0.95), rgba(118,75,162,0.95))",
+      boxShadow: "0 10px 28px rgba(102,126,234,0.45), inset 0 1px 1px rgba(255,255,255,0.5)",
+    },
+  };
+
   return (
     <Box
       id="contact"
@@ -453,17 +485,28 @@ const ContactForm = () => {
       <Slide in direction="up" timeout={800}>
         <Card
           sx={{
+            position: "relative",
+            isolation: "isolate",
             maxWidth: 500,
             width: "100%",
             mx: "auto",
-            background: "rgba(255, 255, 255, 0.93)",
-            backdropFilter: "blur(20px)",
+            background: `
+              linear-gradient(160deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.05) 100%),
+              rgba(18, 18, 28, 0.55)
+            `,
+            backdropFilter: "blur(24px) saturate(160%)",
+            WebkitBackdropFilter: "blur(24px) saturate(160%)",
             borderRadius: 4,
-            boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+            border: "1px solid rgba(255,255,255,0.18)",
+            boxShadow: `
+              0 20px 50px rgba(0,0,0,0.45),
+              inset 0 1px 1px rgba(255,255,255,0.25),
+              inset 0 -8px 20px rgba(255,255,255,0.03)
+            `,
             overflow: "hidden",
           }}
         >
-          <CardContent sx={{ p: 3 }}>
+          <CardContent sx={{ p: 3, position: "relative", zIndex: 1 }}>
             <Fade in timeout={1000}>
               <Box>
                 <Typography
@@ -472,13 +515,15 @@ const ContactForm = () => {
                   gutterBottom
                   textAlign="center"
                   sx={{
-                    background: "linear-gradient(45deg, #667eea, #764ba2)",
+                    background: "linear-gradient(45deg, #a3e2ff, #e8bfff)", // Swapped to higher contrast colors
                     backgroundClip: "text",
                     WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent", 
                     color: "transparent",
                     fontWeight: "bold",
                     mb: 1,
                   }}
+
                 >
                   Get In Touch
                 </Typography>
@@ -497,7 +542,7 @@ const ContactForm = () => {
                     variant="outlined"
                     size="small"
                     FormHelperTextProps={{ sx: { mx: 0.5 } }}
-                    sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+                    sx={glassFieldSx}
                   />
 
                   {!hidePhone && (
@@ -515,9 +560,7 @@ const ContactForm = () => {
                       size="small"
                       inputProps={{ maxLength: 25 }}
                       FormHelperTextProps={{ sx: { mx: 0.5 } }}
-                      sx={{
-                        "& .MuiOutlinedInput-root": { borderRadius: 2 },
-                      }}
+                      sx={glassFieldSx}
                     />
                   )}
 
@@ -534,7 +577,7 @@ const ContactForm = () => {
                     variant="outlined"
                     size="small"
                     FormHelperTextProps={{ sx: { mx: 0.5 } }}
-                    sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+                    sx={glassFieldSx}
                   />
 
                   <TextField
@@ -552,8 +595,12 @@ const ContactForm = () => {
                     size="small"
                     FormHelperTextProps={{ sx: { mx: 0.5 } }}
                     sx={{
-                      "& .MuiOutlinedInput-root": { borderRadius: 2, alignItems: "flex-start" },
-                      "& .MuiInputBase-inputMultiline": { minHeight: "80px" },
+                      ...glassFieldSx,
+                      "& .MuiOutlinedInput-root": {
+                        ...glassFieldSx["& .MuiOutlinedInput-root"],
+                        alignItems: "flex-start",
+                      },
+                      "& .MuiInputBase-inputMultiline": { minHeight: "80px", color: "#fff" },
                     }}
                   />
 
@@ -566,6 +613,7 @@ const ContactForm = () => {
                     disabled={loading}
                     endIcon={loading ? <CircularProgress size={16} color="white" /> : <SendIcon />}
                     sx={{
+                      ...glassButtonSx,
                       mt: 2,
                       py: 1,
                       px: 4,
@@ -599,14 +647,24 @@ const ContactForm = () => {
         fullWidth
         maxWidth="xs"
         PaperProps={{
-          sx: { borderRadius: 3, p: 1, minHeight: 420 },
+          sx: {
+            borderRadius: 3,
+            p: 1,
+            minHeight: 420,
+            background: "rgba(20, 20, 30, 0.75)",
+            backdropFilter: "blur(24px) saturate(160%)",
+            WebkitBackdropFilter: "blur(24px) saturate(160%)",
+            border: "1px solid rgba(255,255,255,0.16)",
+            boxShadow: "0 20px 50px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.2)",
+            color: "#fff",
+          },
         }}
       >
-        <DialogTitle sx={{ fontWeight: "bold", pb: 1 }}>
+        <DialogTitle sx={{ fontWeight: "bold", pb: 1, color: "#fff" }}>
           Select Country
           <IconButton
             onClick={() => setCountryModalOpen(false)}
-            sx={{ position: "absolute", right: 8, top: 8, color: "text.secondary" }}
+            sx={{ position: "absolute", right: 8, top: 8, color: "rgba(255,255,255,0.7)" }}
           >
             <CloseIcon />
           </IconButton>
@@ -629,35 +687,46 @@ const ContactForm = () => {
                   style={{ width: "1.4em", height: "1.4em", borderRadius: 2, flexShrink: 0 }}
                 />
                 <span style={{ flex: 1 }}>{opt.name}</span>
-                <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "#888" }}>{opt.calling}</span>
+                <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "#aaa" }}>{opt.calling}</span>
               </span>
             )}
             styles={{
               control: (base, state) => ({
                 ...base,
-                borderColor: state.isFocused ? "#667eea" : "#ddd",
-                boxShadow: state.isFocused ? "0 0 0 2px rgba(102,126,234,0.25)" : "none",
+                background: "rgba(255,255,255,0.06)",
+                borderColor: state.isFocused ? "#8ab4ff" : "rgba(255,255,255,0.22)",
+                boxShadow: state.isFocused ? "0 0 0 2px rgba(138,180,255,0.2)" : "none",
                 borderRadius: 8,
-                "&:hover": { borderColor: "#667eea" },
+                "&:hover": { borderColor: "#8ab4ff" },
               }),
+              input: (base) => ({ ...base, color: "#fff" }),
+              singleValue: (base) => ({ ...base, color: "#fff" }),
+              placeholder: (base) => ({ ...base, color: "rgba(255,255,255,0.5)" }),
+              menu: (base) => ({
+                ...base,
+                marginTop: 4,
+                background: "rgba(28,28,38,0.95)",
+                backdropFilter: "blur(20px)",
+                border: "1px solid rgba(255,255,255,0.14)",
+              }),
+              menuList: (base) => ({ ...base, maxHeight: 300 }),
+              menuPortal: (base) => ({ ...base, zIndex: 9999 }),
               option: (base, state) => ({
                 ...base,
                 backgroundColor: state.isSelected
-                  ? "rgba(102,126,234,0.15)"
+                  ? "rgba(102,126,234,0.35)"
                   : state.isFocused
-                    ? "rgba(102,126,234,0.08)"
-                    : "white",
-                color: state.isSelected ? "#667eea" : "#333",
+                    ? "rgba(102,126,234,0.18)"
+                    : "transparent",
+                color: state.isSelected ? "#cdd8ff" : "#fff",
                 fontWeight: state.isSelected ? 600 : 400,
                 cursor: "pointer",
               }),
-              menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-              menuList: (base) => ({ ...base, maxHeight: 300 }),
-              menu: (base) => ({ ...base, marginTop: 4 }),
             }}
           />
         </DialogContent>
       </Dialog>
+
 
       <Modal
         open={feedbackOpen}
@@ -678,29 +747,34 @@ const ContactForm = () => {
         <Fade in={feedbackOpen}>
           <Box
             sx={{
-              bgcolor: "background.paper",
+              position: "relative",
+              isolation: "isolate",
+              background: "rgba(20, 20, 30, 0.75)",
+              backdropFilter: "blur(24px) saturate(160%)",
+              WebkitBackdropFilter: "blur(24px) saturate(160%)",
+              border: "1px solid rgba(255,255,255,0.16)",
               borderRadius: 3,
-              boxShadow: 24,
+              boxShadow: "0 20px 50px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.2)",
               p: 4,
               width: { xs: "90%", sm: 450 },
-              position: "relative",
               textAlign: "center",
+              overflow: "hidden",
             }}
           >
             {!feedbackSubmitted ? (
               <>
                 <IconButton
                   onClick={handleFeedbackClose}
-                  sx={{ position: "absolute", right: 8, top: 8, color: "text.secondary" }}
+                  sx={{ position: "absolute", right: 8, top: 8, color: "rgba(255,255,255,0.7)" }}
                 >
                   <CloseIcon />
                 </IconButton>
 
-                <Typography variant="h5" fontWeight="bold" sx={{ mb: 0.5, color: "text.primary" }}>
+                <Typography variant="h5" fontWeight="bold" sx={{ mb: 0.5, color: "#fff" }}>
                   Rate this portfolio
                 </Typography>
 
-                <Typography variant="body2" sx={{ mb: 2, color: "text.secondary" }}>
+                <Typography variant="body2" sx={{ mb: 2, color: "rgba(255,255,255,0.6)" }}>
                   Your rating for this portfolio
                 </Typography>
 
@@ -709,7 +783,15 @@ const ContactForm = () => {
                   value={rating}
                   onChange={(event, newValue) => setRating(newValue)}
                   size="large"
-                  sx={{ mb: 3 }}
+                  sx={{
+                    mb: 3,
+                    "& .MuiRating-iconEmpty": {
+                      color: "rgba(255,255,255,0.35)",
+                    },
+                    "& .MuiRating-iconHover": {
+                      color: "#ffd54f",
+                    },
+                  }}
                 />
 
                 <TextField
@@ -720,17 +802,18 @@ const ContactForm = () => {
                   variant="outlined"
                   value={feedbackComment}
                   onChange={(e) => setFeedbackComment(e.target.value)}
-                  sx={{ mb: 3 }}
+                  sx={{ ...glassFieldSx, mb: 3 }}
                 />
 
                 <Button
                   variant="contained"
                   disableRipple
+                  className="contact-submit buttons"
                   onClick={handleFeedbackSubmit}
                   disabled={!rating || feedbackLoading}
                   fullWidth
                   endIcon={feedbackLoading ? <CircularProgress size={16} color="inherit" /> : null}
-                  sx={{ py: 1.5, fontWeight: "bold", borderRadius: 2 }}
+                  sx={{ ...glassButtonSx, py: 1.5, fontWeight: "bold", borderRadius: 2 }}
                 >
                   {feedbackLoading ? "Submitting..." : "Submit"}
                 </Button>
@@ -741,7 +824,7 @@ const ContactForm = () => {
                   <GreenTickSuccess />
                 </Box>
 
-                <Typography variant="h5" fontWeight="bold" sx={{ mb: 1, color: "text.primary" }}>
+                <Typography variant="h5" fontWeight="bold" sx={{ mb: 1, color: "#fff" }}>
                   Thanks for your feedback
                 </Typography>
 
@@ -749,7 +832,7 @@ const ContactForm = () => {
                   variant="contained"
                   disableRipple
                   onClick={handleFeedbackClose}
-                  sx={{ mt: 3, px: 4, py: 1, fontWeight: "bold", borderRadius: 2 }}
+                  sx={{ ...glassButtonSx, mt: 3, px: 4, py: 1, fontWeight: "bold", borderRadius: 2 }}
                 >
                   Close
                 </Button>

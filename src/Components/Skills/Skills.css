@@ -62,11 +62,3 @@
     z-index: 2;
 }
 
-.skill-progress {
-    height: 100%;
-    width: 0%;
-    border-radius: 999px;
-    background: linear-gradient(90deg, var(--teritary-color, #6ee7b7), var(--primary-color, #3b82f6));
-    transition: width 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    transform: translateZ(0);
-}

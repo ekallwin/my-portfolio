@@ -126,7 +126,7 @@ const Achievements = () => {
               fontWeight: 700,
               mt: 5,
               mb: 4,
-              fontFamily: "serif",
+              fontFamily: 'Times New Roman',
               color: "white",
               fontSize: { xs: "2rem", md: "3rem" },
             }}
@@ -144,10 +144,16 @@ const Achievements = () => {
                 width: "100%",
                 maxWidth: 1500,
                 overflow: "hidden",
-                borderRadius: 2,
-                boxShadow: 3,
-                backgroundColor: "#fff",
-                p: 0,
+                borderRadius: 3,
+                background: `
+                  linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.05) 100%),
+                  rgba(18, 18, 28, 0.5)
+                `,
+                backdropFilter: "blur(20px) saturate(160%)",
+                WebkitBackdropFilter: "blur(20px) saturate(160%)",
+                border: "1px solid rgba(255,255,255,0.16)",
+                boxShadow: "0 20px 50px rgba(0,0,0,0.35), inset 0 1px 1px rgba(255,255,255,0.12)",
+                p: 1.5,
               }}
               onMouseMove={() => !isMobile && showControlsTemporarily()}
               onTouchStart={() => isMobile && showControlsTemporarily()}
@@ -158,7 +164,9 @@ const Achievements = () => {
                   height: smallScreen ? "180px" : "410px",
                   position: "relative",
                   display: "block",
-                  backgroundColor: "#fff",
+                  borderRadius: 2,
+                  overflow: "hidden",
+                  backgroundColor: "#f4f4f8",
                 }}
               >
                 {slides.map((s, index) => (
@@ -195,9 +203,16 @@ const Achievements = () => {
                         top: "50%",
                         left: 10,
                         transform: "translateY(-50%)",
-                        bgcolor: "rgba(0,0,0,0.4)",
+                        bgcolor: "rgba(20,20,30,0.45)",
+                        backdropFilter: "blur(10px)",
+                        border: "1px solid rgba(255,255,255,0.25)",
                         color: "#fff",
-                        "&:hover": { bgcolor: "rgba(0,0,0,0.6)" },
+                        boxShadow: "inset 0 1px 1px rgba(255,255,255,0.25)",
+                        transition: "background 0.25s ease, transform 0.25s ease",
+                        "&:hover": {
+                          bgcolor: "rgba(20,20,30,0.65)",
+                          transform: "translateY(-50%) scale(1.08)",
+                        },
                       }}
                     >
                       <ArrowBackIosNewIcon />
@@ -212,9 +227,16 @@ const Achievements = () => {
                         top: "50%",
                         right: 10,
                         transform: "translateY(-50%)",
-                        bgcolor: "rgba(0,0,0,0.4)",
+                        bgcolor: "rgba(20,20,30,0.45)",
+                        backdropFilter: "blur(10px)",
+                        border: "1px solid rgba(255,255,255,0.25)",
                         color: "#fff",
-                        "&:hover": { bgcolor: "rgba(0,0,0,0.6)" },
+                        boxShadow: "inset 0 1px 1px rgba(255,255,255,0.25)",
+                        transition: "background 0.25s ease, transform 0.25s ease",
+                        "&:hover": {
+                          bgcolor: "rgba(20,20,30,0.65)",
+                          transform: "translateY(-50%) scale(1.08)",
+                        },
                       }}
                     >
                       <ArrowForwardIosIcon />
@@ -229,7 +251,6 @@ const Achievements = () => {
                   flexDirection: "column",
                   alignItems: "center",
                   justifyContent: "center",
-                  backgroundColor: "#fff",
                   py: 2.5,
                   px: 2,
                 }}
@@ -254,11 +275,12 @@ const Achievements = () => {
                         width: { xs: 18, sm: 14 },
                         height: { xs: 18, sm: 14 },
                         borderRadius: "50%",
-                        border: "none",
+                        border: "1px solid rgba(255,255,255,0.3)",
                         padding: 0,
                         cursor: "pointer",
-                        backgroundColor: idx === currentIndex ? "grey.600" : "grey.300",
-                        transition: "transform 200ms ease, background-color 200ms ease",
+                        backgroundColor: idx === currentIndex ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.2)",
+                        boxShadow: idx === currentIndex ? "0 0 8px rgba(255,255,255,0.5)" : "none",
+                        transition: "transform 200ms ease, background-color 200ms ease, box-shadow 200ms ease",
                         transform: idx === currentIndex ? "scale(1)" : "scale(0.75)",
                         display: "flex",
                         alignItems: "center",
@@ -276,7 +298,7 @@ const Achievements = () => {
                     textAlign: "center",
                     fontSize: { xs: "0.95rem", sm: "1rem" },
                     fontWeight: 500,
-                    color: "black",
+                    color: "#fff",
                   }}
                 >
                   {rank} prize in {event_name} at {college_name}, {college_place}

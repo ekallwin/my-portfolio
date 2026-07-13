@@ -4,7 +4,6 @@ import { Box, IconButton, Typography, Drawer, List, ListItem, ListItemButton, Li
 import { useLocation, useNavigate } from "react-router-dom";
 import { IoMenu, IoClose } from "react-icons/io5";
 import { motion } from "motion/react";
-import ScrollProgress from "../ScrollProgress/ScrollProgress";
 
 const navItems = [
   { label: 'Home', href: '#Home', isHash: true },
@@ -97,8 +96,44 @@ function Navbar(props) {
   };
 
   const drawer = (
-    <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center', backgroundColor: 'rgba(0, 0, 0, 0.8)', height: '100%' }}>
-      <Typography variant="h6" sx={{ my: 2, marginLeft: -2, color: '#fff', fontWeight: 'bold', fontFamily: 'serif', fontSize: '1.2rem', textTransform: 'capitalize' }}>
+    <Box 
+      onClick={handleDrawerToggle} 
+      sx={{ 
+        textAlign: 'center', 
+        backgroundColor: 'rgba(15, 12, 41, 0.95)',
+        backdropFilter: 'blur(30px)',
+        WebkitBackdropFilter: 'blur(30px)',
+        height: '100%',
+        borderRight: '1px solid rgba(255, 255, 255, 0.1)',
+        position: 'relative',
+        overflow: 'hidden',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: '-50%',
+          left: '-50%',
+          width: '200%',
+          height: '200%',
+          background: 'radial-gradient(circle at 30% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%)',
+          animation: 'shimmer 4s ease-in-out infinite',
+          pointerEvents: 'none',
+        }
+      }}
+    >
+      <Typography 
+        variant="h6" 
+        sx={{ 
+          my: 2, 
+          color: '#fff', 
+          fontWeight: 'bold', 
+          fontFamily: 'serif', 
+          fontSize: '1.3rem', 
+          textTransform: 'capitalize',
+          position: 'relative',
+          zIndex: 1,
+          letterSpacing: '1px',
+        }}
+      >
         Allwin's Portfolio
       </Typography>
       <List
@@ -106,6 +141,7 @@ function Navbar(props) {
         variants={containerVariants}
         initial="hidden"
         animate={mobileOpen ? "visible" : "hidden"}
+        sx={{ position: 'relative', zIndex: 1 }}
       >
         {navItems.map(({ label, href, isHash }) => (
           <ListItem
@@ -113,26 +149,32 @@ function Navbar(props) {
             component={motion.li}
             variants={itemVariants}
             disablePadding
+            sx={{ px: 2, mb: 0.5 }}
           >
             <ListItemButton
               component={motion.div}
               whileHover={{ 
-                scale: 1.05, 
-                backgroundColor: "rgba(255, 255, 255, 0.12)",
-                borderLeft: "4px solid #fff",
-                paddingLeft: "24px"
+                scale: 1.02, 
+                backgroundColor: "rgba(139, 92, 246, 0.15)",
               }}
-              whileTap={{ scale: 0.95 }}
+              whileTap={{ scale: 0.98 }}
               onClick={(e) => handleClick(e, href, isHash)}
               sx={{
                 justifyContent: 'center',
                 color: '#fff',
-                py: 1.5,
+                py: 1.2,
+                px: 2,
+                borderRadius: '8px',
+                backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.05)',
                 transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-                borderLeft: '4px solid transparent',
-                borderRadius: '0 8px 8px 0',
-                mx: 1,
-                mb: 0.5,
+                '&:hover': {
+                  background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)',
+                  boxShadow: '0 0 15px rgba(139, 92, 246, 0.3)',
+                  border: '1px solid rgba(139, 92, 246, 0.3)',
+                }
               }}
             >
               <ListItemText 
@@ -140,8 +182,9 @@ function Navbar(props) {
                 primaryTypographyProps={{
                   sx: {
                     fontFamily: 'serif',
-                    fontSize: '1.1rem',
+                    fontSize: '1rem',
                     fontWeight: 500,
+                    letterSpacing: '0.5px',
                   }
                 }}
               />
@@ -164,11 +207,21 @@ function Navbar(props) {
         left: 0,
         width: '100%',
         zIndex: 1200,
-        backgroundColor: 'rgba(0, 0, 0, 0.4)',
-        backdropFilter: 'blur(10px)',
-        WebkitBackdropFilter: 'blur(10px)',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        background: 'rgba(15, 12, 41, 0.6)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        boxShadow: '0 4px 30px rgba(0, 0, 0, 0.3)',
         fontFamily: 'serif',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '1px',
+          background: 'linear-gradient(90deg, transparent 0%, rgba(139, 92, 246, 0.5) 50%, transparent 100%)',
+        }
       }}
     >
       <Box
@@ -176,7 +229,7 @@ function Navbar(props) {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '10px 20px',
+          padding: '12px 25px',
         }}
       >
         <Typography
@@ -185,13 +238,15 @@ function Navbar(props) {
             color: '#fff',
             fontWeight: 'bold',
             fontFamily: 'serif',
-            fontSize: '1.2rem',
-            textTransform: 'capitalize'
+            fontSize: '1.3rem',
+            textTransform: 'capitalize',
+            letterSpacing: '1px',
           }}
         >
           Allwin's Portfolio
         </Typography>
-        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: '20px' }}>
+        
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: '8px' }}>
           {navItems.map(({ label, href, isHash }) => (
             <Box
               key={href}
@@ -201,53 +256,65 @@ function Navbar(props) {
               sx={{
                 color: '#fff',
                 textDecoration: 'none',
-                padding: '10px 10px',
-                paddingTop: '20px',
+                padding: '8px 0',
                 fontFamily: 'serif',
-                fontSize: '1.2rem',
-                transition: 'color 0.3s ease',
-                display: 'inline-block',
+                fontSize: '1.1rem',
+                letterSpacing: '0.5px',
+                display: 'inline-flex',
+                flexDirection: 'column',
+                alignItems: 'center',
                 position: 'relative',
+                transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                margin: '0 12px',
 
-                '& span': {
-                  position: 'relative',
-                  display: 'inline-block',
-                  '&::after': {
-                    content: '""',
-                    position: 'absolute',
-                    bottom: -2,
-                    left: '50%',
-                    width: 0,
-                    height: '2px',
-                    backgroundColor: '#fff',
-                    transform: 'translateX(-50%)',
-                    transition: 'width 0.3s ease',
-                  },
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: 4,
+                  width: 0,
+                  height: '2px',
+                  background: 'linear-gradient(90deg, #8B5CF6, #EC4899, #F59E0B)',
+                  transition: 'width 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                  borderRadius: '2px',
+                  boxShadow: '0 0 10px rgba(139, 92, 246, 0.5)',
                 },
 
-                '&:hover span::after': {
+                '&:hover': {
+                  background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                },
+
+                '&:hover::after': {
                   width: '100%',
                 },
               }}
             >
-              <span>{label}</span>
+              {label}
             </Box>
           ))}
         </Box>
-
 
         <IconButton
           color="inherit"
           aria-label="open drawer"
           edge="start"
           onClick={handleDrawerToggle}
-          sx={{ display: { md: 'none', paddingRight: '1px' }, color: '#fff' }}
+          sx={{ 
+            display: { md: 'none', paddingRight: '1px' }, 
+            color: 'rgba(255, 255, 255, 0.9)',
+            '&:hover': {
+              color: '#EC4899',
+              backgroundColor: 'rgba(139, 92, 246, 0.1)',
+            },
+            transition: 'all 0.3s ease',
+          }}
         >
           {mobileOpen ? <IoClose size={30} /> : <IoMenu size={30} />}
         </IconButton>
       </Box>
 
-      <Box component="div" sx={{ display: { xs: 'block', md: 'none', padding: '5px' } }}>
+      <Box component="div" sx={{ display: { xs: 'block', md: 'none' } }}>
         <Drawer
           container={container}
           variant="temporary"
@@ -259,11 +326,18 @@ function Navbar(props) {
           }}
           sx={{
             '& .MuiDrawer-paper': {
-              width: '70%',
+              width: '75%',
+              maxWidth: '320px',
               backgroundColor: 'transparent',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
+              backdropFilter: 'blur(30px)',
+              WebkitBackdropFilter: 'blur(30px)',
               boxShadow: 'none',
+              borderRight: '1px solid rgba(255, 255, 255, 0.1)',
+            },
+            '& .MuiBackdrop-root': {
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              backdropFilter: 'blur(5px)',
+              WebkitBackdropFilter: 'blur(5px)',
             }
           }}
         >

@@ -36,10 +36,12 @@
         opacity: 0;
         transform: translateY(20px);
     }
+
     60% {
         opacity: 1;
         transform: translateY(5px);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0);
@@ -51,13 +53,81 @@
 }
 
 .custom-card {
-    background: rgba(255, 255, 255, 0.1) !important;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    border-radius: 15px !important;
+    position: relative;
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 20px !important;
     overflow: hidden;
     color: white !important;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.custom-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 0%,
+            rgba(139, 92, 246, 0.15),
+            transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+
+.custom-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 50%,
+            rgba(139, 92, 246, 0.05) 0%,
+            rgba(236, 72, 153, 0.05) 50%,
+            transparent 70%);
+    animation: liquidMove 8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes liquidMove {
+
+    0%,
+    100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+
+    25% {
+        transform: translate(2%, -2%) rotate(2deg);
+    }
+
+    50% {
+        transform: translate(-1%, 1%) rotate(-1deg);
+    }
+
+    75% {
+        transform: translate(-2%, -1%) rotate(1deg);
+    }
+}
+
+.custom-card:hover::before {
+    opacity: 1;
+}
+
+.custom-card:hover {
+    box-shadow:
+        0 12px 40px rgba(139, 92, 246, 0.2),
+        0 0 20px rgba(236, 72, 153, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    border-color: rgba(139, 92, 246, 0.3) !important;
+    transform: translateY(-3px);
 }
 
 .edu-img-container {
@@ -68,6 +138,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    z-index: 1;
 }
 
 .edu-img {
@@ -75,6 +147,13 @@
     height: 100%;
     object-fit: contain;
     padding: 10px;
+    filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.3));
+    transition: all 0.3s ease;
+}
+
+.education-card-wrapper:hover .edu-img {
+    filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.5));
+    transform: scale(1.05);
 }
 
 .edu-degree {
@@ -82,6 +161,10 @@
     font-weight: 700;
     color: #fff;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.8) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .edu-institution {
@@ -96,19 +179,39 @@
 }
 
 .edu-year-badge {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    padding: 5px 15px;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
+    padding: 6px 18px;
     border-radius: 20px;
     font-weight: 600;
     font-size: 0.9rem;
     color: white;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    box-shadow:
+        0 4px 15px rgba(139, 92, 246, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.education-card-wrapper:hover .edu-year-badge {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.3));
+    border-color: rgba(139, 92, 246, 0.5);
+    box-shadow:
+        0 4px 20px rgba(139, 92, 246, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .edu-percentage {
     font-size: 1.1rem;
-    color: #fff;
+    color: rgba(255, 255, 255, 0.9);
+    position: relative;
+    z-index: 1;
 }
+
+
 
 @media (max-width: 768px) {
     .edu-degree {
@@ -118,7 +221,6 @@
     .edu-img-container {
         width: 220px;
         height: 220px;
-        /* margin-bottom: 15px; */
     }
 
     .education-card .row {

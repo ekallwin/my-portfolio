@@ -73,7 +73,7 @@ const Education = () => {
                         fontWeight: 700,
                         mt: 3,
                         mb: 4,
-                        fontFamily: "serif",
+                        fontFamily: 'Times New Roman',
                         color: "white",
                         fontSize: { xs: "2rem", md: "3rem" },
                     }}
@@ -102,7 +102,7 @@ const Education = () => {
                                         <Card.Body>
                                             <div className="d-flex justify-content-between align-items-start">
                                                 <div style={{ flex: 1, minWidth: 0, marginRight: '1rem' }}>
-                                                    <Card.Title className="edu-degree mb-1">{edu.course}</Card.Title>
+                                                    <Card.Title className="edu-degree mb-1" style={{ fontFamily: 'Times New Roman' }}>{edu.course}</Card.Title>
                                                     <Card.Subtitle className="edu-institution mb-2">{edu.institution}</Card.Subtitle>
                                                     {edu.university && <Card.Text className="edu-uni mb-2">{edu.university}</Card.Text>}
                                                 </div>
