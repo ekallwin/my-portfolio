@@ -202,36 +202,36 @@ const typeConfig: Record<NotificationType, TypeStyle> = {
   success: {
     icon: CircleCheck,
     accent: "#34d399",
-    tintFrom: "rgba(16,185,129,0.28)",
-    tintTo: "rgba(5,150,105,0.10)",
+    tintFrom: "rgba(16,185,129,0.38)",
+    tintTo: "rgba(5,150,105,0.20)",
     glow: "rgba(16,185,129,0.35)",
   },
   error: {
     icon: AlertCircle,
     accent: "#f87171",
-    tintFrom: "rgba(239,68,68,0.30)",
-    tintTo: "rgba(190,18,60,0.10)",
+    tintFrom: "rgba(239,68,68,0.40)",
+    tintTo: "rgba(190,18,60,0.20)",
     glow: "rgba(239,68,68,0.35)",
   },
   warning: {
     icon: AlertTriangle,
     accent: "#fbbf24",
-    tintFrom: "rgba(245,158,11,0.28)",
-    tintTo: "rgba(217,119,6,0.10)",
+    tintFrom: "rgba(245,158,11,0.38)",
+    tintTo: "rgba(217,119,6,0.20)",
     glow: "rgba(245,158,11,0.35)",
   },
   info: {
     icon: Info,
     accent: "#22d3ee",
-    tintFrom: "rgba(6,182,212,0.28)",
-    tintTo: "rgba(8,145,178,0.10)",
+    tintFrom: "rgba(6,182,212,0.38)",
+    tintTo: "rgba(8,145,178,0.20)",
     glow: "rgba(6,182,212,0.35)",
   },
   loading: {
     icon: Loader2,
     accent: "#a78bfa",
-    tintFrom: "rgba(139,92,246,0.28)",
-    tintTo: "rgba(109,40,217,0.10)",
+    tintFrom: "rgba(139,92,246,0.38)",
+    tintTo: "rgba(109,40,217,0.20)",
     glow: "rgba(139,92,246,0.35)",
     spin: true,
   },
@@ -299,7 +299,6 @@ function GlassNotificationContainer({ position = "bottom-right" }: { position?: 
           onClose={() => removeNotification(notification.id)}
           style={{
             transform: `scale(${1 - index * 0.02})`,
-            opacity: 1 - index * 0.1,
           }}
         />
       ))}
@@ -350,9 +349,9 @@ function GlassNotificationItem({ notification, onClose, style }: GlassNotificati
           borderRadius: 14,
           overflow: "hidden",
           border: `1px solid ${config.accent}55`,
-          background: `linear-gradient(135deg, ${config.tintFrom}, ${config.tintTo}), rgba(24,24,32,0.55)`,
-          backdropFilter: "blur(20px) saturate(160%)",
-          WebkitBackdropFilter: "blur(20px) saturate(160%)",
+          background: `linear-gradient(135deg, ${config.tintFrom}, ${config.tintTo}), rgba(15,15,22,0.82)`,
+          backdropFilter: "blur(32px) saturate(180%)",
+          WebkitBackdropFilter: "blur(32px) saturate(180%)",
           boxShadow: `0 8px 32px rgba(0,0,0,0.35), 0 0 24px ${config.glow}, inset 0 1px 1px rgba(255,255,255,0.15)`,
         }}
       >
@@ -454,9 +453,9 @@ export function GlassNotification({
           borderRadius: 14,
           overflow: "hidden",
           border: `1px solid ${config.accent}55`,
-          background: `linear-gradient(135deg, ${config.tintFrom}, ${config.tintTo}), rgba(24,24,32,0.55)`,
-          backdropFilter: "blur(20px) saturate(160%)",
-          WebkitBackdropFilter: "blur(20px) saturate(160%)",
+          background: `linear-gradient(135deg, ${config.tintFrom}, ${config.tintTo}), rgba(15,15,22,0.82)`,
+          backdropFilter: "blur(32px) saturate(180%)",
+          WebkitBackdropFilter: "blur(32px) saturate(180%)",
           boxShadow: `0 8px 32px rgba(0,0,0,0.35), 0 0 24px ${config.glow}, inset 0 1px 1px rgba(255,255,255,0.15)`,
         }}
       >
