@@ -378,7 +378,7 @@ function GlassNotificationItem({ notification, onClose, style }: GlassNotificati
           boxShadow: `0 8px 32px rgba(0,0,0,0.35), 0 0 24px ${config.glow}, inset 0 1px 1px rgba(255,255,255,0.15)`,
         }}
       >
-        <div style={{ position: "relative", padding: 16, display: "flex", alignItems: "flex-start", gap: 12 }}>
+        <div style={{ position: "relative", padding: 16, display: "flex", alignItems: "center", gap: 12 }}>
           <div
             style={{
               flexShrink: 0,

@@ -368,7 +368,7 @@ const ContactForm = () => {
         });
         setHidePhone(false);
         setErrors({});
-        setTimeout(() => setFeedbackOpen(true), 2500);
+        setTimeout(() => setFeedbackOpen(true), 6000);
         return "Message sent successfully!";
       },
       error: "Failed to send message. Please try again.",

@@ -3,9 +3,9 @@ import { Box, Container, Typography, Card, CardContent, Avatar, Button, Chip, St
 import Allwin from "./Images/Allwin.jpg";
 import { useTheme } from '@mui/material/styles';
 import { toast } from '../GlassNotification/glass-notification';
-import { FaDownload, FaCircleCheck, FaSpinner, FaGithub, FaLinkedin } from 'react-icons/fa6';
+import { FaDownload, FaCircleCheck, FaGithub, FaLinkedin } from 'react-icons/fa6';
 import GreenTickSuccess from '../Contact/Component/Success.jsx';
-import LinearDeterminate from '../Contact/Component/Progress.jsx';
+import DownloadProgress from './DownloadProgress.jsx';
 import './about.css';
 import { scale } from 'motion';
 
@@ -53,25 +53,39 @@ function About() {
   }, []);
 
   const handleDownload = () => {
+    console.log('Download button clicked! isDownloading will be set to true');
+    
     if (hasDownloaded) {
       toast.error("You've already initiated the resume download. Please check your Downloads folder!", { duration: 5000 });
       return;
     }
+    
     setHasDownloaded(true);
     setIsDownloading(true);
+    console.log('isDownloading state set to true');
   };
 
   const handleDownloadComplete = () => {
-    const link = document.createElement('a');
-    link.href = '/Resume.pdf';
-    link.download = 'Allwin E K - Resume.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    console.log('Download complete called!');
+    
+    // Trigger file download
+    setTimeout(() => {
+      const link = document.createElement('a');
+      link.href = '/Resume.pdf';
+      link.download = 'Allwin E K - Resume.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      console.log('File download triggered');
+    }, 300);
 
-    setIsDownloading(false);
-    setIsModalOpen(true);
-    setButtonText(<>Resume Downloaded <FaCircleCheck style={{ fontSize: '1em', marginLeft: 6 }} /></>);
+    // Show completion modal
+    setTimeout(() => {
+      setIsDownloading(false);
+      setIsModalOpen(true);
+      setButtonText(<>Resume Downloaded <FaCircleCheck style={{ fontSize: '1em', marginLeft: 6 }} /></>);
+      console.log('Modal opened, progress hidden');
+    }, 800);
   };
 
   const skills = [
@@ -195,9 +209,10 @@ function About() {
                     >
                       <FaGithub />
                     </Box>
+
                     <Box
                       component="a"
-                      href="https://www.linkedin.com/in/ekallwin/"
+                      href="https://linkedin.com/in/allwinek"
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label="LinkedIn"
@@ -248,7 +263,7 @@ function About() {
                     Technologies I Work With:
                   </Typography>
 
-                  <Stack direction="row" flexWrap="wrap" gap={1}>
+                  <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mb: 3 }}>
                     {skills.map((skill, i) => (
                       <Chip
                         key={i}
@@ -269,51 +284,45 @@ function About() {
                             transform: 'translateY(-2px)',
                             background: 'rgba(255, 255, 255, 0.14)',
                             boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255,255,255,0.25)',
-
                           },
                         }}
                       />
                     ))}
                   </Stack>
 
-                  {isDownloading ? (
-                    <Box sx={{ mt: 3, width: '100%', maxWidth: 300, mx: { xs: 'auto', md: 0 } }}>
-                      <LinearDeterminate onComplete={handleDownloadComplete} />
-                      <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)', mt: 1, display: 'block', textAlign: 'center' }}>
-                        Downloading...
-                      </Typography>
-                    </Box>
-                  ) : (
-                    <Button
-                      disableRipple
-                      variant="contained"
-                      onClick={handleDownload}
-                      className={`buttons ${!hasDownloaded ? 'animate-child' : ''}`}
-                      data-animate={!hasDownloaded ? true : undefined}
-                      sx={{
-                        mt: 3,
-                        px: 4,
-                        py: 1.5,
-                        fontWeight: 'bold',
-                        borderRadius: 3,
-                        color: 'white',
-                        mx: { xs: 'auto', md: 0 },
-                        display: { xs: 'block', md: 'inline-flex' },
-                        background: 'linear-gradient(135deg, rgba(102,126,234,0.85), rgba(118,75,162,0.85))',
-                        backdropFilter: 'blur(12px)',
-                        border: '1px solid rgba(255,255,255,0.25)',
-                        boxShadow: '0 8px 24px rgba(102,126,234,0.35), inset 0 1px 1px rgba(255,255,255,0.4)',
-                        '&:hover': {
-                          transform: 'translateY(-2px)',
-                          background: 'linear-gradient(135deg, rgba(102,126,234,0.95), rgba(118,75,162,0.95))',
-                          boxShadow: '0 10px 28px rgba(102,126,234,0.45), inset 0 1px 1px rgba(255,255,255,0.5)',
-                        },
-                        transition: 'all 0.3s ease',
-                      }}
-                    >
-                      {buttonText}
-                    </Button>
-                  )}
+                  <Button
+                    disableRipple
+                    disabled={isDownloading}
+                    variant="contained"
+                    onClick={handleDownload}
+                    className={`buttons ${!hasDownloaded ? 'animate-child' : ''}`}
+                    data-animate={!hasDownloaded ? true : undefined}
+                    sx={{
+                      mt: 3,
+                      px: 4,
+                      py: 1.5,
+                      fontWeight: 'bold',
+                      borderRadius: 3,
+                      color: 'white',
+                      mx: { xs: 'auto', md: 0 },
+                      display: { xs: 'block', md: 'inline-flex' },
+                      background: 'linear-gradient(135deg, rgba(102,126,234,0.85), rgba(118,75,162,0.85))',
+                      backdropFilter: 'blur(12px)',
+                      border: '1px solid rgba(255,255,255,0.25)',
+                      boxShadow: '0 8px 24px rgba(102,126,234,0.35), inset 0 1px 1px rgba(255,255,255,0.4)',
+                      '&:hover': {
+                        transform: 'translateY(-2px)',
+                        background: 'linear-gradient(135deg, rgba(102,126,234,0.95), rgba(118,75,162,0.95))',
+                        boxShadow: '0 10px 28px rgba(102,126,234,0.45), inset 0 1px 1px rgba(255,255,255,0.5)',
+                      },
+                      '&.Mui-disabled': {
+                        color: 'rgba(255,255,255,0.5)',
+                      },
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    {isDownloading ? 'Downloading...' : buttonText}
+                  </Button>
                 </Box>
               </Stack>
             </CardContent>
@@ -322,11 +331,9 @@ function About() {
       </Box>
 
       <Modal
-        open={isModalOpen}
-        onClose={(event, reason) => {
-          if (reason === "backdropClick") return;
-          setIsModalOpen(false);
-        }}
+        open={isDownloading || isModalOpen}
+        onClose={() => {}}
+        disableEscapeKeyDown
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
@@ -339,7 +346,7 @@ function About() {
           backdropFilter: 'blur(5px)',
         }}
       >
-        <Fade in={isModalOpen}>
+        <Fade in={isDownloading || isModalOpen}>
           <Box
             sx={{
               background: 'rgba(20, 20, 30, 0.75)',
@@ -356,43 +363,48 @@ function About() {
               alignItems: 'center',
             }}
           >
-            <Box sx={{ mb: 2, color: 'success.main', display: 'flex', justifyContent: 'center' }}>
-              <GreenTickSuccess size={100} />
-            </Box>
+            {isDownloading ? (
+              <DownloadProgress onComplete={handleDownloadComplete} />
+            ) : (
+              <>
+                <Box sx={{ mb: 2, color: 'success.main', display: 'flex', justifyContent: 'center' }}>
+                  <GreenTickSuccess size={100} />
+                </Box>
 
-            <Typography variant="h5" fontWeight="bold" textAlign="center" sx={{ mb: 1, color: '#fff' }}>
-              Resume downloaded !
-            </Typography>
+                <Typography variant="h5" fontWeight="bold" textAlign="center" sx={{ mb: 1, color: '#fff' }}>
+                  Resume downloaded !
+                </Typography>
 
-            <Typography variant="body2" textAlign="justify" sx={{ mb: 3, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
-              My resume has been successfully downloaded in your device. Kindly check in your downloaded file named as <strong>"Allwin E K - Resume.pdf"</strong>
-            </Typography>
+                <Typography variant="body2" textAlign="justify" sx={{ mb: 3, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
+                  My resume has been successfully downloaded in your device. Kindly check in your downloaded file named as <strong>"Allwin E K - Resume.pdf"</strong>
+                </Typography>
 
-            <Button
-              onClick={() => setIsModalOpen(false)}
-              variant="contained"
-              disableRipple
-
-              sx={{
-                mt: 1,
-                px: 4,
-                py: 1,
-                fontWeight: "bold",
-                borderRadius: 2,
-                textTransform: 'none',
-                color: '#fff',
-                background: 'linear-gradient(135deg, rgba(102,126,234,0.85), rgba(118,75,162,0.85))',
-                backdropFilter: 'blur(12px)',
-                border: '1px solid rgba(255,255,255,0.25)',
-                boxShadow: '0 8px 24px rgba(102,126,234,0.35), inset 0 1px 1px rgba(255,255,255,0.4)',
-                '&:hover': {
-                  background: 'linear-gradient(135deg, rgba(102,126,234,0.95), rgba(118,75,162,0.95))',
-                  boxShadow: '0 10px 28px rgba(102,126,234,0.45), inset 0 1px 1px rgba(255,255,255,0.5)',
-                },
-              }}
-            >
-              Close
-            </Button>
+                <Button
+                  onClick={() => setIsModalOpen(false)}
+                  variant="contained"
+                  disableRipple
+                  sx={{
+                    mt: 1,
+                    px: 4,
+                    py: 1,
+                    fontWeight: "bold",
+                    borderRadius: 2,
+                    textTransform: 'none',
+                    color: '#fff',
+                    background: 'linear-gradient(135deg, rgba(102,126,234,0.85), rgba(118,75,162,0.85))',
+                    backdropFilter: 'blur(12px)',
+                    border: '1px solid rgba(255,255,255,0.25)',
+                    boxShadow: '0 8px 24px rgba(102,126,234,0.35), inset 0 1px 1px rgba(255,255,255,0.4)',
+                    '&:hover': {
+                      background: 'linear-gradient(135deg, rgba(102,126,234,0.95), rgba(118,75,162,0.95))',
+                      boxShadow: '0 10px 28px rgba(102,126,234,0.45), inset 0 1px 1px rgba(255,255,255,0.5)',
+                    },
+                  }}
+                >
+                  Close
+                </Button>
+              </>
+            )}
           </Box>
         </Fade>
       </Modal>
