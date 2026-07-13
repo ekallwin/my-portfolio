@@ -5,6 +5,7 @@
         linear-gradient(180deg, #05061a 0%, #020210 100%);
     color: #fff;
     padding: 3rem 0;
+    padding-bottom: calc(3rem + env(safe-area-inset-bottom, 0px));
     margin-top: auto;
     position: relative;
     overflow: hidden;

@@ -13,6 +13,7 @@
 body {
   overflow-x: hidden;
   height: 100vh;
+  height: 100dvh;
 }
 
 html {
@@ -165,8 +166,10 @@ button {
 .app-shell {
   position: relative;
   z-index: 1;
-  height: 100vh;
+  height: 100vh; /* fallback for browsers without dvh support */
+  height: 100dvh; /* recalculates as mobile address bar shows/hides, so no dead space at the bottom */
   overflow-y: auto;
+  overflow-x: hidden;
   scroll-behavior: smooth;
 }
 
