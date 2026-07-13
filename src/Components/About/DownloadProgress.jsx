@@ -66,7 +66,7 @@ function DownloadProgress({ onComplete }) {
 
             {/* Subtitle */}
             <Typography variant="body2" textAlign="center" sx={{ mb: 3, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
-                Please wait while your resume is being downloaded
+                Please wait while my resume is being downloaded
             </Typography>
 
             {/* Progress bar background */}
