@@ -66,6 +66,7 @@ const ContactForm = () => {
       .sort((a, b) => a.name.localeCompare(b.name));
   }, []);
 
+
   useEffect(() => {
     countryOptions.forEach((opt) => {
       const img = new Image();
@@ -92,18 +93,6 @@ const ContactForm = () => {
       try {
         setIsLoadingCountry(true);
 
-        const cachedData = sessionStorage.getItem("user_country_code");
-        if (cachedData) {
-          const parsed = JSON.parse(cachedData);
-          if (parsed.isoCode && parsed.callingCode) {
-            setCountryCode(parsed.callingCode);
-            setCountryIso(parsed.isoCode);
-            setUserCountry(parsed.countryName || parsed.isoCode);
-            setFormData((prev) => ({ ...prev, phone: "" }));
-            setIsLoadingCountry(false);
-            return;
-          }
-        }
 
         let callingCode = null;
         let isoCode = null;
@@ -113,13 +102,17 @@ const ContactForm = () => {
           const res = await fetch("https://ipwho.is/");
           if (res.ok) {
             const d = await res.json();
-            if (d.success && d.country_code && d.country_phone) {
+            if (d.success && d.country_code && d.calling_code) {
               isoCode = d.country_code;
-              callingCode = d.country_phone.startsWith("+") ? d.country_phone : `+${d.country_phone}`;
+              callingCode = d.calling_code.toString().startsWith("+")
+                ? d.calling_code
+                : `+${d.calling_code}`;
               countryName = d.country;
             }
           }
-        } catch { }
+        } catch (err) {
+          console.warn("ipwho.is lookup failed:", err);
+        }
 
         if (!isoCode) {
           try {
@@ -133,32 +126,31 @@ const ContactForm = () => {
                 countryName = displayNames.of(d.country) || d.country;
               }
             }
-          } catch { }
+          } catch (err) {
+            console.warn("ipinfo.io lookup failed:", err);
+          }
         }
+
+        if (isManuallySelected) return;
 
         if (isoCode && callingCode) {
           setCountryCode(callingCode);
           setCountryIso(isoCode);
-          const name = countryName || isoCode;
-          setUserCountry(name);
-          setFormData((prev) => ({ ...prev, phone: "" }));
-
-          sessionStorage.setItem("user_country_code", JSON.stringify({
-            isoCode,
-            callingCode,
-            countryName: name
-          }));
+          setUserCountry(countryName || isoCode);
         } else {
+          setCountryCode("+91");
+          setCountryIso("IN");
+          setUserCountry("India");
+        }
+        setFormData((prev) => ({ ...prev, phone: "" }));
+      } catch (err) {
+        console.warn("Country detection failed:", err);
+        if (!isManuallySelected) {
           setCountryCode("+91");
           setCountryIso("IN");
           setUserCountry("India");
           setFormData((prev) => ({ ...prev, phone: "" }));
         }
-      } catch {
-        setCountryCode("+91");
-        setCountryIso("IN");
-        setUserCountry("India");
-        setFormData((prev) => ({ ...prev, phone: "" }));
       } finally {
         setIsLoadingCountry(false);
       }
@@ -422,7 +414,7 @@ const ContactForm = () => {
     if (isLoadingCountry) return "Detecting your country...";
     return (
       <span style={{ margin: '0rem' }}>
-        {/* {isManuallySelected ? "Country:" : "Country:"}{" "} */}
+        {/* {isManuallySelected ? "Detected Country:" : "Selected Country:"}{" "} */}
         Country:{'  '}
         <strong>{userCountry}</strong>{" "}
         <span
@@ -459,6 +451,7 @@ const ContactForm = () => {
     "& .MuiFormHelperText-root": { color: "rgba(255,255,255,0.55)" },
     "& .MuiFormHelperText-root.Mui-error": { color: "#ff8a8a" },
   };
+
 
   const glassButtonSx = {
     color: "#fff",
@@ -522,7 +515,7 @@ const ContactForm = () => {
                     background: "linear-gradient(45deg, #a3e2ff, #e8bfff)",
                     backgroundClip: "text",
                     WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent", 
+                    WebkitTextFillColor: "transparent",
                     color: "transparent",
                     fontWeight: "bold",
                     mb: 1,
