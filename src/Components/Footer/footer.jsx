@@ -77,11 +77,11 @@ export default function Footer() {
           </p>
         </div>
 
-        <div className="footer-connection">
+        {/* <div className="footer-connection">
           <button className="footer-connection-btn" onClick={() => setConnectionOpen(true)}>
             Show Connection Details
           </button>
-        </div>
+        </div> */}
 
       </div>
 
