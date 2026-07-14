@@ -24,11 +24,11 @@ import {
 import Stack from "@mui/material/Stack";
 import Tooltip from '@mui/material/Tooltip';
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { Send as SendIcon, Close as CloseIcon } from "@mui/icons-material";
+import { Send as SendIcon, Close as CloseIcon, Search as SearchIcon, SearchOff as SearchOffIcon } from "@mui/icons-material";
 import GreenTickSuccess from "./Component/Success";
 import moment from "moment";
 import { parsePhoneNumberFromString, AsYouType, getCountries, getCountryCallingCode } from "libphonenumber-js";
-import ReactSelect from "react-select";
+import ReactSelect, { components } from "react-select";
 
 const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL;
 
@@ -53,6 +53,8 @@ const ContactForm = () => {
   const [feedbackLoading, setFeedbackLoading] = useState(false);
   const [countryModalOpen, setCountryModalOpen] = useState(false);
   const [isManuallySelected, setIsManuallySelected] = useState(false);
+  const [isCountrySearchable, setIsCountrySearchable] = useState(false);
+  const countrySelectRef = useRef(null);
 
   const countryOptions = useMemo(() => {
     const displayNames = new Intl.DisplayNames(["en"], { type: "region" });
@@ -66,14 +68,41 @@ const ContactForm = () => {
       .sort((a, b) => a.name.localeCompare(b.name));
   }, []);
 
-  // Preload every flag image as soon as the page loads, so they're already
-  // cached by the browser by the time the country modal is opened.
   useEffect(() => {
     countryOptions.forEach((opt) => {
       const img = new Image();
       img.src = opt.flagUrl;
     });
   }, [countryOptions]);
+
+  const CountrySearchIndicator = (props) => (
+    <components.DropdownIndicator {...props}>
+      {isCountrySearchable ? (
+        <SearchOffIcon
+          onMouseDown={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            setIsCountrySearchable(false);
+            countrySelectRef.current?.blur();
+          }}
+          sx={{ fontSize: 20, color: "rgba(255,255,255,0.6)", cursor: "pointer" }}
+        />
+      ) : (
+        <SearchIcon
+          onMouseDown={(e) => {
+          
+            e.stopPropagation();
+            e.preventDefault();
+            setIsCountrySearchable(true);
+            setTimeout(() => {
+              countrySelectRef.current?.focus();
+            }, 0);
+          }}
+          sx={{ fontSize: 20, color: "rgba(255,255,255,0.6)", cursor: "pointer" }}
+        />
+      )}
+    </components.DropdownIndicator>
+  );
 
   const handleCountrySelect = (option) => {
     if (!option) return;
@@ -84,6 +113,7 @@ const ContactForm = () => {
     setErrors((prev) => ({ ...prev, phone: "" }));
     setIsManuallySelected(true);
     setCountryModalOpen(false);
+    setIsCountrySearchable(false);
   };
 
   const theme = useTheme();
@@ -94,7 +124,6 @@ const ContactForm = () => {
       try {
         setIsLoadingCountry(true);
 
-        // Check if country data is already cached in this session to prevent redundant requests
         const cachedData = sessionStorage.getItem("user_country_code");
         if (cachedData) {
           const parsed = JSON.parse(cachedData);
@@ -522,7 +551,7 @@ const ContactForm = () => {
                   gutterBottom
                   textAlign="center"
                   sx={{
-                    background: "linear-gradient(45deg, #a3e2ff, #e8bfff)", // Swapped to higher contrast colors
+                    background: "linear-gradient(45deg, #a3e2ff, #e8bfff)",
                     backgroundClip: "text",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent", 
@@ -650,7 +679,10 @@ const ContactForm = () => {
 
       <Dialog
         open={countryModalOpen}
-        onClose={() => setCountryModalOpen(false)}
+        onClose={() => {
+          setCountryModalOpen(false);
+          setIsCountrySearchable(false);
+        }}
         fullWidth
         maxWidth="xs"
         PaperProps={{
@@ -670,7 +702,10 @@ const ContactForm = () => {
         <DialogTitle sx={{ fontWeight: "bold", pb: 1, color: "#fff" }}>
           Select Country
           <IconButton
-            onClick={() => setCountryModalOpen(false)}
+            onClick={() => {
+              setCountryModalOpen(false);
+              setIsCountrySearchable(false);
+            }}
             sx={{ position: "absolute", right: 8, top: 8, color: "rgba(255,255,255,0.7)" }}
           >
             <CloseIcon />
@@ -678,13 +713,16 @@ const ContactForm = () => {
         </DialogTitle>
         <DialogContent sx={{ pt: 0, overflow: "visible" }}>
           <ReactSelect
+            ref={countrySelectRef}
             autoFocus
             openMenuOnFocus
+            isSearchable={isCountrySearchable}
             options={countryOptions}
             onChange={handleCountrySelect}
             placeholder="Search country..."
             menuPortalTarget={document.body}
             menuPosition="fixed"
+            components={{ DropdownIndicator: CountrySearchIndicator }}
             value={countryOptions.find((o) => o.value === countryIso) || null}
             formatOptionLabel={(opt) => (
               <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
