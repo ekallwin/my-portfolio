@@ -29,7 +29,6 @@ import GreenTickSuccess from "./Component/Success";
 import moment from "moment";
 import { parsePhoneNumberFromString, AsYouType, getCountries, getCountryCallingCode } from "libphonenumber-js";
 import ReactSelect from "react-select";
-import ReactCountryFlag from "react-country-flag";
 
 const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL;
 
@@ -61,13 +60,20 @@ const ContactForm = () => {
       .map((iso) => {
         const calling = `+${getCountryCallingCode(iso)}`;
         const name = displayNames.of(iso) || iso;
-        const flag = iso.toUpperCase().split("").map((c) =>
-          String.fromCodePoint(127397 + c.charCodeAt(0))
-        ).join("");
-        return { value: iso, label: `${flag}  ${name}`, name, calling };
+        const flagUrl = `https://flagcdn.com/24x18/${iso.toLowerCase()}.png`;
+        return { value: iso, label: name, name, calling, flagUrl };
       })
       .sort((a, b) => a.name.localeCompare(b.name));
   }, []);
+
+  // Preload every flag image as soon as the page loads, so they're already
+  // cached by the browser by the time the country modal is opened.
+  useEffect(() => {
+    countryOptions.forEach((opt) => {
+      const img = new Image();
+      img.src = opt.flagUrl;
+    });
+  }, [countryOptions]);
 
   const handleCountrySelect = (option) => {
     if (!option) return;
@@ -419,7 +425,8 @@ const ContactForm = () => {
     if (isLoadingCountry) return "Detecting your country...";
     return (
       <span style={{ margin: '0rem' }}>
-        {isManuallySelected ? "Selected country:" : "Detected country:"}{" "}
+        {/* {isManuallySelected ? "Country:" : "Country:"}{" "} */}
+        Country:{'  '}
         <strong>{userCountry}</strong>{" "}
         <span
           onClick={() => setCountryModalOpen(true)}
@@ -681,10 +688,13 @@ const ContactForm = () => {
             value={countryOptions.find((o) => o.value === countryIso) || null}
             formatOptionLabel={(opt) => (
               <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <ReactCountryFlag
-                  countryCode={opt.value}
-                  svg
-                  style={{ width: "1.4em", height: "1.4em", borderRadius: 2, flexShrink: 0 }}
+                <img
+                  src={opt.flagUrl}
+                  alt=""
+                  width={24}
+                  height={18}
+                  style={{ borderRadius: 2, flexShrink: 0, objectFit: "cover" }}
+                  onError={(e) => { e.target.style.visibility = "hidden"; }}
                 />
                 <span style={{ flex: 1 }}>{opt.name}</span>
                 <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "#aaa" }}>{opt.calling}</span>

@@ -40,7 +40,7 @@ const Skills = () => {
                     }
                 });
             },
-            { threshold: 0.2 }
+            { threshold: 0.3, rootMargin: '0px 0px -15% 0px' }
         );
 
         skillBoxRefs.current.forEach(el => el && observer.observe(el));
@@ -125,7 +125,7 @@ const Skills = () => {
                                     `,
                                     opacity: 0,
                                     transform: 'translateY(20px)',
-                                    transition: 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease, background 0.35s ease, border-color 0.2s ease',
+                                    transition: 'opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.35s ease, background 0.35s ease, border-color 0.2s ease',
                                     '&::before': {
                                         content: '""',
                                         position: 'absolute',
@@ -160,6 +160,7 @@ const Skills = () => {
                                         transform: 'translateY(-4px) scale(1.12)',
                                         cursor: 'pointer',
                                         border: '1px solid rgba(255,255,255,0.38)',
+                                        transition: 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease',
                                         boxShadow: `
                                             0 14px 32px rgba(0,0,0,0.4),
                                             inset 0 1px 1px rgba(255,255,255,0.45),
