@@ -103,7 +103,7 @@ export default function Footer() {
         }}
       >
         <DialogTitle sx={{ fontWeight: "bold", pb: 1, color: "#fff" }}>
-         Client side connection details
+         Your connection details
           <IconButton
             onClick={() => setConnectionOpen(false)}
             sx={{ position: "absolute", right: 8, top: 8, color: "rgba(255,255,255,0.7)" }}
