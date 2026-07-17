@@ -287,55 +287,55 @@ function IP() {
 
     const ispRows = info
         ? [
-              {
-                  label: "Status",
-                  value:
-                      typeof info.success === "boolean"
-                          ? info.success
-                              ? "Success"
-                              : "Failed"
-                          : null,
-              },
-              {
-                  label: "Protocol Version",
-                  value: info.type,
-              },
-              {
-                  label:"IP Address",
-                  value: info.ip
-              },
-              {
-                  label: "Continent",
-                  value: info.continent,
-              },
-              {
-                  label: "Country",
-                  value: info.country,
-              },
-              {
-                  label: "Capital",
-                  value: info.capital,
-              },
-              {
-                  label: "ISP",
-                  value: info.connection?.isp,
-              },
-              {
-                  label: "Timezone",
-                  value: info.timezone?.abbr
-                      ? `${info.timezone.id} (${info.timezone.abbr})`
-                      : info.timezone?.id,
-              },
-              {
-                  label: "UTC",
-                  value: info.timezone?.utc,
-              },
-          ].filter(
-              (row) =>
-                  row.value !== null &&
-                  row.value !== undefined &&
-                  row.value !== ""
-          )
+            {
+                label: "Status",
+                value:
+                    typeof info.success === "boolean"
+                        ? info.success
+                            ? "Success"
+                            : "Failed"
+                        : null,
+            },
+            {
+                label: "Protocol Version",
+                value: info.type,
+            },
+            {
+                label: "IP Address",
+                value: info.ip
+            },
+            {
+                label: "ISP",
+                value: info.connection?.isp,
+            },
+            {
+                label: "Continent",
+                value: info.continent,
+            },
+            {
+                label: "Country",
+                value: info.country,
+            },
+            {
+                label: "Capital",
+                value: info.capital,
+            },
+            {
+                label: "Timezone",
+                value: info.timezone?.abbr
+                    ? `${info.timezone.id} (${info.timezone.abbr})`
+                    : info.timezone?.id,
+            },
+            {
+                label: "UTC",
+                value: info.timezone?.utc,
+            },
+        ].filter(
+            (row) =>
+                row.value !== null &&
+                row.value !== undefined &&
+                row.value !== ""
+        )
         : [];
 
     const networkRows = [
