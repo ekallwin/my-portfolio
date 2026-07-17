@@ -192,6 +192,25 @@ const getPlatform = () => {
     return "Unknown";
 };
 
+const labelCellSx = {
+    color: "rgba(255,255,255,0.6)",
+    borderBottom: "1px solid rgba(255,255,255,0.1)",
+    fontWeight: 600,
+    whiteSpace: "nowrap",
+    verticalAlign: "top",
+    width: "40%",
+    py: 1.25,
+};
+
+const valueCellSx = {
+    color: "#fff",
+    borderBottom: "1px solid rgba(255,255,255,0.1)",
+    textAlign: "right",
+    wordBreak: "break-word",
+    overflowWrap: "anywhere",
+    py: 1.25,
+};
+
 function IP() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -364,30 +383,15 @@ function IP() {
                     Couldn't load connection data: {error}
                 </p>
 
-                <Table size="small">
+                <Table size="small" sx={{ tableLayout: "fixed", width: "100%" }}>
                     <TableBody>
                         {networkRows.map((row) => (
                             <TableRow key={row.label}>
-                                <TableCell
-                                    sx={{
-                                        color: "rgba(255,255,255,0.6)",
-                                        borderBottom:
-                                            "1px solid rgba(255,255,255,0.1)",
-                                        fontWeight: 600,
-                                        whiteSpace: "nowrap",
-                                    }}
-                                >
+                                <TableCell sx={labelCellSx}>
                                     {row.label}
                                 </TableCell>
 
-                                <TableCell
-                                    sx={{
-                                        color: "#fff",
-                                        borderBottom:
-                                            "1px solid rgba(255,255,255,0.1)",
-                                        textAlign: "right",
-                                    }}
-                                >
+                                <TableCell sx={valueCellSx}>
                                     {row.value}
                                 </TableCell>
                             </TableRow>
@@ -401,30 +405,15 @@ function IP() {
     const rows = [...ispRows, ...networkRows];
 
     return (
-        <Table size="small">
+        <Table size="small" sx={{ tableLayout: "fixed", width: "100%" }}>
             <TableBody>
                 {rows.map((row) => (
                     <TableRow key={row.label}>
-                        <TableCell
-                            sx={{
-                                color: "rgba(255,255,255,0.6)",
-                                borderBottom:
-                                    "1px solid rgba(255,255,255,0.1)",
-                                fontWeight: 600,
-                                whiteSpace: "nowrap",
-                            }}
-                        >
+                        <TableCell sx={labelCellSx}>
                             {row.label}
                         </TableCell>
 
-                        <TableCell
-                            sx={{
-                                color: "#fff",
-                                borderBottom:
-                                    "1px solid rgba(255,255,255,0.1)",
-                                textAlign: "right",
-                            }}
-                        >
+                        <TableCell sx={valueCellSx}>
                             {row.value}
                         </TableCell>
                     </TableRow>
