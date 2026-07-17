@@ -316,10 +316,10 @@ function IP() {
                 label: "Country",
                 value: info.country,
             },
-            {
-                label: "Capital",
-                value: info.capital,
-            },
+            // {
+            //     label: "Capital",
+            //     value: info.capital,
+            // },
             {
                 label: "Timezone",
                 value: info.timezone?.abbr
@@ -343,10 +343,10 @@ function IP() {
             label: "Estimated Speed",
             value: network.downlink,
         },
-        {
-            label: "Round-Trip Time",
-            value: network.rtt,
-        },
+        // {
+        //     label: "Round-Trip Time",
+        //     value: network.rtt,
+        // },
         {
             label: "Browser",
             value: browser,
