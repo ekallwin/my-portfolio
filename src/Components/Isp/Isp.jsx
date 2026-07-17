@@ -297,7 +297,7 @@ function IP() {
                           : null,
               },
               {
-                  label: "Type",
+                  label: "Protocol Version",
                   value: info.type,
               },
               {
