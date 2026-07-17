@@ -35,30 +35,135 @@ const getNetworkInfo = () => {
     };
 };
 
-const getBrowser = () => {
+// Product tokens that browsers add to their own UA string to identify
+// themselves, even though they're Chromium-based under the hood. Anthing
+// not in this map falls through to the generic extractor below, so new /
+// regional browsers (JioSphere, DuckDuckGo, OEM browsers, etc.) still get
+// their real name instead of being reported as "Chrome".
+const KNOWN_BRAND_TOKENS = [
+    ["SamsungBrowser/", "Samsung Internet"],
+    ["HeyTapBrowser/", "Heytap Browser"],
+    ["OppoBrowser/", "Oppo Browser"],
+    ["MiuiBrowser/", "Mi Browser"],
+    ["VivoBrowser/", "Vivo Browser"],
+    ["HuaweiBrowser/", "Huawei Browser"],
+    ["UCBrowser/", "UC Browser"],
+    ["UCWEB/", "UC Browser"],
+    ["YaBrowser/", "Yandex Browser"],
+    ["QQBrowser/", "QQ Browser"],
+    ["Puffin/", "Puffin"],
+    ["Silk/", "Amazon Silk"],
+    ["Vivaldi/", "Vivaldi"],
+    ["DuckDuckGo/", "DuckDuckGo"],
+    ["JioSphere/", "JioSphere"],
+    ["JioPages/", "JioPages"],
+];
+
+// Tokens that are part of the underlying engine/compatibility boilerplate,
+// not the actual browser name - these are ignored by the generic extractor.
+const GENERIC_UA_TOKENS = new Set([
+    "Mozilla",
+    "AppleWebKit",
+    "KHTML",
+    "like",
+    "Gecko",
+    "Chrome",
+    "CriOS",
+    "FxiOS",
+    "EdgiOS",
+    "EdgA",
+    "Edg",
+    "OPiOS",
+    "OPT",
+    "OPR",
+    "Version",
+    "Mobile",
+    "Safari",
+    "Build",
+]);
+
+// Looks for any "Name/Version" token the client itself added to the UA
+// string that isn't one of the generic engine tokens above. This is what
+// catches browsers we haven't explicitly listed (new/regional/rebranded
+// Chromium browsers), since they still tell us their own name - we just
+// weren't reading it before.
+const extractUnknownBrandFromUA = (ua) => {
+    const matches = [...ua.matchAll(/([A-Za-z][A-Za-z0-9.\-]*)\/[\d.]+/g)];
+
+    const candidate = matches
+        .map((m) => m[1])
+        .find((name) => !GENERIC_UA_TOKENS.has(name));
+
+    return candidate || null;
+};
+
+const getBrowserFromUA = () => {
     const ua = navigator.userAgent;
 
-    if (ua.includes("Edg/")) {
+    // iOS forces every browser onto WebKit, so non-Safari browsers there
+    // identify with their own "*iOS/" token instead of the usual
+    // desktop-style token (Chrome/, Firefox/, OPR/). These must be checked
+    // first, or they'll be misread as Safari/Chrome below.
+    if (ua.includes("EdgiOS/")) {
         return "Microsoft Edge";
     }
 
-    if (ua.includes("Chrome/")) {
-        return "Google Chrome";
+    if (ua.includes("OPiOS/") || ua.includes("OPT/")) {
+        return "Opera";
     }
 
-    if (ua.includes("Firefox/")) {
-        return "Mozilla Firefox";
+    // Named/branded Chromium browsers - check before the generic Chrome/
+    // Firefox/Safari fallbacks, since their UA also contains "Chrome/".
+    for (const [token, name] of KNOWN_BRAND_TOKENS) {
+        if (ua.includes(token)) {
+            return name;
+        }
     }
 
-    if (ua.includes("Safari/") && !ua.includes("Chrome/")) {
-        return "Safari";
+    // Desktop / Android style Edge & Opera tokens
+    if (ua.includes("Edg/") || ua.includes("EdgA/")) {
+        return "Microsoft Edge";
     }
 
     if (ua.includes("OPR/")) {
         return "Opera";
     }
 
-    return "Unknown";
+    if (ua.includes("CriOS/") || ua.includes("Chrome/")) {
+        // Not one of the known/branded browsers above - see if the client
+        // added its own product token we don't have a friendly name for
+        // yet, and show that verbatim rather than defaulting to Chrome.
+        const unknownBrand = extractUnknownBrandFromUA(ua);
+        if (unknownBrand) {
+            return unknownBrand;
+        }
+        return "Google Chrome";
+    }
+
+    if (ua.includes("FxiOS/") || ua.includes("Firefox/")) {
+        return "Mozilla Firefox";
+    }
+
+    if (ua.includes("Safari/")) {
+        return "Safari";
+    }
+
+    return extractUnknownBrandFromUA(ua) || "Unknown";
+};
+
+// Brave deliberately keeps its user-agent identical to Chrome's (to avoid
+// sites blocking/downgrading it), so it can only be detected via this
+// feature-detection API, which is async.
+const detectBrave = async () => {
+    try {
+        if (navigator.brave && typeof navigator.brave.isBrave === "function") {
+            const isBrave = await navigator.brave.isBrave();
+            return !!isBrave;
+        }
+    } catch {
+        // ignore - fall through to UA-based result
+    }
+    return false;
 };
 
 const getPlatform = () => {
@@ -92,6 +197,21 @@ function IP() {
     const [error, setError] = useState(null);
     const [info, setInfo] = useState(null);
     const [network, setNetwork] = useState(getNetworkInfo);
+    const [browser, setBrowser] = useState(getBrowserFromUA);
+
+    useEffect(() => {
+        let mounted = true;
+
+        detectBrave().then((isBrave) => {
+            if (mounted && isBrave) {
+                setBrowser("Brave");
+            }
+        });
+
+        return () => {
+            mounted = false;
+        };
+    }, []);
 
     useEffect(() => {
         const conn =
@@ -162,6 +282,10 @@ function IP() {
                   value: info.type,
               },
               {
+                  label:"IP Address",
+                  value: info.ip
+              },
+              {
                   label: "Continent",
                   value: info.continent,
               },
@@ -206,7 +330,7 @@ function IP() {
         },
         {
             label: "Browser",
-            value: getBrowser(),
+            value: browser,
         },
         {
             label: "Platform",
