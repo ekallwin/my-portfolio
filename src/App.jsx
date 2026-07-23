@@ -13,7 +13,6 @@ import CometScrollbar from "./Components/ScrollProgress/CometScrollbar.jsx";
 const Home = lazy(() => import("./Home"));
 const Projects = lazy(() => import("./Components/Projects/project.jsx"));
 const Achievements = lazy(() => import("./Components/Achievements/achievements"));
-const Education = lazy(() => import("./Components/Education/Education"));
 
 const useOnlineStatus = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -60,7 +59,6 @@ function App() {
           <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/education" element={<Education />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/achievements" element={<Achievements />} />
             <Route path="*" element={<Navigate to="/" replace />} />

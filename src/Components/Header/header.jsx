@@ -1,8 +1,6 @@
 import Typewriter from './Typewriter';
-import { toast } from "react-toastify";
 import { useEffect, useRef } from "react";
 import { useTheme } from '@mui/material/styles';
-import SplitText from '../SplitText/SplitText';
 import './header.css';
 import moment from 'moment';
 import ShinyText from '../ShinyText/ShinyText';

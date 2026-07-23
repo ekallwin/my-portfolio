@@ -5,7 +5,6 @@ html {
 .animate-child {
   opacity: 0;
   transform: translateY(12px);
-  will-change: opacity, transform;
   animation-name: none;
   animation-duration: var(--duration, 0.75s);
   animation-delay: var(--delay, 0s);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 
 const HEAD_SIZE = 10;
@@ -6,9 +6,9 @@ const TAIL_HEIGHT = 50;
 
 const CometScrollbar = () => {
   const location = useLocation();
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [scrollDirection, setScrollDirection] = useState("down");
   const trackRef = useRef(null);
+  const headRef = useRef(null);
+  const tailRef = useRef(null);
   const isDragging = useRef(false);
   const lastScrollTop = useRef(0);
 
@@ -23,18 +23,37 @@ const CometScrollbar = () => {
     const handleScroll = () => {
       const { scrollTop, scrollHeight, clientHeight } = appShell;
       const total = scrollHeight - clientHeight;
-      setScrollProgress(total <= 0 ? 0 : scrollTop / total);
+      const progress = total <= 0 ? 0 : scrollTop / total;
 
-      if (scrollTop > lastScrollTop.current) {
-        setScrollDirection("down");
-      } else if (scrollTop < lastScrollTop.current) {
-        setScrollDirection("up");
+      // Update head position directly
+      if (headRef.current) {
+        headRef.current.style.top = `calc(${progress} * (100% - ${HEAD_SIZE}px))`;
       }
+
+      // Update tail opacity & position/gradient directly
+      if (tailRef.current) {
+        const opacity = Math.min(1, progress * 10);
+        tailRef.current.style.opacity = opacity;
+
+        if (scrollTop > lastScrollTop.current) {
+          tailRef.current.style.bottom = "100%";
+          tailRef.current.style.top = "auto";
+          tailRef.current.style.background =
+            "linear-gradient(to top, var(--neon-color-2, #e81cff), transparent)";
+        } else if (scrollTop < lastScrollTop.current) {
+          tailRef.current.style.top = "100%";
+          tailRef.current.style.bottom = "auto";
+          tailRef.current.style.background =
+            "linear-gradient(to bottom, var(--neon-color-2, #e81cff), transparent)";
+        }
+      }
+
       lastScrollTop.current = scrollTop;
     };
 
     appShell.addEventListener("scroll", handleScroll);
     handleScroll();
+    
     return () => appShell.removeEventListener("scroll", handleScroll);
   }, [isHomePage]);
 
@@ -77,9 +96,6 @@ const CometScrollbar = () => {
     document.addEventListener("mouseup", onUp);
   };
 
-  const tailOpacity = Math.min(1, scrollProgress * 10);
-  const headTopCSS = `calc(${scrollProgress} * (100% - ${HEAD_SIZE}px))`;
-
   return (
     <div
       ref={trackRef}
@@ -108,12 +124,13 @@ const CometScrollbar = () => {
       />
 
       <div
+        ref={headRef}
         onMouseDown={handleMouseDown}
         style={{
           position: "absolute",
           left: "50%",
           transform: "translateX(-50%)",
-          top: headTopCSS,
+          top: "0px",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -121,18 +138,17 @@ const CometScrollbar = () => {
         }}
       >
         <div
+          ref={tailRef}
           style={{
             position: "absolute",
-            [scrollDirection === "down" ? "bottom" : "top"]: "100%",
+            bottom: "100%",
             left: "50%",
             transform: "translateX(-50%)",
             width: "3px",
             height: `${TAIL_HEIGHT}px`,
             background:
-              scrollDirection === "down"
-                ? "linear-gradient(to top, var(--neon-color-2, #e81cff), transparent)"
-                : "linear-gradient(to bottom, var(--neon-color-2, #e81cff), transparent)",
-            opacity: tailOpacity,
+              "linear-gradient(to top, var(--neon-color-2, #e81cff), transparent)",
+            opacity: 0,
             borderRadius: "1.5px",
             transition: "opacity 0.2s ease",
           }}

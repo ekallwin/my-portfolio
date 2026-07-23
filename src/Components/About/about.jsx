@@ -7,7 +7,6 @@ import { FaDownload, FaCircleCheck, FaGithub, FaLinkedin } from 'react-icons/fa6
 import GreenTickSuccess from '../Contact/Component/Success.jsx';
 import DownloadProgress from './DownloadProgress.jsx';
 import './about.css';
-import { scale } from 'motion';
 
 function About() {
   const theme = useTheme();
