@@ -11,6 +11,7 @@ const CometScrollbar = () => {
   const tailRef = useRef(null);
   const isDragging = useRef(false);
   const lastScrollTop = useRef(0);
+  const trackHeight = useRef(0);
 
   const isHomePage = location.pathname === "/";
 
@@ -18,19 +19,30 @@ const CometScrollbar = () => {
     if (!isHomePage) return;
 
     const appShell = document.querySelector(".app-shell");
-    if (!appShell) return;
+    const track = trackRef.current;
+    if (!appShell || !track) return;
 
+    const measureTrack = () => {
+      trackHeight.current = track.getBoundingClientRect().height;
+    };
+    measureTrack();
+
+    // Direct, synchronous DOM writes on every scroll event (same as before),
+    // but moving the head with `transform: translateY()` instead of `top`.
+    // `top` forces a layout recalculation on every single scroll event,
+    // which is what caused the stutter/"buffering" on fast scrolling.
+    // `transform` is compositor-only, so the browser can move the dot
+    // without re-running layout — this is what actually fixes the jank.
     const handleScroll = () => {
       const { scrollTop, scrollHeight, clientHeight } = appShell;
       const total = scrollHeight - clientHeight;
       const progress = total <= 0 ? 0 : scrollTop / total;
 
-      // Update head position directly
       if (headRef.current) {
-        headRef.current.style.top = `calc(${progress} * (100% - ${HEAD_SIZE}px))`;
+        const travel = Math.max(0, trackHeight.current - HEAD_SIZE);
+        headRef.current.style.transform = `translate(-50%, ${progress * travel}px)`;
       }
 
-      // Update tail opacity & position/gradient directly
       if (tailRef.current) {
         const opacity = Math.min(1, progress * 10);
         tailRef.current.style.opacity = opacity;
@@ -51,10 +63,14 @@ const CometScrollbar = () => {
       lastScrollTop.current = scrollTop;
     };
 
-    appShell.addEventListener("scroll", handleScroll);
+    appShell.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", measureTrack);
     handleScroll();
-    
-    return () => appShell.removeEventListener("scroll", handleScroll);
+
+    return () => {
+      appShell.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", measureTrack);
+    };
   }, [isHomePage]);
 
   if (!isHomePage) return null;
@@ -129,12 +145,13 @@ const CometScrollbar = () => {
         style={{
           position: "absolute",
           left: "50%",
-          transform: "translateX(-50%)",
           top: "0px",
+          transform: "translate(-50%, 0px)",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           cursor: "grab",
+          willChange: "transform",
         }}
       >
         <div

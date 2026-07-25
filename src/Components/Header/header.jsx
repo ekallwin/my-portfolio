@@ -14,6 +14,17 @@ function Header() {
     window.open('https://www.linkedin.com/in/ekallwin/', '_blank');
   };
 
+  const handleContactClick = () => {
+    const contactSection = document.getElementById('contact');
+
+    if (contactSection) {
+      contactSection.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  };
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -80,11 +91,11 @@ function Header() {
         </div>
         <button
           className="button"
-          onClick={LinkedIn}
+          onClick={handleContactClick}
           ref={buttonRef}
-          // style={{
-          //   background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`
-          // }}
+        style={{
+          background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`
+        }}
         >
           Let's connect
         </button>

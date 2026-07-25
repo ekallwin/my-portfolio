@@ -309,10 +309,6 @@ function IP() {
                 value: info.connection?.isp,
             },
             {
-                label: "Continent",
-                value: info.continent,
-            },
-            {
                 label: "Country",
                 value: info.country,
             },
