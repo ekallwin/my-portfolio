@@ -160,7 +160,7 @@ button {
 }
 
 .buttons {
-  background: linear-gradient(110deg, var(--btn-primary), var(--btn-secondary), var(--btn-tertiary));
+  /* background: linear-gradient(110deg, var(--btn-primary), var(--btn-secondary), var(--btn-tertiary)); */
 }
 
 .app-shell {

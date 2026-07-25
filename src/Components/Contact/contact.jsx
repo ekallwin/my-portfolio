@@ -620,6 +620,9 @@ const ContactForm = () => {
                       textTransform: "none",
                       width: "100%",
                     }}
+                    style={{
+                      background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`
+                    }}
                   >
                     {loading ? "Sending" : "Send Message"}
                   </Button>
@@ -815,6 +818,9 @@ const ContactForm = () => {
                   fullWidth
                   endIcon={feedbackLoading ? <CircularProgress size={16} color="inherit" /> : null}
                   sx={{ ...glassButtonSx, py: 1.5, fontWeight: "bold", borderRadius: 2 }}
+                  style={{
+                    background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`
+                  }}
                 >
                   {feedbackLoading ? "Submitting..." : "Submit"}
                 </Button>
@@ -834,6 +840,9 @@ const ContactForm = () => {
                   disableRipple
                   onClick={handleFeedbackClose}
                   sx={{ ...glassButtonSx, mt: 3, px: 4, py: 1, fontWeight: "bold", borderRadius: 2 }}
+                  style={{
+                    background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`
+                  }}
                 >
                   Close
                 </Button>

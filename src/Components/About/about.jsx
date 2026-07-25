@@ -53,12 +53,12 @@ function About() {
 
   const handleDownload = () => {
     console.log('Download button clicked! isDownloading will be set to true');
-    
+
     if (hasDownloaded) {
       toast.error("You've already initiated the resume download. Please check your Downloads folder!", { duration: 5000 });
       return;
     }
-    
+
     setHasDownloaded(true);
     setIsDownloading(true);
     console.log('isDownloading state set to true');
@@ -66,7 +66,7 @@ function About() {
 
   const handleDownloadComplete = () => {
     console.log('Download complete called!');
-    
+
     // Trigger file download
     setTimeout(() => {
       const link = document.createElement('a');
@@ -294,6 +294,9 @@ function About() {
                     disabled={isDownloading}
                     variant="contained"
                     onClick={handleDownload}
+                    style={{
+                      background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`
+                    }}
                     className={`buttons ${!hasDownloaded ? 'animate-child' : ''}`}
                     data-animate={!hasDownloaded ? true : undefined}
                     sx={{
@@ -331,7 +334,7 @@ function About() {
 
       <Modal
         open={isDownloading || isModalOpen}
-        onClose={() => {}}
+        onClose={() => { }}
         disableEscapeKeyDown
         closeAfterTransition
         BackdropComponent={Backdrop}
@@ -399,6 +402,10 @@ function About() {
                       boxShadow: '0 10px 28px rgba(102,126,234,0.45), inset 0 1px 1px rgba(255,255,255,0.5)',
                     },
                   }}
+                  style={{
+                    background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`
+                  }}
+
                 >
                   Close
                 </Button>
