@@ -44,6 +44,7 @@ const ContactForm = () => {
     email: "",
     message: "",
   });
+  const [tooltipOpen, setTooltipOpen] = useState(false);
   const [hidePhone, setHidePhone] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
