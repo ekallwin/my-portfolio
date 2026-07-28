@@ -574,7 +574,7 @@ const ContactForm = () => {
                     fullWidth
                     label="Name"
                     name="name"
-                    autoComplete="name"
+                    // autoComplete="name"
                     value={formData.name}
                     onBlur={handleNameBlur}
                     onChange={handleChange}
@@ -593,7 +593,7 @@ const ContactForm = () => {
                       label="Phone Number"
                       name="phone"
                       type="tel"
-                      autoComplete="tel"
+                      // autoComplete="tel"
                       value={formData.phone}
                       onChange={handleChange}
                       error={!!errors.phone}
@@ -612,7 +612,7 @@ const ContactForm = () => {
                     label="Email Address"
                     name="email"
                     type="email"
-                    autoComplete="email"
+                    // autoComplete="email"
                     value={formData.email}
                     onChange={handleChange}
                     error={!!errors.email}
