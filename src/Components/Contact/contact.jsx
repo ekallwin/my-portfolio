@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import './contact.css';
 import { toast } from '../GlassNotification/glass-notification';
 import { Filter } from 'bad-words';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-
 import {
   Box,
   TextField,
@@ -29,9 +27,12 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
+import Stack from "@mui/material/Stack";
 import Tooltip from '@mui/material/Tooltip';
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { Send as SendIcon, Close as CloseIcon } from "@mui/icons-material";
 import GreenTickSuccess from "./Component/Success";
+import moment from "moment";
 import { parsePhoneNumberFromString, AsYouType, getCountries, getCountryCallingCode } from "libphonenumber-js";
 import ReactSelect from "react-select";
 
@@ -44,7 +45,6 @@ const ContactForm = () => {
     email: "",
     message: "",
   });
-  const [tooltipOpen, setTooltipOpen] = useState(false);
   const [hidePhone, setHidePhone] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -61,8 +61,6 @@ const ContactForm = () => {
   const [isManuallySelected, setIsManuallySelected] = useState(false);
   const [contactAtSpecificTime, setContactAtSpecificTime] = useState(false);
   const [preferredTimeSlot, setPreferredTimeSlot] = useState("");
-
-  const isMobile = window.matchMedia("(hover: none)").matches;
 
   const timeSlots = useMemo(() => {
     const slots = [];
@@ -662,56 +660,18 @@ const ContactForm = () => {
                         }}
                       />
                     }
-                    label={
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                        <span>Contact at a specific time</span>
-
-                        <Tooltip
-                          title="Select this if you'd like to be contacted during a specific time slot."
-                          arrow
-                          open={isMobile ? tooltipOpen : undefined}
-                          onClose={() => setTooltipOpen(false)}
-                          disableHoverListener={false}
-                          disableFocusListener
-                          disableTouchListener
-                        >
-                          <Box
-                            component="span"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-
-                              if ("ontouchstart" in window) {
-                                setTooltipOpen((prev) => !prev);
-                              }
-                            }}
-                            onMouseDown={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                            }}
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              ml: 0.25,
-                              cursor: "help",
-                            }}
-                          >
-                            <HelpOutlineIcon
-                              fontSize="small"
-                              sx={{
-                                fontSize: 20,
-                                color: "rgba(255,255,255,0.6)",
-                                "&:hover": {
-                                  color: "#8ab4ff",
-                                },
-                              }}
-                            />
-                          </Box>
-                        </Tooltip>
-                      </Box>
-                    }
+                    label="Contact at a specific time"
                     sx={{ mt: 1, color: "rgba(255,255,255,0.85)" }}
                   />
+                  <Stack direction="row" alignItems="center" spacing={1}>
+
+                    <Typography
+                      variant="body2"
+                      sx={{ mt: 1, color: "rgba(255,255,255,0.85)", fontSize: "10px" }}
+                    >
+                      Select this if you'd like to be contacted during a specific time slot.
+                    </Typography>
+                  </Stack>
 
                   {contactAtSpecificTime && (
                     <FormControl
