@@ -650,83 +650,57 @@ const ContactForm = () => {
                       "& .MuiInputBase-inputMultiline": { minHeight: "80px", color: "#fff" },
                     }}
                   />
-
-                 <FormControlLabel
-  control={
-    <Checkbox
-      checked={contactAtSpecificTime}
-      onChange={handleContactTimeToggle}
-      sx={{
-        color: "rgba(255,255,255,0.5)",
-        "&.Mui-checked": { color: "#8ab4ff" },
-      }}
-    />
-  }
-  label={
-    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-      <span>Contact at a specific time</span>
-
-      <Tooltip
-        title="Select this if you'd like to be contacted during a specific time slot."
-        arrow
-      >
-        <HelpOutlineIcon
-          fontSize="small"
-          sx={{
-            fontSize: 16,
-            color: "rgba(255,255,255,0.6)",
-            cursor: "pointer",
-          }}
-        />
-      </Tooltip>
-    </Box>
-  }
-  sx={{ mt: 1, color: "rgba(255,255,255,0.85)" }}
-/>
-
-                  {contactAtSpecificTime && (
-                    <FormControl
-                      fullWidth
-                      size="small"
-                      margin="normal"
-                      error={!!errors.preferredTimeSlot}
-                      sx={glassFieldSx}
-                    >
-                      <InputLabel id="preferred-time-slot-label">Preferred Time</InputLabel>
-                      <Select
-                        labelId="preferred-time-slot-label"
-                        label="Preferred Time"
-                        value={preferredTimeSlot}
-                        onChange={handleTimeSlotChange}
-                        MenuProps={{
-                          PaperProps: {
-                            sx: {
-                              background: "rgba(28,28,38,0.95)",
-                              backdropFilter: "blur(20px)",
-                              "& .MuiMenuItem-root": { color: "#fff" },
-                              "& .MuiMenuItem-root.Mui-selected": {
-                                backgroundColor: "rgba(102,126,234,0.35)",
-                              },
-                            },
-                          },
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={contactAtSpecificTime}
+                        onChange={handleContactTimeToggle}
+                        sx={{
+                          color: "rgba(255,255,255,0.5)",
+                          "&.Mui-checked": { color: "#8ab4ff" },
                         }}
-                      >
-                        {timeSlots.map((slot) => (
-                          <MenuItem key={slot} value={slot}>
-                            {slot}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                      {errors.preferredTimeSlot && (
-                        <Typography
-                          variant="caption"
-                          sx={{ color: "#ff8a8a", mx: 1.7, mt: 0.5 }}
+                      />
+                    }
+                    label={
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                        <span>Contact at a specific time</span>
+
+                        <Tooltip
+                          title="Select this if you'd like to be contacted during a specific time slot."
+                          arrow
                         >
-                          {errors.preferredTimeSlot}
-                        </Typography>
-                      )}
-                    </FormControl>
-                  )}
+                          <Box
+                            component="span"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                            }}
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                            }}
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              ml: 0.25,
+                            }}
+                          >
+                            <HelpOutlineIcon
+                              fontSize="small"
+                              sx={{
+                                fontSize: 16,
+                                color: "rgba(255,255,255,0.6)",
+                                "&:hover": {
+                                  color: "#8ab4ff",
+                                },
+                              }}
+                            />
+                          </Box>
+                        </Tooltip>
+                      </Box>
+                    }
+                    sx={{ mt: 1, color: "rgba(255,255,255,0.85)" }}
+                  />
 
                   <Button
                     disableRipple
