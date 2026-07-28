@@ -66,7 +66,7 @@ const ContactForm = () => {
   const [preferredTimeSlot, setPreferredTimeSlot] = useState("");
 
   const isMobile = window.matchMedia("(hover: none)").matches;
-  
+
   const timeSlots = useMemo(() => {
     const slots = [];
     for (let hour = 8; hour < 20; hour++) {
@@ -669,48 +669,48 @@ const ContactForm = () => {
                         <span>Contact at a specific time</span>
 
                         <Tooltip
-  title="Select this if you'd like to be contacted during a specific time slot."
-  arrow
-  open={isMobile ? tooltipOpen : undefined}
-  onClose={() => setTooltipOpen(false)}
-  disableHoverListener={false}
-  disableFocusListener
-  disableTouchListener
->
-  <Box
-    component="span"
-    onClick={(e) => {
-      e.preventDefault();
-      e.stopPropagation();
+                          title="Select this if you'd like to be contacted during a specific time slot."
+                          arrow
+                          open={isMobile ? tooltipOpen : undefined}
+                          onClose={() => setTooltipOpen(false)}
+                          disableHoverListener={false}
+                          disableFocusListener
+                          disableTouchListener
+                        >
+                          <Box
+                            component="span"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
 
-      // Mobile: toggle tooltip on tap
-      if ("ontouchstart" in window) {
-        setTooltipOpen((prev) => !prev);
-      }
-    }}
-    onMouseDown={(e) => {
-      e.preventDefault();
-      e.stopPropagation();
-    }}
-    sx={{
-      display: "flex",
-      alignItems: "center",
-      ml: 0.25,
-      cursor: "help",
-    }}
-  >
-    <HelpOutlineIcon
-      fontSize="small"
-      sx={{
-        fontSize: 16,
-        color: "rgba(255,255,255,0.6)",
-        "&:hover": {
-          color: "#8ab4ff",
-        },
-      }}
-    />
-  </Box>
-</Tooltip>
+                              // Mobile: toggle tooltip on tap
+                              if ("ontouchstart" in window) {
+                                setTooltipOpen((prev) => !prev);
+                              }
+                            }}
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                            }}
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              ml: 0.25,
+                              cursor: "help",
+                            }}
+                          >
+                            <HelpOutlineIcon
+                              fontSize="small"
+                              sx={{
+                                fontSize: 20,
+                                color: "rgba(255,255,255,0.6)",
+                                "&:hover": {
+                                  color: "#8ab4ff",
+                                },
+                              }}
+                            />
+                          </Box>
+                        </Tooltip>
                       </Box>
                     }
                     sx={{ mt: 1, color: "rgba(255,255,255,0.85)" }}
