@@ -20,6 +20,12 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  Checkbox,
+  FormControlLabel,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import Tooltip from '@mui/material/Tooltip';
@@ -53,6 +59,21 @@ const ContactForm = () => {
   const [feedbackLoading, setFeedbackLoading] = useState(false);
   const [countryModalOpen, setCountryModalOpen] = useState(false);
   const [isManuallySelected, setIsManuallySelected] = useState(false);
+  const [contactAtSpecificTime, setContactAtSpecificTime] = useState(false);
+  const [preferredTimeSlot, setPreferredTimeSlot] = useState("");
+
+  const timeSlots = useMemo(() => {
+    const slots = [];
+    for (let hour = 8; hour < 20; hour++) {
+      const formatHour = (h) => {
+        const period = h >= 12 ? "PM" : "AM";
+        const display = h % 12 === 0 ? 12 : h % 12;
+        return `${String(display).padStart(2, "0")}:00 ${period}`;
+      };
+      slots.push(`${formatHour(hour)} - ${formatHour(hour + 1)}`);
+    }
+    return slots;
+  }, []);
 
   const countryOptions = useMemo(() => {
     const displayNames = new Intl.DisplayNames(["en"], { type: "region" });
@@ -305,8 +326,28 @@ const ContactForm = () => {
       }
     }
 
+    if (contactAtSpecificTime && !preferredTimeSlot) {
+      newErrors.preferredTimeSlot = "Please select a preferred time slot";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const handleContactTimeToggle = (e) => {
+    const checked = e.target.checked;
+    setContactAtSpecificTime(checked);
+    if (!checked) {
+      setPreferredTimeSlot("");
+      setErrors((prev) => ({ ...prev, preferredTimeSlot: "" }));
+    }
+  };
+
+  const handleTimeSlotChange = (e) => {
+    setPreferredTimeSlot(e.target.value);
+    if (errors.preferredTimeSlot) {
+      setErrors((prev) => ({ ...prev, preferredTimeSlot: "" }));
+    }
   };
 
   const submitToGoogleSheets = async (data) => {
@@ -316,6 +357,7 @@ const ContactForm = () => {
         email: data.email,
         phone: data.phone,
         message: data.message,
+        preferredTimeSlot: data.contactAtSpecificTime ? data.preferredTimeSlot : "",
         timestamp: new Date().toLocaleString(),
       };
 
@@ -349,7 +391,7 @@ const ContactForm = () => {
       return;
     }
 
-    const submittedData = { ...formData, hidePhone };
+    const submittedData = { ...formData, hidePhone, contactAtSpecificTime, preferredTimeSlot };
 
     const submissionPromise = submitToGoogleSheets(submittedData);
     toast.promise(submissionPromise, {
@@ -362,6 +404,8 @@ const ContactForm = () => {
           message: "",
         });
         setHidePhone(false);
+        setContactAtSpecificTime(false);
+        setPreferredTimeSlot("");
         setErrors({});
         setTimeout(() => setFeedbackOpen(true), 6000);
         return "Message sent successfully!";
@@ -530,6 +574,7 @@ const ContactForm = () => {
                     fullWidth
                     label="Name"
                     name="name"
+                    autoComplete="name"
                     value={formData.name}
                     onBlur={handleNameBlur}
                     onChange={handleChange}
@@ -548,6 +593,7 @@ const ContactForm = () => {
                       label="Phone Number"
                       name="phone"
                       type="tel"
+                      autoComplete="tel"
                       value={formData.phone}
                       onChange={handleChange}
                       error={!!errors.phone}
@@ -566,6 +612,7 @@ const ContactForm = () => {
                     label="Email Address"
                     name="email"
                     type="email"
+                    autoComplete="email"
                     value={formData.email}
                     onChange={handleChange}
                     error={!!errors.email}
@@ -581,6 +628,7 @@ const ContactForm = () => {
                     fullWidth
                     label="Your Message"
                     name="message"
+                    autoComplete="off"
                     value={formData.message}
                     onChange={handleChange}
                     error={!!errors.message}
@@ -600,6 +648,65 @@ const ContactForm = () => {
                       "& .MuiInputBase-inputMultiline": { minHeight: "80px", color: "#fff" },
                     }}
                   />
+
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={contactAtSpecificTime}
+                        onChange={handleContactTimeToggle}
+                        sx={{
+                          color: "rgba(255,255,255,0.5)",
+                          "&.Mui-checked": { color: "#8ab4ff" },
+                        }}
+                      />
+                    }
+                    label="Contact at a specific time"
+                    sx={{ mt: 1, color: "rgba(255,255,255,0.85)" }}
+                  />
+
+                  {contactAtSpecificTime && (
+                    <FormControl
+                      fullWidth
+                      size="small"
+                      margin="normal"
+                      error={!!errors.preferredTimeSlot}
+                      sx={glassFieldSx}
+                    >
+                      <InputLabel id="preferred-time-slot-label">Preferred Time</InputLabel>
+                      <Select
+                        labelId="preferred-time-slot-label"
+                        label="Preferred Time"
+                        value={preferredTimeSlot}
+                        onChange={handleTimeSlotChange}
+                        MenuProps={{
+                          PaperProps: {
+                            sx: {
+                              background: "rgba(28,28,38,0.95)",
+                              backdropFilter: "blur(20px)",
+                              "& .MuiMenuItem-root": { color: "#fff" },
+                              "& .MuiMenuItem-root.Mui-selected": {
+                                backgroundColor: "rgba(102,126,234,0.35)",
+                              },
+                            },
+                          },
+                        }}
+                      >
+                        {timeSlots.map((slot) => (
+                          <MenuItem key={slot} value={slot}>
+                            {slot}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      {errors.preferredTimeSlot && (
+                        <Typography
+                          variant="caption"
+                          sx={{ color: "#ff8a8a", mx: 1.7, mt: 0.5 }}
+                        >
+                          {errors.preferredTimeSlot}
+                        </Typography>
+                      )}
+                    </FormControl>
+                  )}
 
                   <Button
                     disableRipple
