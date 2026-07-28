@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import './contact.css';
 import { toast } from '../GlassNotification/glass-notification';
 import { Filter } from 'bad-words';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+
 import {
   Box,
   TextField,
@@ -649,20 +651,38 @@ const ContactForm = () => {
                     }}
                   />
 
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={contactAtSpecificTime}
-                        onChange={handleContactTimeToggle}
-                        sx={{
-                          color: "rgba(255,255,255,0.5)",
-                          "&.Mui-checked": { color: "#8ab4ff" },
-                        }}
-                      />
-                    }
-                    label="Contact at a specific time"
-                    sx={{ mt: 1, color: "rgba(255,255,255,0.85)" }}
-                  />
+                 <FormControlLabel
+  control={
+    <Checkbox
+      checked={contactAtSpecificTime}
+      onChange={handleContactTimeToggle}
+      sx={{
+        color: "rgba(255,255,255,0.5)",
+        "&.Mui-checked": { color: "#8ab4ff" },
+      }}
+    />
+  }
+  label={
+    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+      <span>Contact at a specific time</span>
+
+      <Tooltip
+        title="Select this if you'd like to be contacted during a specific time slot."
+        arrow
+      >
+        <HelpOutlineIcon
+          fontSize="small"
+          sx={{
+            fontSize: 16,
+            color: "rgba(255,255,255,0.6)",
+            cursor: "pointer",
+          }}
+        />
+      </Tooltip>
+    </Box>
+  }
+  sx={{ mt: 1, color: "rgba(255,255,255,0.85)" }}
+/>
 
                   {contactAtSpecificTime && (
                     <FormControl
