@@ -29,12 +29,9 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import Stack from "@mui/material/Stack";
 import Tooltip from '@mui/material/Tooltip';
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { Send as SendIcon, Close as CloseIcon } from "@mui/icons-material";
 import GreenTickSuccess from "./Component/Success";
-import moment from "moment";
 import { parsePhoneNumberFromString, AsYouType, getCountries, getCountryCallingCode } from "libphonenumber-js";
 import ReactSelect from "react-select";
 
@@ -47,7 +44,6 @@ const ContactForm = () => {
     email: "",
     message: "",
   });
-  const [tooltipOpen, setTooltipOpen] = useState(false);
   const [hidePhone, setHidePhone] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -653,6 +649,7 @@ const ContactForm = () => {
                       "& .MuiInputBase-inputMultiline": { minHeight: "80px", color: "#fff" },
                     }}
                   />
+
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -683,7 +680,6 @@ const ContactForm = () => {
                               e.preventDefault();
                               e.stopPropagation();
 
-                              // Mobile: toggle tooltip on tap
                               if ("ontouchstart" in window) {
                                 setTooltipOpen((prev) => !prev);
                               }
@@ -715,6 +711,50 @@ const ContactForm = () => {
                     }
                     sx={{ mt: 1, color: "rgba(255,255,255,0.85)" }}
                   />
+
+                  {contactAtSpecificTime && (
+                    <FormControl
+                      fullWidth
+                      size="small"
+                      margin="normal"
+                      error={!!errors.preferredTimeSlot}
+                      sx={glassFieldSx}
+                    >
+                      <InputLabel id="preferred-time-slot-label">Preferred Time</InputLabel>
+                      <Select
+                        labelId="preferred-time-slot-label"
+                        label="Preferred Time"
+                        value={preferredTimeSlot}
+                        onChange={handleTimeSlotChange}
+                        MenuProps={{
+                          PaperProps: {
+                            sx: {
+                              background: "rgba(28,28,38,0.95)",
+                              backdropFilter: "blur(20px)",
+                              "& .MuiMenuItem-root": { color: "#fff" },
+                              "& .MuiMenuItem-root.Mui-selected": {
+                                backgroundColor: "rgba(102,126,234,0.35)",
+                              },
+                            },
+                          },
+                        }}
+                      >
+                        {timeSlots.map((slot) => (
+                          <MenuItem key={slot} value={slot}>
+                            {slot}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      {errors.preferredTimeSlot && (
+                        <Typography
+                          variant="caption"
+                          sx={{ color: "#ff8a8a", mx: 1.7, mt: 0.5 }}
+                        >
+                          {errors.preferredTimeSlot}
+                        </Typography>
+                      )}
+                    </FormControl>
+                  )}
 
                   <Button
                     disableRipple
