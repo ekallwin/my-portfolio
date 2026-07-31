@@ -61,6 +61,8 @@ const ContactForm = () => {
   const [isManuallySelected, setIsManuallySelected] = useState(false);
   const [contactAtSpecificTime, setContactAtSpecificTime] = useState(false);
   const [preferredTimeSlot, setPreferredTimeSlot] = useState("");
+  const [submitModalOpen, setSubmitModalOpen] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState("sending"); // "sending" | "success"
 
   const timeSlots = useMemo(() => {
     const slots = [];
@@ -393,32 +395,39 @@ const ContactForm = () => {
 
     const submittedData = { ...formData, hidePhone, contactAtSpecificTime, preferredTimeSlot };
 
-    const submissionPromise = submitToGoogleSheets(submittedData);
-    toast.promise(submissionPromise, {
-      loading: "Sending your message...",
-      success: () => {
-        setFormData({
-          name: "",
-          phone: countryCode + " ",
-          email: "",
-          message: "",
-        });
-        setHidePhone(false);
-        setContactAtSpecificTime(false);
-        setPreferredTimeSlot("");
-        setErrors({});
-        setTimeout(() => setFeedbackOpen(true), 6000);
-        return "Message sent successfully!";
-      },
-      error: "Failed to send message. Please try again.",
-    });
+    setSubmitStatus("sending");
+    setSubmitModalOpen(true);
 
     try {
-      await submissionPromise;
+      await submitToGoogleSheets(submittedData);
+
+      setSubmitStatus("success");
+      setFormData({
+        name: "",
+        phone: countryCode + " ",
+        email: "",
+        message: "",
+      });
+      setHidePhone(false);
+      setContactAtSpecificTime(false);
+      setPreferredTimeSlot("");
+      setErrors({});
     } catch (error) {
       console.error("Submission failed:", error);
+      setSubmitModalOpen(false);
+      toast.error("Failed to send message. Please try again.", {
+        duration: 4000,
+      });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSubmitModalClose = () => {
+    const wasSuccess = submitStatus === "success";
+    setSubmitModalOpen(false);
+    if (wasSuccess) {
+      setTimeout(() => setFeedbackOpen(true), 1000);
     }
   };
 
@@ -847,6 +856,84 @@ const ContactForm = () => {
         </DialogContent>
       </Dialog>
 
+
+      <Modal
+        open={submitModalOpen}
+        onClose={(event, reason) => {
+          if (reason === "backdropClick" && submitStatus === "sending") return;
+          handleSubmitModalClose();
+        }}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{ timeout: 500 }}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backdropFilter: "blur(5px)",
+        }}
+      >
+        <Fade in={submitModalOpen}>
+          <Box
+            sx={{
+              position: "relative",
+              isolation: "isolate",
+              background: "rgba(20, 20, 30, 0.75)",
+              backdropFilter: "blur(24px) saturate(160%)",
+              WebkitBackdropFilter: "blur(24px) saturate(160%)",
+              border: "1px solid rgba(255,255,255,0.16)",
+              borderRadius: 3,
+              boxShadow: "0 20px 50px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.2)",
+              p: 4,
+              width: { xs: "90%", sm: 380 },
+              textAlign: "center",
+              overflow: "hidden",
+            }}
+          >
+            {submitStatus === "sending" ? (
+              <>
+                <Box sx={{ mb: 2, display: "flex", justifyContent: "center" }}>
+                  <CircularProgress size={48} thickness={4} color="inherit" sx={{ color: "#8ab4ff" }} />
+                </Box>
+                <Typography variant="h6" fontWeight="bold" sx={{ color: "#fff" }}>
+                  Sending your message...
+                </Typography>
+              </>
+            ) : (
+              <>
+                <IconButton
+                  onClick={handleSubmitModalClose}
+                  sx={{ position: "absolute", right: 8, top: 8, color: "rgba(255,255,255,0.7)" }}
+                >
+                  <CloseIcon />
+                </IconButton>
+
+                <Box sx={{ mb: 2, color: "success.main", display: "flex", justifyContent: "center" }}>
+                  <GreenTickSuccess />
+                </Box>
+                <Typography variant="h6" fontWeight="bold" sx={{ mb: 1, color: "#fff" }}>
+                  Message sent successfully!
+                </Typography>
+                <Typography variant="body2" sx={{ mb: 3, color: "rgba(255,255,255,0.65)" }}>
+                  I have received your message and sent a confirmation email to your inbox. Please check your email, and I’ll get back to you shortly.
+                </Typography>
+
+                <Button
+                  variant="contained"
+                  disableRipple
+                  onClick={handleSubmitModalClose}
+                  sx={{ ...glassButtonSx, px: 4, py: 1, fontWeight: "bold", borderRadius: 2 }}
+                  style={{
+                    background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`
+                  }}
+                >
+                  Close
+                </Button>
+              </>
+            )}
+          </Box>
+        </Fade>
+      </Modal>
 
       <Modal
         open={feedbackOpen}
