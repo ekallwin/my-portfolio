@@ -5,8 +5,10 @@ import { useTheme } from '@mui/material/styles';
 import { toast } from '../GlassNotification/glass-notification';
 import { FaDownload, FaCircleCheck, FaGithub, FaLinkedin } from 'react-icons/fa6';
 import GreenTickSuccess from '../Contact/Component/Success.jsx';
+import ErrorIcon from '../Contact/Component/Error.jsx';
 import DownloadProgress from './DownloadProgress.jsx';
 import './about.css';
+import downloadStatus from './download_status.json';
 
 function About() {
   const theme = useTheme();
@@ -14,6 +16,7 @@ function About() {
   const [hasDownloaded, setHasDownloaded] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isErrorOpen, setIsErrorOpen] = useState(false);
   const [buttonText, setButtonText] = useState(
     <>Download Resume <FaDownload style={{ fontSize: '1em', marginLeft: 6 }} /></>
   );
@@ -52,7 +55,11 @@ function About() {
   }, []);
 
   const handleDownload = () => {
-    console.log('Download button clicked! isDownloading will be set to true');
+
+    if (!downloadStatus.download_status) {
+      setIsErrorOpen(true);
+      return;
+    }
 
     if (hasDownloaded) {
       toast.error("You've already initiated the resume download. Please check your Downloads folder!", { duration: 5000 });
@@ -61,13 +68,10 @@ function About() {
 
     setHasDownloaded(true);
     setIsDownloading(true);
-    console.log('isDownloading state set to true');
   };
 
   const handleDownloadComplete = () => {
-    console.log('Download complete called!');
 
-    // Trigger file download
     setTimeout(() => {
       const link = document.createElement('a');
       link.href = '/Resume.pdf';
@@ -75,15 +79,12 @@ function About() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      console.log('File download triggered');
     }, 300);
 
-    // Show completion modal
     setTimeout(() => {
       setIsDownloading(false);
       setIsModalOpen(true);
       setButtonText(<>Resume Downloaded <FaCircleCheck style={{ fontSize: '1em', marginLeft: 6 }} /></>);
-      console.log('Modal opened, progress hidden');
     }, 800);
   };
 
@@ -331,6 +332,84 @@ function About() {
           </Card>
         </Container>
       </Box>
+
+      <Modal
+        open={isErrorOpen}
+        onClose={() => setIsErrorOpen(false)}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backdropFilter: 'blur(5px)',
+        }}
+      >
+        <Fade in={isErrorOpen}>
+          <Box
+            sx={{
+              background: 'rgba(20, 20, 30, 0.75)',
+              backdropFilter: 'blur(24px) saturate(160%)',
+              WebkitBackdropFilter: 'blur(24px) saturate(160%)',
+              border: '1px solid rgba(255,255,255,0.16)',
+              borderRadius: 3,
+              boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+              p: 4,
+              width: { xs: "90%", sm: 450 },
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+
+            <Box sx={{ mb: 2 }}>
+              <ErrorIcon size={100} />
+            </Box>
+
+            <Typography
+              variant="h5"
+              fontWeight="bold"
+              textAlign="center"
+              sx={{ mb: 1, color: '#fff' }}
+            >
+              Download error
+            </Typography>
+
+            <Typography
+              variant="body2"
+              textAlign="center"
+              sx={{
+                mb: 3,
+                color: 'rgba(255,255,255,0.6)',
+                lineHeight: 1.6
+              }}
+            >
+              {downloadStatus.error_text}
+            </Typography>
+
+            <Button
+              onClick={() => setIsErrorOpen(false)}
+              variant="contained"
+              disableRipple
+              sx={{
+                px: 4,
+                py: 1,
+                fontWeight: "bold",
+                borderRadius: 2,
+                color: '#fff',
+                background:
+                  'linear-gradient(135deg, rgba(102,126,234,0.85), rgba(118,75,162,0.85))',
+              }}
+            >
+              Close
+            </Button>
+
+          </Box>
+        </Fade>
+      </Modal>
 
       <Modal
         open={isDownloading || isModalOpen}
