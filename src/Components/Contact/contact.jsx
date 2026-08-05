@@ -915,7 +915,7 @@ const ContactForm = () => {
                   Message sent successfully!
                 </Typography>
                 <Typography variant="body2" sx={{ mb: 3, color: "rgba(255,255,255,0.65)" }}>
-                  I have received your message and sent a confirmation email to your inbox. Please check your email, and I’ll get back to you shortly.
+                  Your message has been sent to Allwin, and a confirmation email has been sent to your email address. Kindly check your inbox. If you don't see it, please check your Spam/Junk folder.
                 </Typography>
 
                 <Button
