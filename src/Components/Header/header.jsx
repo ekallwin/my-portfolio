@@ -4,8 +4,6 @@ import { useTheme } from '@mui/material/styles';
 import './header.css';
 import moment from 'moment';
 import ShinyText from '../ShinyText/ShinyText';
-import { RiVerifiedBadgeFill } from "react-icons/ri";
-import Tooltip from "@mui/material/Tooltip";
 
 
 function Header() {
@@ -70,18 +68,13 @@ function Header() {
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <h2 className="titlename">Good {greeting}!</h2>
 
-          <h3 className="titlename font-semibold header-text text-2xl mb-8 inline-flex items-center">
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              I'm Allwin E K
-              <Tooltip title="Official Personal Website" arrow>
-                <RiVerifiedBadgeFill
-                  className="ml-2 relative top-[2px] cursor-pointer"
-                  color="#1DA1F2"
-                  size={30}
-                />
-              </Tooltip>
-            </div>
-          </h3>
+          <ShinyText
+            text="I'm Allwin E K"
+            delay={150}
+            animateBy="words"
+            direction="top"
+            className="titlename font-semibold header-text text-2xl mb-8"
+          />
 
         </div>
         <div className="typing-effect" style={{ display: 'flex', flexDirection: 'column', color: 'white', marginLeft: '10px' }}>
@@ -100,9 +93,9 @@ function Header() {
           className="button"
           onClick={handleContactClick}
           ref={buttonRef}
-          style={{
-            background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`
-          }}
+        style={{
+          background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`
+        }}
         >
           Let's connect
         </button>
