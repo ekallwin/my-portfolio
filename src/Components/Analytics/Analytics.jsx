@@ -1,4 +1,3 @@
-
 import React, {
     useEffect,
     useRef,
@@ -93,9 +92,9 @@ const isGenericAndroidWebView = (ua) => {
     return (
         /Android/i.test(ua) &&
         (
-            /;\s*wv\)/i.test(ua) ||
+            /;\s*\*?wv\)/i.test(ua) ||
             (
-                /Version\/4\.0/i.test(ua) &&
+                /Version\/4.0/i.test(ua) &&
                 /Chrome\//i.test(ua) &&
                 /Mobile/i.test(ua)
             )
@@ -291,33 +290,36 @@ const getConnectionType = () => {
     return "Unknown";
 };
 
-const getDeviceModelFromClientHints = async () => {
-    try {
-        if (
-            navigator.userAgentData &&
-            typeof navigator.userAgentData
-                .getHighEntropyValues ===
-                "function"
-        ) {
-            const hints =
-                await navigator.userAgentData
-                    .getHighEntropyValues([
-                        "model",
-                        "platform",
-                    ]);
-
+const getDeviceModelFromClientHints =
+    async () => {
+        try {
             if (
-                hints?.model &&
-                hints.model.trim()
+                navigator.userAgentData &&
+                typeof navigator
+                    .userAgentData
+                    .getHighEntropyValues ===
+                "function"
             ) {
-                return hints.model.trim();
-            }
-        }
-    } catch {
-    }
+                const hints =
+                    await navigator
+                        .userAgentData
+                        .getHighEntropyValues([
+                            "model",
+                            "platform",
+                        ]);
 
-    return null;
-};
+                if (
+                    hints?.model &&
+                    hints.model.trim()
+                ) {
+                    return hints.model.trim();
+                }
+            }
+        } catch {
+        }
+
+        return null;
+    };
 
 const getDeviceModelFromUA = () => {
     const ua = navigator.userAgent;
@@ -397,7 +399,7 @@ const detectBrowser = async () => {
     if (
         navigator.brave &&
         typeof navigator.brave.isBrave ===
-            "function"
+        "function"
     ) {
         try {
             const isBrave =
@@ -432,11 +434,35 @@ const formatDuration = (seconds) => {
     ).padStart(2, "0")}S`;
 };
 
+
+const createSessionId = () => {
+    try {
+        if (
+            typeof crypto !== "undefined" &&
+            typeof crypto.randomUUID ===
+            "function"
+        ) {
+            return crypto.randomUUID();
+        }
+    } catch {
+    }
+
+    return (
+        Date.now().toString(36) +
+        Math.random()
+            .toString(36)
+            .slice(2)
+    );
+};
+
 const sendAnalytics = async (
     info,
     browser,
     deviceModel,
-    durationSeconds = null
+    durationSeconds = null,
+    location = null,
+    eventOverride = null,
+    sessionId = null
 ) => {
     const webhookUrl =
         import.meta.env
@@ -469,11 +495,19 @@ const sendAnalytics = async (
                 item.type === type
         )?.value || "";
 
-    const payload = {
-        event:
+    const event =
+        eventOverride ||
+        (
             durationSeconds !== null
                 ? "close"
-                : "visit",
+                : "visit"
+        );
+
+    const payload = {
+        event,
+
+        sessionId:
+            sessionId || "",
 
         timestamp:
             `${getPart("day")}-${getPart("month")}-${getPart("year")} ` +
@@ -507,11 +541,14 @@ const sendAnalytics = async (
         Connection:
             getConnectionType(),
 
+        Location:
+            location || "",
+
         Duration:
             durationSeconds !== null
                 ? formatDuration(
-                      durationSeconds
-                  )
+                    durationSeconds
+                )
                 : "",
     };
 
@@ -562,6 +599,83 @@ const sendAnalytics = async (
     }
 };
 
+
+const requestPreciseLocation = () => {
+    return new Promise(
+        (resolve, reject) => {
+            if (
+                !navigator.geolocation
+            ) {
+                reject(
+                    new Error(
+                        "Geolocation is not supported."
+                    )
+                );
+
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const latitude =
+                        Number(
+                            position.coords
+                                .latitude
+                        );
+
+                    const longitude =
+                        Number(
+                            position.coords
+                                .longitude
+                        );
+
+                    if (
+                        !Number.isFinite(
+                            latitude
+                        ) ||
+                        !Number.isFinite(
+                            longitude
+                        )
+                    ) {
+                        reject(
+                            new Error(
+                                "Invalid location."
+                            )
+                        );
+
+                        return;
+                    }
+
+
+                    const coordinates =
+                        `${latitude.toFixed(
+                            6
+                        )}, ${longitude.toFixed(
+                            6
+                        )}`;
+
+                    resolve({
+                        coordinates,
+                        latitude,
+                        longitude,
+                        accuracy:
+                            position.coords
+                                .accuracy,
+                    });
+                },
+                (error) => {
+                    reject(error);
+                },
+                {
+                    enableHighAccuracy: true,
+                    maximumAge: 0,
+                    timeout: 15000,
+                }
+            );
+        }
+    );
+};
+
 const labelCellSx = {
     color:
         "rgba(255,255,255,0.6)",
@@ -607,6 +721,9 @@ function WebAnalytics() {
             getConnectionType()
         );
 
+    const [location, setLocation] =
+        useState("Requesting permission...");
+
     const activeStartRef =
         useRef(
             document.visibilityState ===
@@ -634,8 +751,15 @@ function WebAnalytics() {
             getConnectionType()
         );
 
+    const locationRef =
+        useRef(null);
+
     const durationSentRef =
         useRef(false);
+
+    const sessionIdRef =
+        useRef(createSessionId());
+
 
     useEffect(() => {
         let mounted = true;
@@ -719,6 +843,7 @@ function WebAnalytics() {
         };
     }, []);
 
+
     useEffect(() => {
         const handleConnectionChange =
             () => {
@@ -773,6 +898,7 @@ function WebAnalytics() {
         };
     }, []);
 
+
     useEffect(() => {
         let mounted = true;
 
@@ -819,7 +945,7 @@ function WebAnalytics() {
                 ) {
                     throw new Error(
                         data.message ||
-                            "IP lookup failed"
+                        "IP lookup failed"
                     );
                 }
 
@@ -844,7 +970,7 @@ function WebAnalytics() {
 
                 setDeviceModel(
                     detectedDeviceModel ||
-                        "Unknown"
+                    "Unknown"
                 );
 
                 setConnection(
@@ -864,10 +990,15 @@ function WebAnalytics() {
                 connectionRef.current =
                     detectedConnection;
 
+
                 await sendAnalytics(
                     data,
                     detectedBrowser,
-                    detectedDeviceModel
+                    detectedDeviceModel,
+                    null,
+                    null,
+                    "visit",
+                    sessionIdRef.current
                 );
             } catch (err) {
                 if (!mounted) {
@@ -883,7 +1014,7 @@ function WebAnalytics() {
 
                 setError(
                     err?.message ||
-                        String(err)
+                    String(err)
                 );
             } finally {
                 if (mounted) {
@@ -900,6 +1031,56 @@ function WebAnalytics() {
         };
     }, []);
 
+
+    useEffect(() => {
+        let mounted = true;
+
+        const requestLocation =
+            async () => {
+                try {
+                    const result =
+                        await requestPreciseLocation();
+
+                    if (!mounted) {
+                        return;
+                    }
+
+                    locationRef.current =
+                        result.coordinates;
+
+                    setLocation(
+                        result.coordinates
+                    );
+
+
+                    await sendAnalytics(
+                        analyticsInfoRef.current,
+                        browserRef.current,
+                        deviceModelRef.current,
+                        null,
+                        result.coordinates,
+                        "location",
+                        sessionIdRef.current
+                    );
+                } catch (err) {
+                    if (!mounted) {
+                        return;
+                    }
+
+                    setLocation("");
+                }
+            };
+
+        requestLocation();
+
+        return () => {
+            mounted = false;
+        };
+    }, []);
+
+    /*
+     * Active page duration.
+     */
     useEffect(() => {
         const startActiveTime = () => {
             if (
@@ -940,14 +1121,17 @@ function WebAnalytics() {
             const durationSeconds =
                 Math.floor(
                     activeDurationRef.current /
-                        1000
+                    1000
                 );
 
             sendAnalytics(
                 analyticsInfoRef.current,
                 browserRef.current,
                 deviceModelRef.current,
-                durationSeconds
+                durationSeconds,
+                locationRef.current,
+                "close",
+                sessionIdRef.current
             );
         };
 
@@ -988,63 +1172,63 @@ function WebAnalytics() {
 
     const ispRows = info
         ? [
-              {
-                  label: "Status",
-                  value:
-                      typeof info.success ===
-                      "boolean"
-                          ? info.success
-                              ? "Success"
-                              : "Failed"
-                          : null,
-              },
-              {
-                  label:
-                      "Protocol Version",
-                  value: info.type,
-              },
-              {
-                  label:
-                      "IP Address",
-                  value: info.ip,
-              },
-              {
-                  label: "ISP",
-                  value:
-                      info.connection?.isp,
-              },
-              {
-                  label:
-                      "Continent",
-                  value:
-                      info.continent,
-              },
-              {
-                  label:
-                      "Country",
-                  value:
-                      info.country,
-              },
-              {
-                  label:
-                      "Timezone",
-                  value:
-                      info.timezone?.abbr
-                          ? `${info.timezone.id} (${info.timezone.abbr})`
-                          : info.timezone?.id,
-              },
-              {
-                  label: "UTC",
-                  value:
-                      info.timezone?.utc,
-              },
-          ].filter(
-              (row) =>
-                  row.value !== null &&
-                  row.value !==
-                      undefined &&
-                  row.value !== ""
-          )
+            {
+                label: "Status",
+                value:
+                    typeof info.success ===
+                        "boolean"
+                        ? info.success
+                            ? "Success"
+                            : "Failed"
+                        : null,
+            },
+            {
+                label:
+                    "Protocol Version",
+                value: info.type,
+            },
+            {
+                label:
+                    "IP Address",
+                value: info.ip,
+            },
+            {
+                label: "ISP",
+                value:
+                    info.connection?.isp,
+            },
+            {
+                label:
+                    "Continent",
+                value:
+                    info.continent,
+            },
+            {
+                label:
+                    "Country",
+                value:
+                    info.country,
+            },
+            {
+                label:
+                    "Timezone",
+                value:
+                    info.timezone?.abbr
+                        ? `${info.timezone.id} (${info.timezone.abbr})`
+                        : info.timezone?.id,
+            },
+            {
+                label: "UTC",
+                value:
+                    info.timezone?.utc,
+            },
+        ].filter(
+            (row) =>
+                row.value !== null &&
+                row.value !==
+                undefined &&
+                row.value !== ""
+        )
         : [];
 
     const browserRows = [
@@ -1065,6 +1249,12 @@ function WebAnalytics() {
             label:
                 "Connection",
             value: connection,
+        },
+        {
+            label: "Location",
+            value:
+                location ||
+                "Not available",
         },
     ];
 
