@@ -66,26 +66,43 @@ const extractUnknownBrandFromUA = (ua) => {
 };
 
 const isInAppBrowser = (ua) => {
+    const inAppTokens = [
+        "Instagram",
+        "FBAN",
+        "FBAV",
+        "FB_IAB",
+        "FBIOS",
+        "FB4A",
+        "TikTok",
+        "musical_ly",
+        "LinkedInApp",
+        "Twitter",
+        "TwitterAndroid",
+        "Snapchat",
+        "Reddit",
+        "Pinterest",
+    ];
+
     if (
-        /Instagram/i.test(ua) ||
-        /FBAN/i.test(ua) ||
-        /FBAV/i.test(ua) ||
-        /FB_IAB/i.test(ua) ||
-        /FBIOS/i.test(ua) ||
-        /FB4A/i.test(ua) ||
-        /TikTok/i.test(ua) ||
-        /musical_ly/i.test(ua) ||
-        /LinkedInApp/i.test(ua) ||
-        /Twitter/i.test(ua) ||
-        /TwitterAndroid/i.test(ua) ||
-        /Snapchat/i.test(ua) ||
-        /Reddit/i.test(ua) ||
-        /Pinterest/i.test(ua)
+        inAppTokens.some((token) =>
+            ua.includes(token)
+        )
     ) {
         return true;
     }
 
-    if (/Android/i.test(ua) && /\bwv\b/i.test(ua)) {
+    if (
+        /Android/i.test(ua) &&
+        /;\s*wv\)/i.test(ua)
+    ) {
+        return true;
+    }
+
+    if (
+        /Android/i.test(ua) &&
+        /\bwv\b/i.test(ua) &&
+        /Version\/4\.0/i.test(ua)
+    ) {
         return true;
     }
 
@@ -197,7 +214,8 @@ const getDeviceModelFromClientHints = async () => {
         if (
             navigator.userAgentData &&
             typeof navigator.userAgentData
-                .getHighEntropyValues === "function"
+                .getHighEntropyValues ===
+                "function"
         ) {
             const hints =
                 await navigator.userAgentData
@@ -207,7 +225,8 @@ const getDeviceModelFromClientHints = async () => {
                     ]);
 
             if (
-                hints?.model &&
+                hints &&
+                hints.model &&
                 hints.model.trim()
             ) {
                 return hints.model.trim();
@@ -236,38 +255,18 @@ const getDeviceModelFromUA = () => {
     }
 
     if (/Android/i.test(ua)) {
-        const androidMatch = ua.match(
-            /Android[^;)]*;\s*(?:[^;)]*;\s*)?([^;)]+?)(?:\s+Build\/[^;)]+)?[;) ]/i
-        );
-
-        if (androidMatch?.[1]) {
-            const model = androidMatch[1]
-                .replace(
-                    /\s+Build\/.*$/i,
-                    ""
-                )
-                .trim();
-
-            if (
-                model &&
-                !/^wv$/i.test(model) &&
-                !/^mobile$/i.test(model) &&
-                !/^android$/i.test(model)
-            ) {
-                return model;
-            }
-        }
-
         const buildMatch = ua.match(
             /;\s*([^;()]+?)\s+Build\//i
         );
 
-        if (buildMatch?.[1]) {
+        if (buildMatch && buildMatch[1]) {
             const model =
                 buildMatch[1].trim();
 
             if (
                 model &&
+                !/^wv$/i.test(model) &&
+                !/^mobile$/i.test(model) &&
                 !/^android$/i.test(model)
             ) {
                 return model;
@@ -304,32 +303,31 @@ const getDeviceModel = async () => {
 };
 
 const detectBrowser = async () => {
-    const uaBrowser = getBrowserFromUA();
+    const browser =
+        getBrowserFromUA();
 
-    if (
-        uaBrowser === "IABMV"
-    ) {
+    if (browser === "IABMV") {
         return "IABMV";
     }
 
     if (
         navigator.brave &&
         typeof navigator.brave.isBrave ===
-        "function"
+            "function"
     ) {
         try {
-            const isBrave =
+            const brave =
                 await navigator.brave.isBrave();
 
-            if (isBrave) {
+            if (brave) {
                 return "Brave";
             }
         } catch {
-            return uaBrowser;
+            return browser;
         }
     }
 
-    return uaBrowser;
+    return browser;
 };
 
 const sendAnalytics = async (
@@ -350,12 +348,11 @@ const sendAnalytics = async (
 
     const now = new Date();
 
-    const timestamp =
+    const parts =
         new Intl.DateTimeFormat(
             "en-US",
             {
-                timeZone:
-                    "Asia/Kolkata",
+                timeZone: "Asia/Kolkata",
                 year: "numeric",
                 month: "2-digit",
                 day: "2-digit",
@@ -366,23 +363,26 @@ const sendAnalytics = async (
             }
         ).formatToParts(now);
 
-    const get = (type) =>
-        timestamp.find(
-            (part) =>
-                part.type === type
-        )?.value;
+    const getPart = (type) => {
+        const part = parts.find(
+            (item) =>
+                item.type === type
+        );
+
+        return part
+            ? part.value
+            : "";
+    };
 
     const payload = {
         timestamp:
-            `${get("year")}-${get("month")}-${get("day")} ` +
-            `${get("hour")}:${get("minute")}:${get("second")} ` +
-            `${get("dayPeriod")} IST`,
+            `${getPart("year")}-${getPart("month")}-${getPart("day")} ` +
+            `${getPart("hour")}:${getPart("minute")}:${getPart("second")} ` +
+            `${getPart("dayPeriod")} IST`,
 
-        ip:
-            info?.ip || "NA",
+        ip: info?.ip || "NA",
 
-        type:
-            info?.type || "NA",
+        type: info?.type || "NA",
 
         continent:
             info?.continent || "NA",
@@ -391,7 +391,8 @@ const sendAnalytics = async (
             info?.country || "NA",
 
         isp:
-            info?.connection?.isp || "NA",
+            info?.connection?.isp ||
+            "NA",
 
         Browser:
             browser || "Unknown",
@@ -407,7 +408,10 @@ const sendAnalytics = async (
         JSON.stringify(payload);
 
     try {
-        if (navigator.sendBeacon) {
+        if (
+            typeof navigator.sendBeacon ===
+            "function"
+        ) {
             const blob = new Blob(
                 [body],
                 {
@@ -427,7 +431,6 @@ const sendAnalytics = async (
             }
         }
     } catch {
-        return;
     }
 
     try {
@@ -445,7 +448,6 @@ const sendAnalytics = async (
             }
         );
     } catch {
-        return;
     }
 };
 
@@ -471,7 +473,7 @@ const valueCellSx = {
     py: 1.25,
 };
 
-function IP() {
+function WebAnalytics() {
     const [loading, setLoading] =
         useState(true);
 
@@ -482,7 +484,9 @@ function IP() {
         useState(null);
 
     const [browser, setBrowser] =
-        useState(getBrowserFromUA);
+        useState(() =>
+            getBrowserFromUA()
+        );
 
     const [deviceModel, setDeviceModel] =
         useState("Detecting...");
@@ -549,7 +553,7 @@ function IP() {
                         );
                     }
 
-                    const res =
+                    const response =
                         await fetch(
                             apiUrl,
                             {
@@ -558,14 +562,14 @@ function IP() {
                             }
                         );
 
-                    if (!res.ok) {
+                    if (!response.ok) {
                         throw new Error(
-                            `Network error: ${res.status}`
+                            `Network error: ${response.status}`
                         );
                     }
 
                     const data =
-                        await res.json();
+                        await response.json();
 
                     if (!mounted) {
                         return;
@@ -577,7 +581,7 @@ function IP() {
                     ) {
                         throw new Error(
                             data.message ||
-                            "IP lookup failed"
+                                "IP lookup failed"
                         );
                     }
 
@@ -599,7 +603,7 @@ function IP() {
 
                     setDeviceModel(
                         detectedDeviceModel ||
-                        "Unknown"
+                            "Unknown"
                     );
 
                     await sendAnalytics(
@@ -613,15 +617,16 @@ function IP() {
                     }
 
                     if (
+                        err &&
                         err.name ===
-                        "AbortError"
+                            "AbortError"
                     ) {
                         return;
                     }
 
                     setError(
-                        err.message ||
-                        String(err)
+                        err?.message ||
+                            String(err)
                     );
                 } finally {
                     if (mounted) {
@@ -640,64 +645,63 @@ function IP() {
 
     const ispRows = info
         ? [
-            {
-                label: "Status",
-                value:
-                    typeof info.success ===
-                        "boolean"
-                        ? info.success
-                            ? "Success"
-                            : "Failed"
-                        : null,
-            },
-            {
-                label:
-                    "Protocol Version",
-                value: info.type,
-            },
-            {
-                label:
-                    "IP Address",
-                value: info.ip,
-            },
-            {
-                label: "ISP",
-                value:
-                    info.connection
-                        ?.isp,
-            },
-            {
-                label:
-                    "Continent",
-                value:
-                    info.continent,
-            },
-            {
-                label:
-                    "Country",
-                value:
-                    info.country,
-            },
-            {
-                label:
-                    "Timezone",
-                value:
-                    info.timezone?.abbr
-                        ? `${info.timezone.id} (${info.timezone.abbr})`
-                        : info.timezone?.id,
-            },
-            {
-                label: "UTC",
-                value:
-                    info.timezone?.utc,
-            },
-        ].filter(
-            (row) =>
-                row.value !== null &&
-                row.value !==
-                undefined &&
-                row.value !== ""
-        )
+              {
+                  label: "Status",
+                  value:
+                      typeof info.success ===
+                      "boolean"
+                          ? info.success
+                              ? "Success"
+                              : "Failed"
+                          : null,
+              },
+              {
+                  label:
+                      "Protocol Version",
+                  value: info.type,
+              },
+              {
+                  label:
+                      "IP Address",
+                  value: info.ip,
+              },
+              {
+                  label: "ISP",
+                  value:
+                      info.connection?.isp,
+              },
+              {
+                  label:
+                      "Continent",
+                  value:
+                      info.continent,
+              },
+              {
+                  label:
+                      "Country",
+                  value:
+                      info.country,
+              },
+              {
+                  label:
+                      "Timezone",
+                  value:
+                      info.timezone?.abbr
+                          ? `${info.timezone.id} (${info.timezone.abbr})`
+                          : info.timezone?.id,
+              },
+              {
+                  label: "UTC",
+                  value:
+                      info.timezone?.utc,
+              },
+          ].filter(
+              (row) =>
+                  row.value !== null &&
+                  row.value !==
+                      undefined &&
+                  row.value !== ""
+          )
         : [];
 
     const browserRows = [
@@ -839,3 +843,4 @@ function IP() {
 }
 
 export default WebAnalytics;
+
