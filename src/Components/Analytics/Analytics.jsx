@@ -56,7 +56,7 @@ const extractUnknownBrandFromUA = (ua) => {
     ];
 
     const candidate = matches
-        .map((m) => m[1])
+        .map((match) => match[1])
         .find(
             (name) =>
                 !GENERIC_UA_TOKENS.has(name)
@@ -65,8 +65,51 @@ const extractUnknownBrandFromUA = (ua) => {
     return candidate || null;
 };
 
+const isInAppBrowser = (ua) => {
+    if (
+        /Instagram/i.test(ua) ||
+        /FBAN/i.test(ua) ||
+        /FBAV/i.test(ua) ||
+        /FB_IAB/i.test(ua) ||
+        /FBIOS/i.test(ua) ||
+        /FB4A/i.test(ua) ||
+        /TikTok/i.test(ua) ||
+        /musical_ly/i.test(ua) ||
+        /LinkedInApp/i.test(ua) ||
+        /Twitter/i.test(ua) ||
+        /TwitterAndroid/i.test(ua) ||
+        /Snapchat/i.test(ua) ||
+        /Reddit/i.test(ua) ||
+        /Pinterest/i.test(ua)
+    ) {
+        return true;
+    }
+
+    if (/Android/i.test(ua) && /\bwv\b/i.test(ua)) {
+        return true;
+    }
+
+    if (
+        /iPhone|iPad|iPod/i.test(ua) &&
+        /AppleWebKit/i.test(ua) &&
+        !/Safari/i.test(ua) &&
+        !/CriOS/i.test(ua) &&
+        !/FxiOS/i.test(ua) &&
+        !/EdgiOS/i.test(ua) &&
+        !/OPiOS/i.test(ua)
+    ) {
+        return true;
+    }
+
+    return false;
+};
+
 const getBrowserFromUA = () => {
     const ua = navigator.userAgent;
+
+    if (isInAppBrowser(ua)) {
+        return "IABMV";
+    }
 
     if (ua.includes("EdgiOS/")) {
         return "Microsoft Edge";
@@ -123,7 +166,6 @@ const getBrowserFromUA = () => {
     );
 };
 
-
 const getPlatform = () => {
     const ua = navigator.userAgent;
 
@@ -150,7 +192,6 @@ const getPlatform = () => {
     return "Unknown";
 };
 
-
 const getDeviceModelFromClientHints = async () => {
     try {
         if (
@@ -173,6 +214,7 @@ const getDeviceModelFromClientHints = async () => {
             }
         }
     } catch {
+        return null;
     }
 
     return null;
@@ -194,19 +236,17 @@ const getDeviceModelFromUA = () => {
     }
 
     if (/Android/i.test(ua)) {
-
         const androidMatch = ua.match(
             /Android[^;)]*;\s*(?:[^;)]*;\s*)?([^;)]+?)(?:\s+Build\/[^;)]+)?[;) ]/i
         );
 
         if (androidMatch?.[1]) {
-            const model =
-                androidMatch[1]
-                    .replace(
-                        /\s+Build\/.*$/i,
-                        ""
-                    )
-                    .trim();
+            const model = androidMatch[1]
+                .replace(
+                    /\s+Build\/.*$/i,
+                    ""
+                )
+                .trim();
 
             if (
                 model &&
@@ -217,7 +257,6 @@ const getDeviceModelFromUA = () => {
                 return model;
             }
         }
-
 
         const buildMatch = ua.match(
             /;\s*([^;()]+?)\s+Build\//i
@@ -238,7 +277,6 @@ const getDeviceModelFromUA = () => {
         return "Android Device";
     }
 
-
     if (/Windows/i.test(ua)) {
         return "Windows PC";
     }
@@ -254,7 +292,6 @@ const getDeviceModelFromUA = () => {
     return "Unknown";
 };
 
-
 const getDeviceModel = async () => {
     const clientHintModel =
         await getDeviceModelFromClientHints();
@@ -266,6 +303,34 @@ const getDeviceModel = async () => {
     return getDeviceModelFromUA();
 };
 
+const detectBrowser = async () => {
+    const uaBrowser = getBrowserFromUA();
+
+    if (
+        uaBrowser === "IABMV"
+    ) {
+        return "IABMV";
+    }
+
+    if (
+        navigator.brave &&
+        typeof navigator.brave.isBrave ===
+        "function"
+    ) {
+        try {
+            const isBrave =
+                await navigator.brave.isBrave();
+
+            if (isBrave) {
+                return "Brave";
+            }
+        } catch {
+            return uaBrowser;
+        }
+    }
+
+    return uaBrowser;
+};
 
 const sendAnalytics = async (
     info,
@@ -280,25 +345,32 @@ const sendAnalytics = async (
         console.warn(
             "VITE_ANALYTICS_WEBHOOK_URL is not configured."
         );
-
         return;
     }
 
     const now = new Date();
 
-    const timestamp = new Intl.DateTimeFormat("en-US", {
-        timeZone: "Asia/Kolkata",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true
-    }).formatToParts(now);
+    const timestamp =
+        new Intl.DateTimeFormat(
+            "en-US",
+            {
+                timeZone:
+                    "Asia/Kolkata",
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: true,
+            }
+        ).formatToParts(now);
 
     const get = (type) =>
-        timestamp.find((part) => part.type === type)?.value;
+        timestamp.find(
+            (part) =>
+                part.type === type
+        )?.value;
 
     const payload = {
         timestamp:
@@ -334,17 +406,15 @@ const sendAnalytics = async (
     const body =
         JSON.stringify(payload);
 
-
     try {
         if (navigator.sendBeacon) {
-            const blob =
-                new Blob(
-                    [body],
-                    {
-                        type:
-                            "text/plain;charset=UTF-8",
-                    }
-                );
+            const blob = new Blob(
+                [body],
+                {
+                    type:
+                        "text/plain;charset=UTF-8",
+                }
+            );
 
             const sent =
                 navigator.sendBeacon(
@@ -357,65 +427,49 @@ const sendAnalytics = async (
             }
         }
     } catch {
+        return;
     }
-
 
     try {
         await fetch(
             webhookUrl,
             {
                 method: "POST",
-
                 mode: "no-cors",
-
                 headers: {
                     "Content-Type":
                         "text/plain;charset=UTF-8",
                 },
-
                 body,
-
                 keepalive: true,
             }
         );
     } catch {
+        return;
     }
 };
-
 
 const labelCellSx = {
     color:
         "rgba(255,255,255,0.6)",
-
     borderBottom:
         "1px solid rgba(255,255,255,0.1)",
-
     fontWeight: 600,
-
     whiteSpace: "nowrap",
-
     verticalAlign: "top",
-
     width: "40%",
-
     py: 1.25,
 };
 
 const valueCellSx = {
     color: "#fff",
-
     borderBottom:
         "1px solid rgba(255,255,255,0.1)",
-
     textAlign: "right",
-
     wordBreak: "break-word",
-
     overflowWrap: "anywhere",
-
     py: 1.25,
 };
-
 
 function IP() {
     const [loading, setLoading] =
@@ -433,31 +487,19 @@ function IP() {
     const [deviceModel, setDeviceModel] =
         useState("Detecting...");
 
-
     useEffect(() => {
         let mounted = true;
 
         const detectClientDetails =
             async () => {
                 try {
-                    if (
-                        navigator.brave &&
-                        typeof navigator.brave
-                            .isBrave ===
-                        "function"
-                    ) {
-                        const isBrave =
-                            await navigator.brave
-                                .isBrave();
+                    const detectedBrowser =
+                        await detectBrowser();
 
-                        if (
-                            mounted &&
-                            isBrave
-                        ) {
-                            setBrowser(
-                                "Brave"
-                            );
-                        }
+                    if (mounted) {
+                        setBrowser(
+                            detectedBrowser
+                        );
                     }
 
                     const model =
@@ -465,12 +507,15 @@ function IP() {
 
                     if (mounted) {
                         setDeviceModel(
-                            model ||
-                            "Unknown"
+                            model || "Unknown"
                         );
                     }
                 } catch {
                     if (mounted) {
+                        setBrowser(
+                            getBrowserFromUA()
+                        );
+
                         setDeviceModel(
                             getDeviceModelFromUA()
                         );
@@ -484,7 +529,6 @@ function IP() {
             mounted = false;
         };
     }, []);
-
 
     useEffect(() => {
         let mounted = true;
@@ -540,7 +584,7 @@ function IP() {
                     setInfo(data);
 
                     const detectedBrowser =
-                        getBrowserFromUA();
+                        await detectBrowser();
 
                     const detectedDeviceModel =
                         await getDeviceModel();
@@ -548,6 +592,10 @@ function IP() {
                     if (!mounted) {
                         return;
                     }
+
+                    setBrowser(
+                        detectedBrowser
+                    );
 
                     setDeviceModel(
                         detectedDeviceModel ||
@@ -586,17 +634,14 @@ function IP() {
 
         return () => {
             mounted = false;
-
             controller.abort();
         };
     }, []);
-
 
     const ispRows = info
         ? [
             {
                 label: "Status",
-
                 value:
                     typeof info.success ===
                         "boolean"
@@ -605,60 +650,44 @@ function IP() {
                             : "Failed"
                         : null,
             },
-
             {
                 label:
                     "Protocol Version",
-
                 value: info.type,
             },
-
             {
                 label:
                     "IP Address",
-
                 value: info.ip,
             },
-
             {
                 label: "ISP",
-
                 value:
                     info.connection
                         ?.isp,
             },
-
             {
                 label:
                     "Continent",
-
                 value:
                     info.continent,
             },
-
             {
                 label:
                     "Country",
-
                 value:
                     info.country,
             },
-
             {
                 label:
                     "Timezone",
-
                 value:
                     info.timezone?.abbr
-                        ? `${info.timezone.id
-                        } (${info.timezone.abbr
-                        })`
+                        ? `${info.timezone.id} (${info.timezone.abbr})`
                         : info.timezone?.id,
             },
-
             {
                 label: "UTC",
-
                 value:
                     info.timezone?.utc,
             },
@@ -671,37 +700,29 @@ function IP() {
         )
         : [];
 
-
     const browserRows = [
         {
             label: "Browser",
             value: browser,
         },
-
         {
             label: "Platform",
             value: getPlatform(),
         },
-
         {
             label:
                 "Device Model",
-            value:
-                deviceModel,
+            value: deviceModel,
         },
     ];
-
 
     if (loading) {
         return (
             <div
                 style={{
-                    display:
-                        "flex",
-
+                    display: "flex",
                     justifyContent:
                         "center",
-
                     padding:
                         "2rem 0",
                 }}
@@ -717,7 +738,6 @@ function IP() {
         );
     }
 
-
     if (error) {
         return (
             <>
@@ -725,7 +745,6 @@ function IP() {
                     style={{
                         color:
                             "rgba(255,255,255,0.75)",
-
                         margin:
                             "0 0 1rem",
                     }}
@@ -740,9 +759,7 @@ function IP() {
                     sx={{
                         tableLayout:
                             "fixed",
-
-                        width:
-                            "100%",
+                        width: "100%",
                     }}
                 >
                     <TableBody>
@@ -781,22 +798,17 @@ function IP() {
         );
     }
 
-
     const rows = [
         ...ispRows,
         ...browserRows,
     ];
 
-
     return (
         <Table
             size="small"
             sx={{
-                tableLayout:
-                    "fixed",
-
-                width:
-                    "100%",
+                tableLayout: "fixed",
+                width: "100%",
             }}
         >
             <TableBody>
@@ -826,4 +838,4 @@ function IP() {
     );
 }
 
-export default IP;
+export default WebAnalytics;
