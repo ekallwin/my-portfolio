@@ -27,15 +27,17 @@ const KNOWN_BRAND_TOKENS = [
     ["JioPages/", "JioPages"],
 ];
 
-const GENERIC_UA_TOKENS = new Set([
+const GENERIC_TOKENS = new Set([
     "Mozilla",
     "AppleWebKit",
     "KHTML",
     "like",
     "Gecko",
     "Chrome",
+    "Chromium",
     "CriOS",
     "FxiOS",
+    "Firefox",
     "EdgiOS",
     "EdgA",
     "Edg",
@@ -46,72 +48,126 @@ const GENERIC_UA_TOKENS = new Set([
     "Mobile",
     "Safari",
     "Build",
+    "Linux",
+    "Android",
+    "Windows",
+    "Macintosh",
+    "Mac",
+    "iPhone",
+    "iPad",
+    "iPod",
+    "wv",
 ]);
 
-const extractUnknownBrandFromUA = (ua) => {
-    const matches = [
-        ...ua.matchAll(
-            /([A-Za-z][A-Za-z0-9.-]*)\/[\d.]+/g
-        ),
-    ];
-
-    const candidate = matches
-        .map((match) => match[1])
-        .find(
-            (name) =>
-                !GENERIC_UA_TOKENS.has(name)
-        );
-
-    return candidate || null;
+const cleanBrandName = (name) => {
+    return name
+        .replace(/[_-]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
 };
 
-const isInAppBrowser = (ua) => {
-    const lowerUA = ua.toLowerCase();
+const extractProductTokens = (ua) => {
+    const tokens = [];
 
-    const inAppTokens = [
-        "instagram",
-        "fban",
-        "fbav",
-        "fb_iab",
-        "fbios",
-        "fb4a",
-        "messenger",
-        "tiktok",
-        "musical_ly",
-        "linkedinapp",
-        "twitter",
-        "twitterandroid",
-        "snapchat",
-        "reddit",
-        "pinterest",
-    ];
+    const regex =
+        /([A-Za-z][A-Za-z0-9._-]*)\/[0-9]+(?:\.[0-9]+)*/g;
 
-    if (
-        inAppTokens.some((token) =>
-            lowerUA.includes(token)
+    let match;
+
+    while ((match = regex.exec(ua)) !== null) {
+        const token = match[1];
+
+        if (!GENERIC_TOKENS.has(token)) {
+            tokens.push(token);
+        }
+    }
+
+    return tokens;
+};
+
+const isGenericAndroidWebView = (ua) => {
+    return (
+        /Android/i.test(ua) &&
+        (
+            /;\s*wv\)/i.test(ua) ||
+            /Version\/4\.0/i.test(ua) &&
+            /Chrome\//i.test(ua) &&
+            /Mobile/i.test(ua)
         )
-    ) {
-        return true;
+    );
+};
+
+const isGenericIOSWebView = (ua) => {
+    if (!/iPhone|iPad|iPod/i.test(ua)) {
+        return false;
     }
 
-    if (
-        /android/i.test(ua) &&
-        /;\s*wv\)/i.test(ua)
-    ) {
-        return true;
+    if (!/AppleWebKit/i.test(ua)) {
+        return false;
     }
 
-    return false;
+    return !(
+        /Safari\//i.test(ua) ||
+        /CriOS\//i.test(ua) ||
+        /FxiOS\//i.test(ua) ||
+        /EdgiOS\//i.test(ua) ||
+        /OPiOS\//i.test(ua)
+    );
+};
+
+const getInAppBrowserName = (ua) => {
+    const tokens = extractProductTokens(ua);
+
+    if (tokens.length > 0) {
+        const firstMeaningfulToken = tokens[0];
+
+        if (
+            firstMeaningfulToken &&
+            !GENERIC_TOKENS.has(
+                firstMeaningfulToken
+            )
+        ) {
+            return `${cleanBrandName(
+                firstMeaningfulToken
+            )} Browser`;
+        }
+    }
+
+    if (isGenericAndroidWebView(ua)) {
+        return "IABMV";
+    }
+
+    if (isGenericIOSWebView(ua)) {
+        return "IABMV";
+    }
+
+    return null;
 };
 
 const getBrowserFromUA = () => {
     const ua = navigator.userAgent;
 
-    if (isInAppBrowser(ua)) {
-        return "IABMV";
+    for (
+        const [token, name]
+        of KNOWN_BRAND_TOKENS
+    ) {
+        if (
+            ua.toLowerCase().includes(
+                token.toLowerCase()
+            )
+        ) {
+            return name;
+        }
     }
 
     if (/EdgiOS\//i.test(ua)) {
+        return "Microsoft Edge";
+    }
+
+    if (
+        /EdgA\//i.test(ua) ||
+        /Edg\//i.test(ua)
+    ) {
         return "Microsoft Edge";
     }
 
@@ -120,19 +176,6 @@ const getBrowserFromUA = () => {
         /OPT\//i.test(ua)
     ) {
         return "Opera";
-    }
-
-    for (const [token, name] of KNOWN_BRAND_TOKENS) {
-        if (ua.includes(token)) {
-            return name;
-        }
-    }
-
-    if (
-        /EdgA\//i.test(ua) ||
-        /Edg\//i.test(ua)
-    ) {
-        return "Microsoft Edge";
     }
 
     if (/OPR\//i.test(ua)) {
@@ -144,6 +187,13 @@ const getBrowserFromUA = () => {
     }
 
     if (/Chrome\//i.test(ua)) {
+        const inApp =
+            getInAppBrowserName(ua);
+
+        if (inApp) {
+            return inApp;
+        }
+
         return "Google Chrome";
     }
 
@@ -158,10 +208,14 @@ const getBrowserFromUA = () => {
         return "Safari";
     }
 
-    return (
-        extractUnknownBrandFromUA(ua) ||
-        "Unknown"
-    );
+    const inApp =
+        getInAppBrowserName(ua);
+
+    if (inApp) {
+        return inApp;
+    }
+
+    return "Unknown";
 };
 
 const getPlatform = () => {
@@ -196,7 +250,7 @@ const getDeviceModelFromClientHints = async () => {
             navigator.userAgentData &&
             typeof navigator.userAgentData
                 .getHighEntropyValues ===
-                "function"
+            "function"
         ) {
             const hints =
                 await navigator.userAgentData
@@ -206,8 +260,7 @@ const getDeviceModelFromClientHints = async () => {
                     ]);
 
             if (
-                hints &&
-                hints.model &&
+                hints?.model &&
                 hints.model.trim()
             ) {
                 return hints.model.trim();
@@ -239,10 +292,7 @@ const getDeviceModelFromUA = () => {
             /;\s*([^;()]+?)\s+Build\//i
         );
 
-        if (
-            buildMatch &&
-            buildMatch[1]
-        ) {
+        if (buildMatch?.[1]) {
             const model =
                 buildMatch[1].trim();
 
@@ -289,14 +339,17 @@ const detectBrowser = async () => {
     const browser =
         getBrowserFromUA();
 
-    if (browser === "IABMV") {
-        return "IABMV";
+    if (
+        browser !== "Unknown" &&
+        browser !== "IABMV"
+    ) {
+        return browser;
     }
 
     if (
         navigator.brave &&
         typeof navigator.brave.isBrave ===
-            "function"
+        "function"
     ) {
         try {
             const isBrave =
@@ -322,10 +375,6 @@ const sendAnalytics = async (
             .VITE_ANALYTICS_WEBHOOK_URL;
 
     if (!webhookUrl) {
-        console.warn(
-            "VITE_ANALYTICS_WEBHOOK_URL is not configured."
-        );
-
         return;
     }
 
@@ -346,43 +395,30 @@ const sendAnalytics = async (
             }
         ).formatToParts(now);
 
-    const getPart = (type) => {
-        const part = parts.find(
+    const getPart = (type) =>
+        parts.find(
             (item) =>
                 item.type === type
-        );
-
-        return part
-            ? part.value
-            : "";
-    };
+        )?.value || "";
 
     const payload = {
         timestamp:
             `${getPart("year")}-${getPart("month")}-${getPart("day")} ` +
             `${getPart("hour")}:${getPart("minute")}:${getPart("second")} ` +
             `${getPart("dayPeriod")} IST`,
-
         ip: info?.ip || "NA",
-
         type: info?.type || "NA",
-
         continent:
             info?.continent || "NA",
-
         country:
             info?.country || "NA",
-
         isp:
             info?.connection?.isp ||
             "NA",
-
         Browser:
             browser || "Unknown",
-
         Platform:
             getPlatform(),
-
         "Device Model":
             deviceModel || "Unknown",
     };
@@ -403,13 +439,12 @@ const sendAnalytics = async (
                 }
             );
 
-            const sent =
+            if (
                 navigator.sendBeacon(
                     webhookUrl,
                     blob
-                );
-
-            if (sent) {
+                )
+            ) {
                 return;
             }
         }
@@ -467,7 +502,7 @@ function WebAnalytics() {
         useState(null);
 
     const [browser, setBrowser] =
-        useState(() =>
+        useState(
             getBrowserFromUA()
         );
 
@@ -477,40 +512,41 @@ function WebAnalytics() {
     useEffect(() => {
         let mounted = true;
 
-        const detectClientDetails =
-            async () => {
-                try {
-                    const detectedBrowser =
-                        await detectBrowser();
+        const detect = async () => {
+            try {
+                const detectedBrowser =
+                    await detectBrowser();
 
-                    if (mounted) {
-                        setBrowser(
-                            detectedBrowser
-                        );
-                    }
+                const model =
+                    await getDeviceModel();
 
-                    const model =
-                        await getDeviceModel();
-
-                    if (mounted) {
-                        setDeviceModel(
-                            model || "Unknown"
-                        );
-                    }
-                } catch {
-                    if (mounted) {
-                        setBrowser(
-                            getBrowserFromUA()
-                        );
-
-                        setDeviceModel(
-                            getDeviceModelFromUA()
-                        );
-                    }
+                if (!mounted) {
+                    return;
                 }
-            };
 
-        detectClientDetails();
+                setBrowser(
+                    detectedBrowser
+                );
+
+                setDeviceModel(
+                    model || "Unknown"
+                );
+            } catch {
+                if (!mounted) {
+                    return;
+                }
+
+                setBrowser(
+                    getBrowserFromUA()
+                );
+
+                setDeviceModel(
+                    getDeviceModelFromUA()
+                );
+            }
+        };
+
+        detect();
 
         return () => {
             mounted = false;
@@ -523,99 +559,98 @@ function WebAnalytics() {
         const controller =
             new AbortController();
 
-        const loadData =
-            async () => {
-                try {
-                    const apiUrl =
-                        import.meta.env
-                            .VITE_IP_API;
+        const loadData = async () => {
+            try {
+                const apiUrl =
+                    import.meta.env
+                        .VITE_IP_API;
 
-                    if (!apiUrl) {
-                        throw new Error(
-                            "VITE_IP_API is not configured."
-                        );
-                    }
-
-                    const response =
-                        await fetch(
-                            apiUrl,
-                            {
-                                signal:
-                                    controller.signal,
-                            }
-                        );
-
-                    if (!response.ok) {
-                        throw new Error(
-                            `Network error: ${response.status}`
-                        );
-                    }
-
-                    const data =
-                        await response.json();
-
-                    if (!mounted) {
-                        return;
-                    }
-
-                    if (
-                        data.success ===
-                        false
-                    ) {
-                        throw new Error(
-                            data.message ||
-                                "IP lookup failed"
-                        );
-                    }
-
-                    setInfo(data);
-
-                    const detectedBrowser =
-                        await detectBrowser();
-
-                    const detectedDeviceModel =
-                        await getDeviceModel();
-
-                    if (!mounted) {
-                        return;
-                    }
-
-                    setBrowser(
-                        detectedBrowser
+                if (!apiUrl) {
+                    throw new Error(
+                        "VITE_IP_API is not configured."
                     );
-
-                    setDeviceModel(
-                        detectedDeviceModel ||
-                            "Unknown"
-                    );
-
-                    await sendAnalytics(
-                        data,
-                        detectedBrowser,
-                        detectedDeviceModel
-                    );
-                } catch (err) {
-                    if (!mounted) {
-                        return;
-                    }
-
-                    if (
-                        err?.name ===
-                        "AbortError"
-                    ) {
-                        return;
-                    }
-
-                    setError(
-                        err?.message ||
-                            String(err)
-                    );
-                } finally {
-                    if (mounted) {
-                        setLoading(false);
-                    }
                 }
-            };
+
+                const response =
+                    await fetch(
+                        apiUrl,
+                        {
+                            signal:
+                                controller.signal,
+                        }
+                    );
+
+                if (!response.ok) {
+                    throw new Error(
+                        `Network error: ${response.status}`
+                    );
+                }
+
+                const data =
+                    await response.json();
+
+                if (!mounted) {
+                    return;
+                }
+
+                if (
+                    data.success ===
+                    false
+                ) {
+                    throw new Error(
+                        data.message ||
+                        "IP lookup failed"
+                    );
+                }
+
+                setInfo(data);
+
+                const detectedBrowser =
+                    await detectBrowser();
+
+                const detectedDeviceModel =
+                    await getDeviceModel();
+
+                if (!mounted) {
+                    return;
+                }
+
+                setBrowser(
+                    detectedBrowser
+                );
+
+                setDeviceModel(
+                    detectedDeviceModel ||
+                    "Unknown"
+                );
+
+                await sendAnalytics(
+                    data,
+                    detectedBrowser,
+                    detectedDeviceModel
+                );
+            } catch (err) {
+                if (!mounted) {
+                    return;
+                }
+
+                if (
+                    err?.name ===
+                    "AbortError"
+                ) {
+                    return;
+                }
+
+                setError(
+                    err?.message ||
+                    String(err)
+                );
+            } finally {
+                if (mounted) {
+                    setLoading(false);
+                }
+            }
+        };
 
         loadData();
 
@@ -627,63 +662,63 @@ function WebAnalytics() {
 
     const ispRows = info
         ? [
-              {
-                  label: "Status",
-                  value:
-                      typeof info.success ===
-                      "boolean"
-                          ? info.success
-                              ? "Success"
-                              : "Failed"
-                          : null,
-              },
-              {
-                  label:
-                      "Protocol Version",
-                  value: info.type,
-              },
-              {
-                  label:
-                      "IP Address",
-                  value: info.ip,
-              },
-              {
-                  label: "ISP",
-                  value:
-                      info.connection?.isp,
-              },
-              {
-                  label:
-                      "Continent",
-                  value:
-                      info.continent,
-              },
-              {
-                  label:
-                      "Country",
-                  value:
-                      info.country,
-              },
-              {
-                  label:
-                      "Timezone",
-                  value:
-                      info.timezone?.abbr
-                          ? `${info.timezone.id} (${info.timezone.abbr})`
-                          : info.timezone?.id,
-              },
-              {
-                  label: "UTC",
-                  value:
-                      info.timezone?.utc,
-              },
-          ].filter(
-              (row) =>
-                  row.value !== null &&
-                  row.value !==
-                      undefined &&
-                  row.value !== ""
-          )
+            {
+                label: "Status",
+                value:
+                    typeof info.success ===
+                        "boolean"
+                        ? info.success
+                            ? "Success"
+                            : "Failed"
+                        : null,
+            },
+            {
+                label:
+                    "Protocol Version",
+                value: info.type,
+            },
+            {
+                label:
+                    "IP Address",
+                value: info.ip,
+            },
+            {
+                label: "ISP",
+                value:
+                    info.connection?.isp,
+            },
+            {
+                label:
+                    "Continent",
+                value:
+                    info.continent,
+            },
+            {
+                label:
+                    "Country",
+                value:
+                    info.country,
+            },
+            {
+                label:
+                    "Timezone",
+                value:
+                    info.timezone?.abbr
+                        ? `${info.timezone.id} (${info.timezone.abbr})`
+                        : info.timezone?.id,
+            },
+            {
+                label: "UTC",
+                value:
+                    info.timezone?.utc,
+            },
+        ].filter(
+            (row) =>
+                row.value !== null &&
+                row.value !==
+                undefined &&
+                row.value !== ""
+        )
         : [];
 
     const browserRows = [
