@@ -1,3 +1,4 @@
+
 import React, {
     useEffect,
     useRef,
@@ -63,12 +64,11 @@ const GENERIC_TOKENS = new Set([
     "wv",
 ]);
 
-const cleanBrandName = (name) => {
-    return name
+const cleanBrandName = (name) =>
+    name
         .replace(/[\_-]+/g, " ")
         .replace(/\s+/g, " ")
         .trim();
-};
 
 const extractProductTokens = (ua) => {
     const tokens = [];
@@ -95,7 +95,7 @@ const isGenericAndroidWebView = (ua) => {
         (
             /;\s*wv\)/i.test(ua) ||
             (
-                /Version\/4.0/i.test(ua) &&
+                /Version\/4\.0/i.test(ua) &&
                 /Chrome\//i.test(ua) &&
                 /Mobile/i.test(ua)
             )
@@ -251,6 +251,46 @@ const getPlatform = () => {
     return "Unknown";
 };
 
+const getConnectionType = () => {
+    const connection =
+        navigator.connection ||
+        navigator.mozConnection ||
+        navigator.webkitConnection;
+
+    if (!connection) {
+        return "Unknown";
+    }
+
+    if (connection.type) {
+        const type =
+            connection.type.toLowerCase();
+
+        if (type === "wifi") {
+            return "WiFi";
+        }
+
+        if (type === "cellular") {
+            return "Cellular";
+        }
+
+        if (type === "ethernet") {
+            return "Ethernet";
+        }
+
+        if (type === "bluetooth") {
+            return "Bluetooth";
+        }
+
+        if (type === "none") {
+            return "Offline";
+        }
+
+        return connection.type;
+    }
+
+    return "Unknown";
+};
+
 const getDeviceModelFromClientHints = async () => {
     try {
         if (
@@ -392,15 +432,27 @@ const formatDuration = (seconds) => {
     ).padStart(2, "0")}S`;
 };
 
-const getISTTimestamp = () => {
+const sendAnalytics = async (
+    info,
+    browser,
+    deviceModel,
+    durationSeconds = null
+) => {
+    const webhookUrl =
+        import.meta.env
+            .VITE_ANALYTICS_WEBHOOK_URL;
+
+    if (!webhookUrl) {
+        return;
+    }
+
     const now = new Date();
 
     const parts =
         new Intl.DateTimeFormat(
             "en-US",
             {
-                timeZone:
-                    "Asia/Kolkata",
+                timeZone: "Asia/Kolkata",
                 year: "numeric",
                 month: "2-digit",
                 day: "2-digit",
@@ -417,34 +469,60 @@ const getISTTimestamp = () => {
                 item.type === type
         )?.value || "";
 
-    return (
-        `${getPart("day")}-${getPart("month")}-${getPart("year")} ` +
-        `${getPart("hour")}:${getPart("minute")}:${getPart("second")} ` +
-        `${getPart("dayPeriod")} IST`
-    );
-};
+    const payload = {
+        event:
+            durationSeconds !== null
+                ? "close"
+                : "visit",
 
-const postAnalytics = (
-    payload,
-    useBeacon = false
-) => {
-    const webhookUrl =
-        import.meta.env
-            .VITE_ANALYTICS_WEBHOOK_URL;
+        timestamp:
+            `${getPart("day")}-${getPart("month")}-${getPart("year")} ` +
+            `${getPart("hour")}:${getPart("minute")}:${getPart("second")} ` +
+            `${getPart("dayPeriod")} IST`,
 
-    if (!webhookUrl) {
-        return false;
-    }
+        ip: info?.ip || "NA",
+
+        type:
+            info?.type || "NA",
+
+        continent:
+            info?.continent || "NA",
+
+        country:
+            info?.country || "NA",
+
+        isp:
+            info?.connection?.isp ||
+            "NA",
+
+        Browser:
+            browser || "Unknown",
+
+        Platform:
+            getPlatform(),
+
+        "Device Model":
+            deviceModel || "Unknown",
+
+        Connection:
+            getConnectionType(),
+
+        Duration:
+            durationSeconds !== null
+                ? formatDuration(
+                      durationSeconds
+                  )
+                : "",
+    };
 
     const body =
         JSON.stringify(payload);
 
-    if (
-        useBeacon &&
-        typeof navigator.sendBeacon ===
+    try {
+        if (
+            typeof navigator.sendBeacon ===
             "function"
-    ) {
-        try {
+        ) {
             const blob =
                 new Blob(
                     [body],
@@ -454,16 +532,20 @@ const postAnalytics = (
                     }
                 );
 
-            return navigator.sendBeacon(
-                webhookUrl,
-                blob
-            );
-        } catch {
+            if (
+                navigator.sendBeacon(
+                    webhookUrl,
+                    blob
+                )
+            ) {
+                return;
+            }
         }
+    } catch {
     }
 
     try {
-        fetch(
+        await fetch(
             webhookUrl,
             {
                 method: "POST",
@@ -476,81 +558,8 @@ const postAnalytics = (
                 keepalive: true,
             }
         );
-
-        return true;
     } catch {
-        return false;
     }
-};
-
-const sendVisit = (
-    info,
-    browser,
-    deviceModel
-) => {
-    postAnalytics({
-        event: "visit",
-        timestamp:
-            getISTTimestamp(),
-        ip:
-            info?.ip || "NA",
-        type:
-            info?.type || "NA",
-        continent:
-            info?.continent || "NA",
-        country:
-            info?.country || "NA",
-        isp:
-            info?.connection?.isp ||
-            "NA",
-        Browser:
-            browser || "Unknown",
-        Platform:
-            getPlatform(),
-        "Device Model":
-            deviceModel || "Unknown",
-    });
-};
-
-const sendLocation = (
-    info,
-    latitude,
-    longitude
-) => {
-    const location =
-        `${Number(latitude).toFixed(5)},${Number(
-            longitude
-        ).toFixed(5)}`;
-
-    postAnalytics({
-        event: "location",
-        timestamp:
-            getISTTimestamp(),
-        ip:
-            info?.ip || "NA",
-        Location:
-            location,
-    });
-};
-
-const sendDuration = (
-    info,
-    durationSeconds
-) => {
-    postAnalytics(
-        {
-            event: "close",
-            timestamp:
-                getISTTimestamp(),
-            ip:
-                info?.ip || "NA",
-            Duration:
-                formatDuration(
-                    durationSeconds
-                ),
-        },
-        true
-    );
 };
 
 const labelCellSx = {
@@ -593,6 +602,11 @@ function WebAnalytics() {
     const [deviceModel, setDeviceModel] =
         useState("Detecting...");
 
+    const [connection, setConnection] =
+        useState(
+            getConnectionType()
+        );
+
     const activeStartRef =
         useRef(
             document.visibilityState ===
@@ -615,10 +629,12 @@ function WebAnalytics() {
     const deviceModelRef =
         useRef("Unknown");
 
-    const durationSentRef =
-        useRef(false);
+    const connectionRef =
+        useRef(
+            getConnectionType()
+        );
 
-    const locationSentRef =
+    const durationSentRef =
         useRef(false);
 
     useEffect(() => {
@@ -632,6 +648,9 @@ function WebAnalytics() {
                 const model =
                     await getDeviceModel();
 
+                const detectedConnection =
+                    getConnectionType();
+
                 if (!mounted) {
                     return;
                 }
@@ -644,11 +663,18 @@ function WebAnalytics() {
                     model || "Unknown"
                 );
 
+                setConnection(
+                    detectedConnection
+                );
+
                 browserRef.current =
                     detectedBrowser;
 
                 deviceModelRef.current =
                     model || "Unknown";
+
+                connectionRef.current =
+                    detectedConnection;
             } catch {
                 if (!mounted) {
                     return;
@@ -660,6 +686,9 @@ function WebAnalytics() {
                 const fallbackModel =
                     getDeviceModelFromUA();
 
+                const fallbackConnection =
+                    getConnectionType();
+
                 setBrowser(
                     fallbackBrowser
                 );
@@ -668,11 +697,18 @@ function WebAnalytics() {
                     fallbackModel
                 );
 
+                setConnection(
+                    fallbackConnection
+                );
+
                 browserRef.current =
                     fallbackBrowser;
 
                 deviceModelRef.current =
                     fallbackModel;
+
+                connectionRef.current =
+                    fallbackConnection;
             }
         };
 
@@ -680,6 +716,60 @@ function WebAnalytics() {
 
         return () => {
             mounted = false;
+        };
+    }, []);
+
+    useEffect(() => {
+        const handleConnectionChange =
+            () => {
+                const type =
+                    getConnectionType();
+
+                setConnection(type);
+
+                connectionRef.current =
+                    type;
+            };
+
+        const network =
+            navigator.connection ||
+            navigator.mozConnection ||
+            navigator.webkitConnection;
+
+        if (network) {
+            network.addEventListener(
+                "change",
+                handleConnectionChange
+            );
+        }
+
+        window.addEventListener(
+            "online",
+            handleConnectionChange
+        );
+
+        window.addEventListener(
+            "offline",
+            handleConnectionChange
+        );
+
+        return () => {
+            if (network) {
+                network.removeEventListener(
+                    "change",
+                    handleConnectionChange
+                );
+            }
+
+            window.removeEventListener(
+                "online",
+                handleConnectionChange
+            );
+
+            window.removeEventListener(
+                "offline",
+                handleConnectionChange
+            );
         };
     }, []);
 
@@ -735,14 +825,14 @@ function WebAnalytics() {
 
                 setInfo(data);
 
-                analyticsInfoRef.current =
-                    data;
-
                 const detectedBrowser =
                     await detectBrowser();
 
                 const detectedDeviceModel =
                     await getDeviceModel();
+
+                const detectedConnection =
+                    getConnectionType();
 
                 if (!mounted) {
                     return;
@@ -757,6 +847,13 @@ function WebAnalytics() {
                         "Unknown"
                 );
 
+                setConnection(
+                    detectedConnection
+                );
+
+                analyticsInfoRef.current =
+                    data;
+
                 browserRef.current =
                     detectedBrowser;
 
@@ -764,7 +861,10 @@ function WebAnalytics() {
                     detectedDeviceModel ||
                     "Unknown";
 
-                sendVisit(
+                connectionRef.current =
+                    detectedConnection;
+
+                await sendAnalytics(
                     data,
                     detectedBrowser,
                     detectedDeviceModel
@@ -801,88 +901,6 @@ function WebAnalytics() {
     }, []);
 
     useEffect(() => {
-        if (!info) {
-            return;
-        }
-
-        if (
-            !navigator.geolocation ||
-            locationSentRef.current
-        ) {
-            return;
-        }
-
-        const requestLocation = () => {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    if (
-                        locationSentRef.current
-                    ) {
-                        return;
-                    }
-
-                    locationSentRef.current =
-                        true;
-
-                    sendLocation(
-                        info,
-                        position.coords.latitude,
-                        position.coords.longitude
-                    );
-                },
-                () => {
-                },
-                {
-                    enableHighAccuracy:
-                        false,
-                    timeout: 15000,
-                    maximumAge: 300000,
-                }
-            );
-        };
-
-        if (
-            navigator.permissions &&
-            typeof navigator.permissions
-                .query ===
-                "function"
-        ) {
-            navigator.permissions
-                .query({
-                    name: "geolocation",
-                })
-                .then((permission) => {
-                    if (
-                        permission.state ===
-                        "granted"
-                    ) {
-                        requestLocation();
-                    } else if (
-                        permission.state ===
-                        "prompt"
-                    ) {
-                        requestLocation();
-                    }
-
-                    permission.onchange =
-                        () => {
-                            if (
-                                permission.state ===
-                                "granted"
-                            ) {
-                                requestLocation();
-                            }
-                        };
-                })
-                .catch(() => {
-                    requestLocation();
-                });
-        } else {
-            requestLocation();
-        }
-    }, [info]);
-
-    useEffect(() => {
         const startActiveTime = () => {
             if (
                 activeStartRef.current ===
@@ -907,19 +925,7 @@ function WebAnalytics() {
             }
         };
 
-        const handleVisibilityChange =
-            () => {
-                if (
-                    document.visibilityState ===
-                    "visible"
-                ) {
-                    startActiveTime();
-                } else {
-                    pauseActiveTime();
-                }
-            };
-
-        const handlePageHide = () => {
+        const sendDuration = () => {
             if (
                 durationSentRef.current
             ) {
@@ -937,11 +943,25 @@ function WebAnalytics() {
                         1000
                 );
 
-            sendDuration(
+            sendAnalytics(
                 analyticsInfoRef.current,
+                browserRef.current,
+                deviceModelRef.current,
                 durationSeconds
             );
         };
+
+        const handleVisibilityChange =
+            () => {
+                if (
+                    document.visibilityState ===
+                    "visible"
+                ) {
+                    startActiveTime();
+                } else {
+                    pauseActiveTime();
+                }
+            };
 
         document.addEventListener(
             "visibilitychange",
@@ -950,7 +970,7 @@ function WebAnalytics() {
 
         window.addEventListener(
             "pagehide",
-            handlePageHide
+            sendDuration
         );
 
         return () => {
@@ -961,7 +981,7 @@ function WebAnalytics() {
 
             window.removeEventListener(
                 "pagehide",
-                handlePageHide
+                sendDuration
             );
         };
     }, []);
@@ -1040,6 +1060,11 @@ function WebAnalytics() {
             label:
                 "Device Model",
             value: deviceModel,
+        },
+        {
+            label:
+                "Connection",
+            value: connection,
         },
     ];
 
