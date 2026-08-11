@@ -92,9 +92,9 @@ const isGenericAndroidWebView = (ua) => {
     return (
         /Android/i.test(ua) &&
         (
-            /;\s*\*?wv\)/i.test(ua) ||
+            /;\s*wv\)/i.test(ua) ||
             (
-                /Version\/4.0/i.test(ua) &&
+                /Version\/4\.0/i.test(ua) &&
                 /Chrome\//i.test(ua) &&
                 /Mobile/i.test(ua)
             )
@@ -290,36 +290,33 @@ const getConnectionType = () => {
     return "Unknown";
 };
 
-const getDeviceModelFromClientHints =
-    async () => {
-        try {
+const getDeviceModelFromClientHints = async () => {
+    try {
+        if (
+            navigator.userAgentData &&
+            typeof navigator.userAgentData
+                .getHighEntropyValues ===
+            "function"
+        ) {
+            const hints =
+                await navigator.userAgentData
+                    .getHighEntropyValues([
+                        "model",
+                        "platform",
+                    ]);
+
             if (
-                navigator.userAgentData &&
-                typeof navigator
-                    .userAgentData
-                    .getHighEntropyValues ===
-                "function"
+                hints?.model &&
+                hints.model.trim()
             ) {
-                const hints =
-                    await navigator
-                        .userAgentData
-                        .getHighEntropyValues([
-                            "model",
-                            "platform",
-                        ]);
-
-                if (
-                    hints?.model &&
-                    hints.model.trim()
-                ) {
-                    return hints.model.trim();
-                }
+                return hints.model.trim();
             }
-        } catch {
         }
+    } catch {
+    }
 
-        return null;
-    };
+    return null;
+};
 
 const getDeviceModelFromUA = () => {
     const ua = navigator.userAgent;
@@ -434,35 +431,11 @@ const formatDuration = (seconds) => {
     ).padStart(2, "0")}S`;
 };
 
-
-const createSessionId = () => {
-    try {
-        if (
-            typeof crypto !== "undefined" &&
-            typeof crypto.randomUUID ===
-            "function"
-        ) {
-            return crypto.randomUUID();
-        }
-    } catch {
-    }
-
-    return (
-        Date.now().toString(36) +
-        Math.random()
-            .toString(36)
-            .slice(2)
-    );
-};
-
 const sendAnalytics = async (
     info,
     browser,
     deviceModel,
-    durationSeconds = null,
-    location = null,
-    eventOverride = null,
-    sessionId = null
+    durationSeconds = null
 ) => {
     const webhookUrl =
         import.meta.env
@@ -495,19 +468,11 @@ const sendAnalytics = async (
                 item.type === type
         )?.value || "";
 
-    const event =
-        eventOverride ||
-        (
+    const payload = {
+        event:
             durationSeconds !== null
                 ? "close"
-                : "visit"
-        );
-
-    const payload = {
-        event,
-
-        sessionId:
-            sessionId || "",
+                : "visit",
 
         timestamp:
             `${getPart("day")}-${getPart("month")}-${getPart("year")} ` +
@@ -540,9 +505,6 @@ const sendAnalytics = async (
 
         Connection:
             getConnectionType(),
-
-        Location:
-            location || "",
 
         Duration:
             durationSeconds !== null
@@ -599,83 +561,6 @@ const sendAnalytics = async (
     }
 };
 
-
-const requestPreciseLocation = () => {
-    return new Promise(
-        (resolve, reject) => {
-            if (
-                !navigator.geolocation
-            ) {
-                reject(
-                    new Error(
-                        "Geolocation is not supported."
-                    )
-                );
-
-                return;
-            }
-
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const latitude =
-                        Number(
-                            position.coords
-                                .latitude
-                        );
-
-                    const longitude =
-                        Number(
-                            position.coords
-                                .longitude
-                        );
-
-                    if (
-                        !Number.isFinite(
-                            latitude
-                        ) ||
-                        !Number.isFinite(
-                            longitude
-                        )
-                    ) {
-                        reject(
-                            new Error(
-                                "Invalid location."
-                            )
-                        );
-
-                        return;
-                    }
-
-
-                    const coordinates =
-                        `${latitude.toFixed(
-                            6
-                        )}, ${longitude.toFixed(
-                            6
-                        )}`;
-
-                    resolve({
-                        coordinates,
-                        latitude,
-                        longitude,
-                        accuracy:
-                            position.coords
-                                .accuracy,
-                    });
-                },
-                (error) => {
-                    reject(error);
-                },
-                {
-                    enableHighAccuracy: true,
-                    maximumAge: 0,
-                    timeout: 15000,
-                }
-            );
-        }
-    );
-};
-
 const labelCellSx = {
     color:
         "rgba(255,255,255,0.6)",
@@ -721,9 +606,6 @@ function WebAnalytics() {
             getConnectionType()
         );
 
-    const [location, setLocation] =
-        useState("Requesting permission...");
-
     const activeStartRef =
         useRef(
             document.visibilityState ===
@@ -751,15 +633,8 @@ function WebAnalytics() {
             getConnectionType()
         );
 
-    const locationRef =
-        useRef(null);
-
     const durationSentRef =
         useRef(false);
-
-    const sessionIdRef =
-        useRef(createSessionId());
-
 
     useEffect(() => {
         let mounted = true;
@@ -843,7 +718,6 @@ function WebAnalytics() {
         };
     }, []);
 
-
     useEffect(() => {
         const handleConnectionChange =
             () => {
@@ -897,7 +771,6 @@ function WebAnalytics() {
             );
         };
     }, []);
-
 
     useEffect(() => {
         let mounted = true;
@@ -990,15 +863,10 @@ function WebAnalytics() {
                 connectionRef.current =
                     detectedConnection;
 
-
                 await sendAnalytics(
                     data,
                     detectedBrowser,
-                    detectedDeviceModel,
-                    null,
-                    null,
-                    "visit",
-                    sessionIdRef.current
+                    detectedDeviceModel
                 );
             } catch (err) {
                 if (!mounted) {
@@ -1031,56 +899,6 @@ function WebAnalytics() {
         };
     }, []);
 
-
-    useEffect(() => {
-        let mounted = true;
-
-        const requestLocation =
-            async () => {
-                try {
-                    const result =
-                        await requestPreciseLocation();
-
-                    if (!mounted) {
-                        return;
-                    }
-
-                    locationRef.current =
-                        result.coordinates;
-
-                    setLocation(
-                        result.coordinates
-                    );
-
-
-                    await sendAnalytics(
-                        analyticsInfoRef.current,
-                        browserRef.current,
-                        deviceModelRef.current,
-                        null,
-                        result.coordinates,
-                        "location",
-                        sessionIdRef.current
-                    );
-                } catch (err) {
-                    if (!mounted) {
-                        return;
-                    }
-
-                    setLocation("");
-                }
-            };
-
-        requestLocation();
-
-        return () => {
-            mounted = false;
-        };
-    }, []);
-
-    /*
-     * Active page duration.
-     */
     useEffect(() => {
         const startActiveTime = () => {
             if (
@@ -1128,10 +946,7 @@ function WebAnalytics() {
                 analyticsInfoRef.current,
                 browserRef.current,
                 deviceModelRef.current,
-                durationSeconds,
-                locationRef.current,
-                "close",
-                sessionIdRef.current
+                durationSeconds
             );
         };
 
@@ -1249,12 +1064,6 @@ function WebAnalytics() {
             label:
                 "Connection",
             value: connection,
-        },
-        {
-            label: "Location",
-            value:
-                location ||
-                "Not available",
         },
     ];
 
