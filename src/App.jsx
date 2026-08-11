@@ -9,7 +9,7 @@ import { Analytics } from "@vercel/analytics/react"
 import Navbar from "./Components/Navbar/navbar.jsx";
 import ScrollToTop from "./Components/ScrollToTop/ScrollToTop.jsx";
 import CometScrollbar from "./Components/ScrollProgress/CometScrollbar.jsx";
-
+import WebAnalytics from "./Components/Analytics/Analytics.jsx"
 const Home = lazy(() => import("./Home"));
 const Projects = lazy(() => import("./Components/Projects/project.jsx"));
 const Achievements = lazy(() => import("./Components/Achievements/achievements"));
@@ -44,6 +44,9 @@ function App() {
 
   return (
     <>
+      <div style={{ display: "none" }}>
+        <WebAnalytics />
+      </div>
       <GlassToaster position="top-center" />
 
       {initialLoad && <Loader onFinish={() => setInitialLoad(false)} />}
@@ -54,7 +57,7 @@ function App() {
 
       <div className="app-shell">
         <ScrollToTop />
-         <CometScrollbar />
+        <CometScrollbar />
         <Suspense fallback={<Loader />}>
           <Navbar />
           <Routes>
