@@ -1,5 +1,9 @@
+import React, {
+    useEffect,
+    useRef,
+    useState,
+} from "react";
 
-import React, { useEffect, useState } from "react";
 import {
     Table,
     TableBody,
@@ -61,7 +65,7 @@ const GENERIC_TOKENS = new Set([
 
 const cleanBrandName = (name) => {
     return name
-        .replace(/[_-]+/g, " ")
+        .replace(/[\_-]+/g, " ")
         .replace(/\s+/g, " ")
         .trim();
 };
@@ -90,9 +94,11 @@ const isGenericAndroidWebView = (ua) => {
         /Android/i.test(ua) &&
         (
             /;\s*wv\)/i.test(ua) ||
-            /Version\/4\.0/i.test(ua) &&
-            /Chrome\//i.test(ua) &&
-            /Mobile/i.test(ua)
+            (
+                /Version\/4.0/i.test(ua) &&
+                /Chrome\//i.test(ua) &&
+                /Mobile/i.test(ua)
+            )
         )
     );
 };
@@ -119,7 +125,8 @@ const getInAppBrowserName = (ua) => {
     const tokens = extractProductTokens(ua);
 
     if (tokens.length > 0) {
-        const firstMeaningfulToken = tokens[0];
+        const firstMeaningfulToken =
+            tokens[0];
 
         if (
             firstMeaningfulToken &&
@@ -250,7 +257,7 @@ const getDeviceModelFromClientHints = async () => {
             navigator.userAgentData &&
             typeof navigator.userAgentData
                 .getHighEntropyValues ===
-            "function"
+                "function"
         ) {
             const hints =
                 await navigator.userAgentData
@@ -288,9 +295,10 @@ const getDeviceModelFromUA = () => {
     }
 
     if (/Android/i.test(ua)) {
-        const buildMatch = ua.match(
-            /;\s*([^;()]+?)\s+Build\//i
-        );
+        const buildMatch =
+            ua.match(
+                /;\s*([^;()]+?)\s+Build\//i
+            );
 
         if (buildMatch?.[1]) {
             const model =
@@ -349,7 +357,7 @@ const detectBrowser = async () => {
     if (
         navigator.brave &&
         typeof navigator.brave.isBrave ===
-        "function"
+            "function"
     ) {
         try {
             const isBrave =
@@ -365,26 +373,34 @@ const detectBrowser = async () => {
     return browser;
 };
 
-const sendAnalytics = async (
-    info,
-    browser,
-    deviceModel
-) => {
-    const webhookUrl =
-        import.meta.env
-            .VITE_ANALYTICS_WEBHOOK_URL;
+const formatDuration = (seconds) => {
+    const totalSeconds = Math.max(
+        0,
+        Math.floor(seconds)
+    );
 
-    if (!webhookUrl) {
-        return;
-    }
+    const minutes =
+        Math.floor(
+            totalSeconds / 60
+        );
 
+    const remainingSeconds =
+        totalSeconds % 60;
+
+    return `${minutes}M:${String(
+        remainingSeconds
+    ).padStart(2, "0")}S`;
+};
+
+const getISTTimestamp = () => {
     const now = new Date();
 
     const parts =
         new Intl.DateTimeFormat(
             "en-US",
             {
-                timeZone: "Asia/Kolkata",
+                timeZone:
+                    "Asia/Kolkata",
                 year: "numeric",
                 month: "2-digit",
                 day: "2-digit",
@@ -401,13 +417,85 @@ const sendAnalytics = async (
                 item.type === type
         )?.value || "";
 
-    const payload = {
+    return (
+        `${getPart("day")}-${getPart("month")}-${getPart("year")} ` +
+        `${getPart("hour")}:${getPart("minute")}:${getPart("second")} ` +
+        `${getPart("dayPeriod")} IST`
+    );
+};
+
+const postAnalytics = (
+    payload,
+    useBeacon = false
+) => {
+    const webhookUrl =
+        import.meta.env
+            .VITE_ANALYTICS_WEBHOOK_URL;
+
+    if (!webhookUrl) {
+        return false;
+    }
+
+    const body =
+        JSON.stringify(payload);
+
+    if (
+        useBeacon &&
+        typeof navigator.sendBeacon ===
+            "function"
+    ) {
+        try {
+            const blob =
+                new Blob(
+                    [body],
+                    {
+                        type:
+                            "text/plain;charset=UTF-8",
+                    }
+                );
+
+            return navigator.sendBeacon(
+                webhookUrl,
+                blob
+            );
+        } catch {
+        }
+    }
+
+    try {
+        fetch(
+            webhookUrl,
+            {
+                method: "POST",
+                mode: "no-cors",
+                headers: {
+                    "Content-Type":
+                        "text/plain;charset=UTF-8",
+                },
+                body,
+                keepalive: true,
+            }
+        );
+
+        return true;
+    } catch {
+        return false;
+    }
+};
+
+const sendVisit = (
+    info,
+    browser,
+    deviceModel
+) => {
+    postAnalytics({
+        event: "visit",
         timestamp:
-            `${getPart("year")}-${getPart("month")}-${getPart("day")} ` +
-            `${getPart("hour")}:${getPart("minute")}:${getPart("second")} ` +
-            `${getPart("dayPeriod")} IST`,
-        ip: info?.ip || "NA",
-        type: info?.type || "NA",
+            getISTTimestamp(),
+        ip:
+            info?.ip || "NA",
+        type:
+            info?.type || "NA",
         continent:
             info?.continent || "NA",
         country:
@@ -421,52 +509,48 @@ const sendAnalytics = async (
             getPlatform(),
         "Device Model":
             deviceModel || "Unknown",
-    };
+    });
+};
 
-    const body =
-        JSON.stringify(payload);
+const sendLocation = (
+    info,
+    latitude,
+    longitude
+) => {
+    const location =
+        `${Number(latitude).toFixed(5)},${Number(
+            longitude
+        ).toFixed(5)}`;
 
-    try {
-        if (
-            typeof navigator.sendBeacon ===
-            "function"
-        ) {
-            const blob = new Blob(
-                [body],
-                {
-                    type:
-                        "text/plain;charset=UTF-8",
-                }
-            );
+    postAnalytics({
+        event: "location",
+        timestamp:
+            getISTTimestamp(),
+        ip:
+            info?.ip || "NA",
+        Location:
+            location,
+    });
+};
 
-            if (
-                navigator.sendBeacon(
-                    webhookUrl,
-                    blob
-                )
-            ) {
-                return;
-            }
-        }
-    } catch {
-    }
-
-    try {
-        await fetch(
-            webhookUrl,
-            {
-                method: "POST",
-                mode: "no-cors",
-                headers: {
-                    "Content-Type":
-                        "text/plain;charset=UTF-8",
-                },
-                body,
-                keepalive: true,
-            }
-        );
-    } catch {
-    }
+const sendDuration = (
+    info,
+    durationSeconds
+) => {
+    postAnalytics(
+        {
+            event: "close",
+            timestamp:
+                getISTTimestamp(),
+            ip:
+                info?.ip || "NA",
+            Duration:
+                formatDuration(
+                    durationSeconds
+                ),
+        },
+        true
+    );
 };
 
 const labelCellSx = {
@@ -509,6 +593,34 @@ function WebAnalytics() {
     const [deviceModel, setDeviceModel] =
         useState("Detecting...");
 
+    const activeStartRef =
+        useRef(
+            document.visibilityState ===
+                "visible"
+                ? performance.now()
+                : null
+        );
+
+    const activeDurationRef =
+        useRef(0);
+
+    const analyticsInfoRef =
+        useRef(null);
+
+    const browserRef =
+        useRef(
+            getBrowserFromUA()
+        );
+
+    const deviceModelRef =
+        useRef("Unknown");
+
+    const durationSentRef =
+        useRef(false);
+
+    const locationSentRef =
+        useRef(false);
+
     useEffect(() => {
         let mounted = true;
 
@@ -531,18 +643,36 @@ function WebAnalytics() {
                 setDeviceModel(
                     model || "Unknown"
                 );
+
+                browserRef.current =
+                    detectedBrowser;
+
+                deviceModelRef.current =
+                    model || "Unknown";
             } catch {
                 if (!mounted) {
                     return;
                 }
 
+                const fallbackBrowser =
+                    getBrowserFromUA();
+
+                const fallbackModel =
+                    getDeviceModelFromUA();
+
                 setBrowser(
-                    getBrowserFromUA()
+                    fallbackBrowser
                 );
 
                 setDeviceModel(
-                    getDeviceModelFromUA()
+                    fallbackModel
                 );
+
+                browserRef.current =
+                    fallbackBrowser;
+
+                deviceModelRef.current =
+                    fallbackModel;
             }
         };
 
@@ -599,11 +729,14 @@ function WebAnalytics() {
                 ) {
                     throw new Error(
                         data.message ||
-                        "IP lookup failed"
+                            "IP lookup failed"
                     );
                 }
 
                 setInfo(data);
+
+                analyticsInfoRef.current =
+                    data;
 
                 const detectedBrowser =
                     await detectBrowser();
@@ -621,10 +754,17 @@ function WebAnalytics() {
 
                 setDeviceModel(
                     detectedDeviceModel ||
-                    "Unknown"
+                        "Unknown"
                 );
 
-                await sendAnalytics(
+                browserRef.current =
+                    detectedBrowser;
+
+                deviceModelRef.current =
+                    detectedDeviceModel ||
+                    "Unknown";
+
+                sendVisit(
                     data,
                     detectedBrowser,
                     detectedDeviceModel
@@ -643,7 +783,7 @@ function WebAnalytics() {
 
                 setError(
                     err?.message ||
-                    String(err)
+                        String(err)
                 );
             } finally {
                 if (mounted) {
@@ -660,65 +800,231 @@ function WebAnalytics() {
         };
     }, []);
 
+    useEffect(() => {
+        if (!info) {
+            return;
+        }
+
+        if (
+            !navigator.geolocation ||
+            locationSentRef.current
+        ) {
+            return;
+        }
+
+        const requestLocation = () => {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    if (
+                        locationSentRef.current
+                    ) {
+                        return;
+                    }
+
+                    locationSentRef.current =
+                        true;
+
+                    sendLocation(
+                        info,
+                        position.coords.latitude,
+                        position.coords.longitude
+                    );
+                },
+                () => {
+                },
+                {
+                    enableHighAccuracy:
+                        false,
+                    timeout: 15000,
+                    maximumAge: 300000,
+                }
+            );
+        };
+
+        if (
+            navigator.permissions &&
+            typeof navigator.permissions
+                .query ===
+                "function"
+        ) {
+            navigator.permissions
+                .query({
+                    name: "geolocation",
+                })
+                .then((permission) => {
+                    if (
+                        permission.state ===
+                        "granted"
+                    ) {
+                        requestLocation();
+                    } else if (
+                        permission.state ===
+                        "prompt"
+                    ) {
+                        requestLocation();
+                    }
+
+                    permission.onchange =
+                        () => {
+                            if (
+                                permission.state ===
+                                "granted"
+                            ) {
+                                requestLocation();
+                            }
+                        };
+                })
+                .catch(() => {
+                    requestLocation();
+                });
+        } else {
+            requestLocation();
+        }
+    }, [info]);
+
+    useEffect(() => {
+        const startActiveTime = () => {
+            if (
+                activeStartRef.current ===
+                null
+            ) {
+                activeStartRef.current =
+                    performance.now();
+            }
+        };
+
+        const pauseActiveTime = () => {
+            if (
+                activeStartRef.current !==
+                null
+            ) {
+                activeDurationRef.current +=
+                    performance.now() -
+                    activeStartRef.current;
+
+                activeStartRef.current =
+                    null;
+            }
+        };
+
+        const handleVisibilityChange =
+            () => {
+                if (
+                    document.visibilityState ===
+                    "visible"
+                ) {
+                    startActiveTime();
+                } else {
+                    pauseActiveTime();
+                }
+            };
+
+        const handlePageHide = () => {
+            if (
+                durationSentRef.current
+            ) {
+                return;
+            }
+
+            durationSentRef.current =
+                true;
+
+            pauseActiveTime();
+
+            const durationSeconds =
+                Math.floor(
+                    activeDurationRef.current /
+                        1000
+                );
+
+            sendDuration(
+                analyticsInfoRef.current,
+                durationSeconds
+            );
+        };
+
+        document.addEventListener(
+            "visibilitychange",
+            handleVisibilityChange
+        );
+
+        window.addEventListener(
+            "pagehide",
+            handlePageHide
+        );
+
+        return () => {
+            document.removeEventListener(
+                "visibilitychange",
+                handleVisibilityChange
+            );
+
+            window.removeEventListener(
+                "pagehide",
+                handlePageHide
+            );
+        };
+    }, []);
+
     const ispRows = info
         ? [
-            {
-                label: "Status",
-                value:
-                    typeof info.success ===
-                        "boolean"
-                        ? info.success
-                            ? "Success"
-                            : "Failed"
-                        : null,
-            },
-            {
-                label:
-                    "Protocol Version",
-                value: info.type,
-            },
-            {
-                label:
-                    "IP Address",
-                value: info.ip,
-            },
-            {
-                label: "ISP",
-                value:
-                    info.connection?.isp,
-            },
-            {
-                label:
-                    "Continent",
-                value:
-                    info.continent,
-            },
-            {
-                label:
-                    "Country",
-                value:
-                    info.country,
-            },
-            {
-                label:
-                    "Timezone",
-                value:
-                    info.timezone?.abbr
-                        ? `${info.timezone.id} (${info.timezone.abbr})`
-                        : info.timezone?.id,
-            },
-            {
-                label: "UTC",
-                value:
-                    info.timezone?.utc,
-            },
-        ].filter(
-            (row) =>
-                row.value !== null &&
-                row.value !==
-                undefined &&
-                row.value !== ""
-        )
+              {
+                  label: "Status",
+                  value:
+                      typeof info.success ===
+                      "boolean"
+                          ? info.success
+                              ? "Success"
+                              : "Failed"
+                          : null,
+              },
+              {
+                  label:
+                      "Protocol Version",
+                  value: info.type,
+              },
+              {
+                  label:
+                      "IP Address",
+                  value: info.ip,
+              },
+              {
+                  label: "ISP",
+                  value:
+                      info.connection?.isp,
+              },
+              {
+                  label:
+                      "Continent",
+                  value:
+                      info.continent,
+              },
+              {
+                  label:
+                      "Country",
+                  value:
+                      info.country,
+              },
+              {
+                  label:
+                      "Timezone",
+                  value:
+                      info.timezone?.abbr
+                          ? `${info.timezone.id} (${info.timezone.abbr})`
+                          : info.timezone?.id,
+              },
+              {
+                  label: "UTC",
+                  value:
+                      info.timezone?.utc,
+              },
+          ].filter(
+              (row) =>
+                  row.value !== null &&
+                  row.value !==
+                      undefined &&
+                  row.value !== ""
+          )
         : [];
 
     const browserRows = [
@@ -828,7 +1134,8 @@ function WebAnalytics() {
         <Table
             size="small"
             sx={{
-                tableLayout: "fixed",
+                tableLayout:
+                    "fixed",
                 width: "100%",
             }}
         >
