@@ -66,54 +66,37 @@ const extractUnknownBrandFromUA = (ua) => {
 };
 
 const isInAppBrowser = (ua) => {
+    const lowerUA = ua.toLowerCase();
+
     const inAppTokens = [
-        "Instagram",
-        "FBAN",
-        "FBAV",
-        "FB_IAB",
-        "FBIOS",
-        "FB4A",
-        "TikTok",
+        "instagram",
+        "fban",
+        "fbav",
+        "fb_iab",
+        "fbios",
+        "fb4a",
+        "messenger",
+        "tiktok",
         "musical_ly",
-        "LinkedInApp",
-        "Twitter",
-        "TwitterAndroid",
-        "Snapchat",
-        "Reddit",
-        "Pinterest",
+        "linkedinapp",
+        "twitter",
+        "twitterandroid",
+        "snapchat",
+        "reddit",
+        "pinterest",
     ];
 
     if (
         inAppTokens.some((token) =>
-            ua.includes(token)
+            lowerUA.includes(token)
         )
     ) {
         return true;
     }
 
     if (
-        /Android/i.test(ua) &&
+        /android/i.test(ua) &&
         /;\s*wv\)/i.test(ua)
-    ) {
-        return true;
-    }
-
-    if (
-        /Android/i.test(ua) &&
-        /\bwv\b/i.test(ua) &&
-        /Version\/4\.0/i.test(ua)
-    ) {
-        return true;
-    }
-
-    if (
-        /iPhone|iPad|iPod/i.test(ua) &&
-        /AppleWebKit/i.test(ua) &&
-        !/Safari/i.test(ua) &&
-        !/CriOS/i.test(ua) &&
-        !/FxiOS/i.test(ua) &&
-        !/EdgiOS/i.test(ua) &&
-        !/OPiOS/i.test(ua)
     ) {
         return true;
     }
@@ -128,13 +111,13 @@ const getBrowserFromUA = () => {
         return "IABMV";
     }
 
-    if (ua.includes("EdgiOS/")) {
+    if (/EdgiOS\//i.test(ua)) {
         return "Microsoft Edge";
     }
 
     if (
-        ua.includes("OPiOS/") ||
-        ua.includes("OPT/")
+        /OPiOS\//i.test(ua) ||
+        /OPT\//i.test(ua)
     ) {
         return "Opera";
     }
@@ -146,34 +129,32 @@ const getBrowserFromUA = () => {
     }
 
     if (
-        ua.includes("Edg/") ||
-        ua.includes("EdgA/")
+        /EdgA\//i.test(ua) ||
+        /Edg\//i.test(ua)
     ) {
         return "Microsoft Edge";
     }
 
-    if (ua.includes("OPR/")) {
+    if (/OPR\//i.test(ua)) {
         return "Opera";
     }
 
-    if (
-        ua.includes("CriOS/") ||
-        ua.includes("Chrome/")
-    ) {
-        const unknownBrand =
-            extractUnknownBrandFromUA(ua);
+    if (/CriOS\//i.test(ua)) {
+        return "Google Chrome";
+    }
 
-        return unknownBrand || "Google Chrome";
+    if (/Chrome\//i.test(ua)) {
+        return "Google Chrome";
     }
 
     if (
-        ua.includes("FxiOS/") ||
-        ua.includes("Firefox/")
+        /FxiOS\//i.test(ua) ||
+        /Firefox\//i.test(ua)
     ) {
         return "Mozilla Firefox";
     }
 
-    if (ua.includes("Safari/")) {
+    if (/Safari\//i.test(ua)) {
         return "Safari";
     }
 
@@ -233,7 +214,6 @@ const getDeviceModelFromClientHints = async () => {
             }
         }
     } catch {
-        return null;
     }
 
     return null;
@@ -259,7 +239,10 @@ const getDeviceModelFromUA = () => {
             /;\s*([^;()]+?)\s+Build\//i
         );
 
-        if (buildMatch && buildMatch[1]) {
+        if (
+            buildMatch &&
+            buildMatch[1]
+        ) {
             const model =
                 buildMatch[1].trim();
 
@@ -316,14 +299,13 @@ const detectBrowser = async () => {
             "function"
     ) {
         try {
-            const brave =
+            const isBrave =
                 await navigator.brave.isBrave();
 
-            if (brave) {
+            if (isBrave) {
                 return "Brave";
             }
         } catch {
-            return browser;
         }
     }
 
@@ -343,6 +325,7 @@ const sendAnalytics = async (
         console.warn(
             "VITE_ANALYTICS_WEBHOOK_URL is not configured."
         );
+
         return;
     }
 
@@ -617,9 +600,8 @@ function WebAnalytics() {
                     }
 
                     if (
-                        err &&
-                        err.name ===
-                            "AbortError"
+                        err?.name ===
+                        "AbortError"
                     ) {
                         return;
                     }
@@ -843,4 +825,3 @@ function WebAnalytics() {
 }
 
 export default WebAnalytics;
-
