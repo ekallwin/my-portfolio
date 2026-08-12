@@ -8,10 +8,6 @@ import {
     CircularProgress,
 } from "@mui/material";
 
-/* =========================================================
-   BROWSER DETECTION
-========================================================= */
-
 const KNOWN_BRAND_TOKENS = [
     ["SamsungBrowser/", "Samsung Internet"],
     ["HeyTapBrowser/", "Heytap Browser"],
@@ -63,15 +59,58 @@ const GENERIC_TOKENS = new Set([
     "wv",
 ]);
 
+const ANALYTICS_SESSION_KEY =
+    "analytics_session_id";
+
 const cleanBrandName = (name) =>
     name
         .replace(/[\_-]+/g, " ")
         .replace(/\s+/g, " ")
         .trim();
 
-/* =========================================================
-   BROWSER HELPERS
-========================================================= */
+const createSessionId = () => {
+    try {
+        if (
+            window.crypto &&
+            typeof window.crypto.randomUUID ===
+                "function"
+        ) {
+            return window.crypto.randomUUID();
+        }
+    } catch {}
+
+    return (
+        `${Date.now()}-` +
+        `${Math.random()
+            .toString(36)
+            .slice(2)}-` +
+        `${Math.random()
+            .toString(36)
+            .slice(2)}`
+    );
+};
+
+const getAnalyticsSessionId = () => {
+    try {
+        let id =
+            sessionStorage.getItem(
+                ANALYTICS_SESSION_KEY
+            );
+
+        if (!id) {
+            id = createSessionId();
+
+            sessionStorage.setItem(
+                ANALYTICS_SESSION_KEY,
+                id
+            );
+        }
+
+        return id;
+    } catch {
+        return createSessionId();
+    }
+};
 
 const extractProductTokens = (ua) => {
     const tokens = [];
@@ -125,14 +164,18 @@ const isGenericIOSWebView = (ua) => {
 };
 
 const getInAppBrowserName = (ua) => {
-    const tokens = extractProductTokens(ua);
+    const tokens =
+        extractProductTokens(ua);
 
     if (tokens.length > 0) {
-        const firstMeaningfulToken = tokens[0];
+        const firstMeaningfulToken =
+            tokens[0];
 
         if (
             firstMeaningfulToken &&
-            !GENERIC_TOKENS.has(firstMeaningfulToken)
+            !GENERIC_TOKENS.has(
+                firstMeaningfulToken
+            )
         ) {
             return `${cleanBrandName(
                 firstMeaningfulToken
@@ -151,24 +194,13 @@ const getInAppBrowserName = (ua) => {
     return null;
 };
 
-/* =========================================================
-   USER AGENT BROWSER DETECTION
-========================================================= */
-
 const getBrowserFromUA = () => {
     const ua = navigator.userAgent;
 
-    /*
-     * IMPORTANT:
-     * Specific browsers MUST be checked before Chrome.
-     */
-
-    // Samsung Internet
     if (/SamsungBrowser\//i.test(ua)) {
         return "Samsung Internet";
     }
 
-    // Microsoft Edge
     if (/EdgiOS\//i.test(ua)) {
         return "Microsoft Edge";
     }
@@ -180,7 +212,6 @@ const getBrowserFromUA = () => {
         return "Microsoft Edge";
     }
 
-    // Opera
     if (
         /OPiOS\//i.test(ua) ||
         /OPT\//i.test(ua)
@@ -192,7 +223,6 @@ const getBrowserFromUA = () => {
         return "Opera";
     }
 
-    // Firefox
     if (
         /FxiOS\//i.test(ua) ||
         /Firefox\//i.test(ua)
@@ -200,14 +230,13 @@ const getBrowserFromUA = () => {
         return "Mozilla Firefox";
     }
 
-    // Chrome on iOS
     if (/CriOS\//i.test(ua)) {
         return "Google Chrome";
     }
 
-    // Chrome
     if (/Chrome\//i.test(ua)) {
-        const inApp = getInAppBrowserName(ua);
+        const inApp =
+            getInAppBrowserName(ua);
 
         if (inApp) {
             return inApp;
@@ -216,12 +245,10 @@ const getBrowserFromUA = () => {
         return "Google Chrome";
     }
 
-    // Safari
     if (/Safari\//i.test(ua)) {
         return "Safari";
     }
 
-    // Other known browsers
     for (
         const [token, name]
         of KNOWN_BRAND_TOKENS
@@ -229,13 +256,16 @@ const getBrowserFromUA = () => {
         if (
             ua
                 .toLowerCase()
-                .includes(token.toLowerCase())
+                .includes(
+                    token.toLowerCase()
+                )
         ) {
             return name;
         }
     }
 
-    const inApp = getInAppBrowserName(ua);
+    const inApp =
+        getInAppBrowserName(ua);
 
     if (inApp) {
         return inApp;
@@ -244,18 +274,7 @@ const getBrowserFromUA = () => {
     return "Unknown";
 };
 
-/* =========================================================
-   FINAL BROWSER DETECTION
-========================================================= */
-
 const detectBrowser = async () => {
-    /*
-     * Brave MUST be checked before Chrome.
-     *
-     * Brave uses a Chromium/Chrome-compatible
-     * user agent, so UA detection alone may say Chrome.
-     */
-
     if (
         navigator.brave &&
         typeof navigator.brave.isBrave ===
@@ -268,79 +287,23 @@ const detectBrowser = async () => {
             if (isBrave) {
                 return "Brave";
             }
-        } catch {
-            // Ignore Brave detection errors.
-        }
+        } catch {}
     }
 
     return getBrowserFromUA();
 };
 
-/* =========================================================
-   ANALYTICS SESSION
-========================================================= */
-
-const ANALYTICS_SESSION_KEY =
-    "analytics_session_id";
-
-const createSessionId = () => {
-    try {
-        if (
-            window.crypto &&
-            typeof window.crypto.randomUUID ===
-                "function"
-        ) {
-            return window.crypto.randomUUID();
-        }
-    } catch {
-        // fallback
-    }
-
-    return (
-        `${Date.now()}-` +
-        `${Math.random()
-            .toString(36)
-            .slice(2)}-` +
-        `${Math.random()
-            .toString(36)
-            .slice(2)}`
-    );
-};
-
-const getAnalyticsSessionId = () => {
-    try {
-        let id =
-            sessionStorage.getItem(
-                ANALYTICS_SESSION_KEY
-            );
-
-        if (!id) {
-            id = createSessionId();
-
-            sessionStorage.setItem(
-                ANALYTICS_SESSION_KEY,
-                id
-            );
-        }
-
-        return id;
-    } catch {
-        return createSessionId();
-    }
-};
-
-/* =========================================================
-   PLATFORM
-========================================================= */
-
 const getPlatform = () => {
-    const ua = navigator.userAgent;
+    const ua =
+        navigator.userAgent;
 
     if (/Android/i.test(ua)) {
         return "Android";
     }
 
-    if (/iPhone|iPad|iPod/i.test(ua)) {
+    if (
+        /iPhone|iPad|iPod/i.test(ua)
+    ) {
         return "iOS";
     }
 
@@ -348,7 +311,9 @@ const getPlatform = () => {
         return "Windows";
     }
 
-    if (/Macintosh|Mac OS X/i.test(ua)) {
+    if (
+        /Macintosh|Mac OS X/i.test(ua)
+    ) {
         return "macOS";
     }
 
@@ -358,10 +323,6 @@ const getPlatform = () => {
 
     return "Unknown";
 };
-
-/* =========================================================
-   CONNECTION
-========================================================= */
 
 const getConnectionType = () => {
     const connection =
@@ -407,10 +368,6 @@ const getConnectionType = () => {
     return "Unknown";
 };
 
-/* =========================================================
-   DEVICE MODEL
-========================================================= */
-
 const getDeviceModelFromClientHints =
     async () => {
         try {
@@ -436,15 +393,14 @@ const getDeviceModelFromClientHints =
                     return hints.model.trim();
                 }
             }
-        } catch {
-            // ignore
-        }
+        } catch {}
 
         return null;
     };
 
 const getDeviceModelFromUA = () => {
-    const ua = navigator.userAgent;
+    const ua =
+        navigator.userAgent;
 
     if (/iPhone/i.test(ua)) {
         return "iPhone";
@@ -485,7 +441,9 @@ const getDeviceModelFromUA = () => {
         return "Windows PC";
     }
 
-    if (/Macintosh|Mac OS X/i.test(ua)) {
+    if (
+        /Macintosh|Mac OS X/i.test(ua)
+    ) {
         return "Mac";
     }
 
@@ -507,10 +465,6 @@ const getDeviceModel = async () => {
     return getDeviceModelFromUA();
 };
 
-/* =========================================================
-   DURATION
-========================================================= */
-
 const formatDuration = (seconds) => {
     const totalSeconds = Math.max(
         0,
@@ -518,7 +472,9 @@ const formatDuration = (seconds) => {
     );
 
     const minutes =
-        Math.floor(totalSeconds / 60);
+        Math.floor(
+            totalSeconds / 60
+        );
 
     const remainingSeconds =
         totalSeconds % 60;
@@ -527,10 +483,6 @@ const formatDuration = (seconds) => {
         remainingSeconds
     ).padStart(2, "0")}S`;
 };
-
-/* =========================================================
-   IST TIMESTAMP
-========================================================= */
 
 const getISTTimestamp = () => {
     const now = new Date();
@@ -567,10 +519,6 @@ const getISTTimestamp = () => {
         `${getPart("dayPeriod")} IST`
     );
 };
-
-/* =========================================================
-   BUILD ANALYTICS PAYLOAD
-========================================================= */
 
 const buildAnalyticsPayload = (
     info,
@@ -628,10 +576,6 @@ const buildAnalyticsPayload = (
     };
 };
 
-/* =========================================================
-   VISIT ANALYTICS
-========================================================= */
-
 const sendVisitAnalytics = async (
     info,
     browser,
@@ -676,10 +620,6 @@ const sendVisitAnalytics = async (
         return false;
     }
 };
-
-/* =========================================================
-   CLOSE ANALYTICS
-========================================================= */
 
 const sendCloseAnalytics = ({
     info,
@@ -727,16 +667,10 @@ const sendCloseAnalytics = ({
                 blob
             );
         }
-    } catch {
-        // ignore
-    }
+    } catch {}
 
     return false;
 };
-
-/* =========================================================
-   TABLE STYLES
-========================================================= */
 
 const labelCellSx = {
     color:
@@ -760,10 +694,6 @@ const valueCellSx = {
     py: 1.25,
 };
 
-/* =========================================================
-   COMPONENT
-========================================================= */
-
 function WebAnalytics() {
     const [loading, setLoading] =
         useState(true);
@@ -774,10 +704,6 @@ function WebAnalytics() {
     const [info, setInfo] =
         useState(null);
 
-    /*
-     * Don't immediately say Chrome.
-     * Wait for Brave detection.
-     */
     const [browser, setBrowser] =
         useState("Detecting...");
 
@@ -788,10 +714,6 @@ function WebAnalytics() {
         useState(
             getConnectionType()
         );
-
-    /* -----------------------------------------------------
-       REFS
-    ----------------------------------------------------- */
 
     const analyticsInfoRef =
         useRef(null);
@@ -821,17 +743,9 @@ function WebAnalytics() {
     const closeSentRef =
         useRef(false);
 
-    /* =====================================================
-       SESSION
-    ===================================================== */
-
     useEffect(() => {
         getAnalyticsSessionId();
     }, []);
-
-    /* =====================================================
-       DETECT BROWSER / DEVICE
-    ===================================================== */
 
     useEffect(() => {
         let mounted = true;
@@ -915,10 +829,6 @@ function WebAnalytics() {
         };
     }, []);
 
-    /* =====================================================
-       CONNECTION CHANGE
-    ===================================================== */
-
     useEffect(() => {
         const handleConnectionChange =
             () => {
@@ -972,10 +882,6 @@ function WebAnalytics() {
             );
         };
     }, []);
-
-    /* =====================================================
-       LOAD IP / ISP
-    ===================================================== */
 
     useEffect(() => {
         let mounted = true;
@@ -1032,11 +938,6 @@ function WebAnalytics() {
                 analyticsInfoRef.current =
                     data;
 
-                /*
-                 * Detect again here so the
-                 * analytics event gets the
-                 * actual browser.
-                 */
                 const detectedBrowser =
                     await detectBrowser();
 
@@ -1110,10 +1011,6 @@ function WebAnalytics() {
             controller.abort();
         };
     }, []);
-
-    /* =====================================================
-       ACTIVE TIME + PAGE CLOSE
-    ===================================================== */
 
     useEffect(() => {
         const startActiveTime = () => {
@@ -1243,10 +1140,6 @@ function WebAnalytics() {
         };
     }, []);
 
-    /* =====================================================
-       TABLE DATA
-    ===================================================== */
-
     const ispRows = info
         ? [
               {
@@ -1330,10 +1223,6 @@ function WebAnalytics() {
         },
     ];
 
-    /* =====================================================
-       LOADING
-    ===================================================== */
-
     if (loading) {
         return (
             <div
@@ -1355,10 +1244,6 @@ function WebAnalytics() {
             </div>
         );
     }
-
-    /* =====================================================
-       ERROR
-    ===================================================== */
 
     if (error) {
         return (
@@ -1419,10 +1304,6 @@ function WebAnalytics() {
             </>
         );
     }
-
-    /* =====================================================
-       NORMAL TABLE
-    ===================================================== */
 
     const rows = [
         ...ispRows,
