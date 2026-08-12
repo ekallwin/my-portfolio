@@ -63,11 +63,59 @@ const GENERIC_TOKENS = new Set([
     "wv",
 ]);
 
+const ANALYTICS_SESSION_KEY =
+    "analytics_session_id";
+
 const cleanBrandName = (name) =>
     name
         .replace(/[\_-]+/g, " ")
         .replace(/\s+/g, " ")
         .trim();
+
+const createSessionId = () => {
+    try {
+        if (
+            window.crypto &&
+            typeof window.crypto.randomUUID ===
+            "function"
+        ) {
+            return window.crypto.randomUUID();
+        }
+    } catch {
+    }
+
+    return (
+        `${Date.now()}-` +
+        `${Math.random()
+            .toString(36)
+            .slice(2)}-` +
+        `${Math.random()
+            .toString(36)
+            .slice(2)}`
+    );
+};
+
+const getAnalyticsSessionId = () => {
+    try {
+        let id =
+            sessionStorage.getItem(
+                ANALYTICS_SESSION_KEY
+            );
+
+        if (!id) {
+            id = createSessionId();
+
+            sessionStorage.setItem(
+                ANALYTICS_SESSION_KEY,
+                id
+            );
+        }
+
+        return id;
+    } catch {
+        return createSessionId();
+    }
+};
 
 const extractProductTokens = (ua) => {
     const tokens = [];
@@ -121,7 +169,8 @@ const isGenericIOSWebView = (ua) => {
 };
 
 const getInAppBrowserName = (ua) => {
-    const tokens = extractProductTokens(ua);
+    const tokens =
+        extractProductTokens(ua);
 
     if (tokens.length > 0) {
         const firstMeaningfulToken =
@@ -224,6 +273,36 @@ const getBrowserFromUA = () => {
     return "Unknown";
 };
 
+const detectBrowser = async () => {
+    const browser =
+        getBrowserFromUA();
+
+    if (
+        browser !== "Unknown" &&
+        browser !== "IABMV"
+    ) {
+        return browser;
+    }
+
+    if (
+        navigator.brave &&
+        typeof navigator.brave.isBrave ===
+        "function"
+    ) {
+        try {
+            const isBrave =
+                await navigator.brave.isBrave();
+
+            if (isBrave) {
+                return "Brave";
+            }
+        } catch {
+        }
+    }
+
+    return browser;
+};
+
 const getPlatform = () => {
     const ua = navigator.userAgent;
 
@@ -287,36 +366,43 @@ const getConnectionType = () => {
         return connection.type;
     }
 
+    if (connection.effectiveType) {
+        return connection.effectiveType;
+    }
+
     return "Unknown";
 };
 
-const getDeviceModelFromClientHints = async () => {
-    try {
-        if (
-            navigator.userAgentData &&
-            typeof navigator.userAgentData
-                .getHighEntropyValues ===
-            "function"
-        ) {
-            const hints =
-                await navigator.userAgentData
-                    .getHighEntropyValues([
-                        "model",
-                        "platform",
-                    ]);
-
+const getDeviceModelFromClientHints =
+    async () => {
+        try {
             if (
-                hints?.model &&
-                hints.model.trim()
+                navigator.userAgentData &&
+                typeof navigator
+                    .userAgentData
+                    .getHighEntropyValues ===
+                "function"
             ) {
-                return hints.model.trim();
-            }
-        }
-    } catch {
-    }
+                const hints =
+                    await navigator
+                        .userAgentData
+                        .getHighEntropyValues([
+                            "model",
+                            "platform",
+                        ]);
 
-    return null;
-};
+                if (
+                    hints?.model &&
+                    hints.model.trim()
+                ) {
+                    return hints.model.trim();
+                }
+            }
+        } catch {
+        }
+
+        return null;
+    };
 
 const getDeviceModelFromUA = () => {
     const ua = navigator.userAgent;
@@ -382,36 +468,6 @@ const getDeviceModel = async () => {
     return getDeviceModelFromUA();
 };
 
-const detectBrowser = async () => {
-    const browser =
-        getBrowserFromUA();
-
-    if (
-        browser !== "Unknown" &&
-        browser !== "IABMV"
-    ) {
-        return browser;
-    }
-
-    if (
-        navigator.brave &&
-        typeof navigator.brave.isBrave ===
-        "function"
-    ) {
-        try {
-            const isBrave =
-                await navigator.brave.isBrave();
-
-            if (isBrave) {
-                return "Brave";
-            }
-        } catch {
-        }
-    }
-
-    return browser;
-};
-
 const formatDuration = (seconds) => {
     const totalSeconds = Math.max(
         0,
@@ -431,20 +487,7 @@ const formatDuration = (seconds) => {
     ).padStart(2, "0")}S`;
 };
 
-const sendAnalytics = async (
-    info,
-    browser,
-    deviceModel,
-    durationSeconds = null
-) => {
-    const webhookUrl =
-        import.meta.env
-            .VITE_ANALYTICS_WEBHOOK_URL;
-
-    if (!webhookUrl) {
-        return;
-    }
-
+const getISTTimestamp = () => {
     const now = new Date();
 
     const parts =
@@ -468,18 +511,45 @@ const sendAnalytics = async (
                 item.type === type
         )?.value || "";
 
+    return (
+        `${getPart("day")}-${getPart(
+            "month"
+        )}-${getPart("year")} ` +
+        `${getPart("hour")}:${getPart(
+            "minute"
+        )}:${getPart("second")} ` +
+        `${getPart("dayPeriod")} IST`
+    );
+};
+
+const sendAnalytics = async (
+    info,
+    browser,
+    deviceModel,
+    durationSeconds = null
+) => {
+    const webhookUrl =
+        import.meta.env
+            .VITE_ANALYTICS_WEBHOOK_URL;
+
+    if (!webhookUrl) {
+        return false;
+    }
+
     const payload = {
         event:
             durationSeconds !== null
                 ? "close"
                 : "visit",
 
-        timestamp:
-            `${getPart("day")}-${getPart("month")}-${getPart("year")} ` +
-            `${getPart("hour")}:${getPart("minute")}:${getPart("second")} ` +
-            `${getPart("dayPeriod")} IST`,
+        sessionId:
+            getAnalyticsSessionId(),
 
-        ip: info?.ip || "NA",
+        timestamp:
+            getISTTimestamp(),
+
+        ip:
+            info?.ip || "NA",
 
         type:
             info?.type || "NA",
@@ -517,30 +587,32 @@ const sendAnalytics = async (
     const body =
         JSON.stringify(payload);
 
-    try {
-        if (
-            typeof navigator.sendBeacon ===
-            "function"
-        ) {
-            const blob =
-                new Blob(
-                    [body],
-                    {
-                        type:
-                            "text/plain;charset=UTF-8",
-                    }
-                );
-
+    if (durationSeconds !== null) {
+        try {
             if (
-                navigator.sendBeacon(
-                    webhookUrl,
-                    blob
-                )
+                typeof navigator.sendBeacon ===
+                "function"
             ) {
-                return;
+                const blob =
+                    new Blob(
+                        [body],
+                        {
+                            type:
+                                "text/plain;charset=UTF-8",
+                        }
+                    );
+
+                if (
+                    navigator.sendBeacon(
+                        webhookUrl,
+                        blob
+                    )
+                ) {
+                    return true;
+                }
             }
+        } catch {
         }
-    } catch {
     }
 
     try {
@@ -557,7 +629,10 @@ const sendAnalytics = async (
                 keepalive: true,
             }
         );
+
+        return true;
     } catch {
+        return false;
     }
 };
 
@@ -606,17 +681,6 @@ function WebAnalytics() {
             getConnectionType()
         );
 
-    const activeStartRef =
-        useRef(
-            document.visibilityState ===
-                "visible"
-                ? performance.now()
-                : null
-        );
-
-    const activeDurationRef =
-        useRef(0);
-
     const analyticsInfoRef =
         useRef(null);
 
@@ -633,8 +697,23 @@ function WebAnalytics() {
             getConnectionType()
         );
 
-    const durationSentRef =
+    const activeStartRef =
+        useRef(
+            document.visibilityState ===
+                "visible"
+                ? performance.now()
+                : null
+        );
+
+    const activeDurationRef =
+        useRef(0);
+
+    const closeSentRef =
         useRef(false);
+
+    useEffect(() => {
+        getAnalyticsSessionId();
+    }, []);
 
     useEffect(() => {
         let mounted = true;
@@ -824,6 +903,9 @@ function WebAnalytics() {
 
                 setInfo(data);
 
+                analyticsInfoRef.current =
+                    data;
+
                 const detectedBrowser =
                     await detectBrowser();
 
@@ -849,9 +931,6 @@ function WebAnalytics() {
                 setConnection(
                     detectedConnection
                 );
-
-                analyticsInfoRef.current =
-                    data;
 
                 browserRef.current =
                     detectedBrowser;
@@ -924,23 +1003,36 @@ function WebAnalytics() {
             }
         };
 
-        const sendDuration = () => {
+        const getActiveSeconds = () => {
+            let duration =
+                activeDurationRef.current;
+
             if (
-                durationSentRef.current
+                activeStartRef.current !==
+                null
             ) {
+                duration +=
+                    performance.now() -
+                    activeStartRef.current;
+            }
+
+            return Math.floor(
+                duration / 1000
+            );
+        };
+
+        const sendClose = () => {
+            if (closeSentRef.current) {
                 return;
             }
 
-            durationSentRef.current =
+            closeSentRef.current =
                 true;
 
             pauseActiveTime();
 
             const durationSeconds =
-                Math.floor(
-                    activeDurationRef.current /
-                    1000
-                );
+                getActiveSeconds();
 
             sendAnalytics(
                 analyticsInfoRef.current,
@@ -962,6 +1054,10 @@ function WebAnalytics() {
                 }
             };
 
+        const handlePageHide = () => {
+            sendClose();
+        };
+
         document.addEventListener(
             "visibilitychange",
             handleVisibilityChange
@@ -969,7 +1065,7 @@ function WebAnalytics() {
 
         window.addEventListener(
             "pagehide",
-            sendDuration
+            handlePageHide
         );
 
         return () => {
@@ -980,7 +1076,7 @@ function WebAnalytics() {
 
             window.removeEventListener(
                 "pagehide",
-                sendDuration
+                handlePageHide
             );
         };
     }, []);
