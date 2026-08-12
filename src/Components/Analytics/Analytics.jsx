@@ -1,8 +1,4 @@
-import React, {
-    useEffect,
-    useRef,
-    useState,
-} from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import {
     Table,
@@ -11,6 +7,10 @@ import {
     TableCell,
     CircularProgress,
 } from "@mui/material";
+
+/* =========================================================
+   BROWSER DETECTION
+========================================================= */
 
 const KNOWN_BRAND_TOKENS = [
     ["SamsungBrowser/", "Samsung Internet"],
@@ -63,25 +63,237 @@ const GENERIC_TOKENS = new Set([
     "wv",
 ]);
 
-const ANALYTICS_SESSION_KEY =
-    "analytics_session_id";
-
 const cleanBrandName = (name) =>
     name
         .replace(/[\_-]+/g, " ")
         .replace(/\s+/g, " ")
         .trim();
 
+/* =========================================================
+   BROWSER HELPERS
+========================================================= */
+
+const extractProductTokens = (ua) => {
+    const tokens = [];
+
+    const regex =
+        /([A-Za-z][A-Za-z0-9._-]*)\/[0-9]+(?:\.[0-9]+)*/g;
+
+    let match;
+
+    while ((match = regex.exec(ua)) !== null) {
+        const token = match[1];
+
+        if (!GENERIC_TOKENS.has(token)) {
+            tokens.push(token);
+        }
+    }
+
+    return tokens;
+};
+
+const isGenericAndroidWebView = (ua) => {
+    return (
+        /Android/i.test(ua) &&
+        (
+            /;\s*wv\)/i.test(ua) ||
+            (
+                /Version\/4.0/i.test(ua) &&
+                /Chrome\//i.test(ua) &&
+                /Mobile/i.test(ua)
+            )
+        )
+    );
+};
+
+const isGenericIOSWebView = (ua) => {
+    if (!/iPhone|iPad|iPod/i.test(ua)) {
+        return false;
+    }
+
+    if (!/AppleWebKit/i.test(ua)) {
+        return false;
+    }
+
+    return !(
+        /Safari\//i.test(ua) ||
+        /CriOS\//i.test(ua) ||
+        /FxiOS\//i.test(ua) ||
+        /EdgiOS\//i.test(ua) ||
+        /OPiOS\//i.test(ua)
+    );
+};
+
+const getInAppBrowserName = (ua) => {
+    const tokens = extractProductTokens(ua);
+
+    if (tokens.length > 0) {
+        const firstMeaningfulToken = tokens[0];
+
+        if (
+            firstMeaningfulToken &&
+            !GENERIC_TOKENS.has(firstMeaningfulToken)
+        ) {
+            return `${cleanBrandName(
+                firstMeaningfulToken
+            )} Browser`;
+        }
+    }
+
+    if (isGenericAndroidWebView(ua)) {
+        return "Android WebView";
+    }
+
+    if (isGenericIOSWebView(ua)) {
+        return "iOS WebView";
+    }
+
+    return null;
+};
+
+/* =========================================================
+   USER AGENT BROWSER DETECTION
+========================================================= */
+
+const getBrowserFromUA = () => {
+    const ua = navigator.userAgent;
+
+    /*
+     * IMPORTANT:
+     * Specific browsers MUST be checked before Chrome.
+     */
+
+    // Samsung Internet
+    if (/SamsungBrowser\//i.test(ua)) {
+        return "Samsung Internet";
+    }
+
+    // Microsoft Edge
+    if (/EdgiOS\//i.test(ua)) {
+        return "Microsoft Edge";
+    }
+
+    if (
+        /EdgA\//i.test(ua) ||
+        /Edg\//i.test(ua)
+    ) {
+        return "Microsoft Edge";
+    }
+
+    // Opera
+    if (
+        /OPiOS\//i.test(ua) ||
+        /OPT\//i.test(ua)
+    ) {
+        return "Opera";
+    }
+
+    if (/OPR\//i.test(ua)) {
+        return "Opera";
+    }
+
+    // Firefox
+    if (
+        /FxiOS\//i.test(ua) ||
+        /Firefox\//i.test(ua)
+    ) {
+        return "Mozilla Firefox";
+    }
+
+    // Chrome on iOS
+    if (/CriOS\//i.test(ua)) {
+        return "Google Chrome";
+    }
+
+    // Chrome
+    if (/Chrome\//i.test(ua)) {
+        const inApp = getInAppBrowserName(ua);
+
+        if (inApp) {
+            return inApp;
+        }
+
+        return "Google Chrome";
+    }
+
+    // Safari
+    if (/Safari\//i.test(ua)) {
+        return "Safari";
+    }
+
+    // Other known browsers
+    for (
+        const [token, name]
+        of KNOWN_BRAND_TOKENS
+    ) {
+        if (
+            ua
+                .toLowerCase()
+                .includes(token.toLowerCase())
+        ) {
+            return name;
+        }
+    }
+
+    const inApp = getInAppBrowserName(ua);
+
+    if (inApp) {
+        return inApp;
+    }
+
+    return "Unknown";
+};
+
+/* =========================================================
+   FINAL BROWSER DETECTION
+========================================================= */
+
+const detectBrowser = async () => {
+    /*
+     * Brave MUST be checked before Chrome.
+     *
+     * Brave uses a Chromium/Chrome-compatible
+     * user agent, so UA detection alone may say Chrome.
+     */
+
+    if (
+        navigator.brave &&
+        typeof navigator.brave.isBrave ===
+            "function"
+    ) {
+        try {
+            const isBrave =
+                await navigator.brave.isBrave();
+
+            if (isBrave) {
+                return "Brave";
+            }
+        } catch {
+            // Ignore Brave detection errors.
+        }
+    }
+
+    return getBrowserFromUA();
+};
+
+/* =========================================================
+   ANALYTICS SESSION
+========================================================= */
+
+const ANALYTICS_SESSION_KEY =
+    "analytics_session_id";
+
 const createSessionId = () => {
     try {
         if (
             window.crypto &&
             typeof window.crypto.randomUUID ===
-            "function"
+                "function"
         ) {
             return window.crypto.randomUUID();
         }
     } catch {
+        // fallback
     }
 
     return (
@@ -117,191 +329,9 @@ const getAnalyticsSessionId = () => {
     }
 };
 
-const extractProductTokens = (ua) => {
-    const tokens = [];
-
-    const regex =
-        /([A-Za-z][A-Za-z0-9._-]*)\/[0-9]+(?:\.[0-9]+)*/g;
-
-    let match;
-
-    while ((match = regex.exec(ua)) !== null) {
-        const token = match[1];
-
-        if (!GENERIC_TOKENS.has(token)) {
-            tokens.push(token);
-        }
-    }
-
-    return tokens;
-};
-
-const isGenericAndroidWebView = (ua) => {
-    return (
-        /Android/i.test(ua) &&
-        (
-            /;\s*wv\)/i.test(ua) ||
-            (
-                /Version\/4\.0/i.test(ua) &&
-                /Chrome\//i.test(ua) &&
-                /Mobile/i.test(ua)
-            )
-        )
-    );
-};
-
-const isGenericIOSWebView = (ua) => {
-    if (!/iPhone|iPad|iPod/i.test(ua)) {
-        return false;
-    }
-
-    if (!/AppleWebKit/i.test(ua)) {
-        return false;
-    }
-
-    return !(
-        /Safari\//i.test(ua) ||
-        /CriOS\//i.test(ua) ||
-        /FxiOS\//i.test(ua) ||
-        /EdgiOS\//i.test(ua) ||
-        /OPiOS\//i.test(ua)
-    );
-};
-
-const getInAppBrowserName = (ua) => {
-    const tokens =
-        extractProductTokens(ua);
-
-    if (tokens.length > 0) {
-        const firstMeaningfulToken =
-            tokens[0];
-
-        if (
-            firstMeaningfulToken &&
-            !GENERIC_TOKENS.has(
-                firstMeaningfulToken
-            )
-        ) {
-            return `${cleanBrandName(
-                firstMeaningfulToken
-            )} Browser`;
-        }
-    }
-
-    if (isGenericAndroidWebView(ua)) {
-        return "IABMV";
-    }
-
-    if (isGenericIOSWebView(ua)) {
-        return "IABMV";
-    }
-
-    return null;
-};
-
-const getBrowserFromUA = () => {
-    const ua = navigator.userAgent;
-
-    for (
-        const [token, name]
-        of KNOWN_BRAND_TOKENS
-    ) {
-        if (
-            ua.toLowerCase().includes(
-                token.toLowerCase()
-            )
-        ) {
-            return name;
-        }
-    }
-
-    if (/EdgiOS\//i.test(ua)) {
-        return "Microsoft Edge";
-    }
-
-    if (
-        /EdgA\//i.test(ua) ||
-        /Edg\//i.test(ua)
-    ) {
-        return "Microsoft Edge";
-    }
-
-    if (
-        /OPiOS\//i.test(ua) ||
-        /OPT\//i.test(ua)
-    ) {
-        return "Opera";
-    }
-
-    if (/OPR\//i.test(ua)) {
-        return "Opera";
-    }
-
-    if (/CriOS\//i.test(ua)) {
-        return "Google Chrome";
-    }
-
-    if (/Chrome\//i.test(ua)) {
-        const inApp =
-            getInAppBrowserName(ua);
-
-        if (inApp) {
-            return inApp;
-        }
-
-        return "Google Chrome";
-    }
-
-    if (
-        /FxiOS\//i.test(ua) ||
-        /Firefox\//i.test(ua)
-    ) {
-        return "Mozilla Firefox";
-    }
-
-    if (/Safari\//i.test(ua)) {
-        return "Safari";
-    }
-
-    const inApp =
-        getInAppBrowserName(ua);
-
-    if (inApp) {
-        return inApp;
-    }
-
-    return "Unknown";
-};
-
-const detectBrowser = async () => {
-    const browser =
-        getBrowserFromUA();
-
-    if (
-        browser !== "Unknown" &&
-        browser !== "IABMV"
-    ) {
-        return browser;
-    }
-
-    if (
-        navigator.brave &&
-        typeof navigator.brave.isBrave ===
-        "function"
-    ) {
-        try {
-            const isBrave =
-                await navigator.brave.isBrave();
-
-            if (isBrave) {
-                return "Brave";
-            }
-        } catch {
-        }
-    }
-
-    return browser;
-};
+/* =========================================================
+   PLATFORM
+========================================================= */
 
 const getPlatform = () => {
     const ua = navigator.userAgent;
@@ -328,6 +358,10 @@ const getPlatform = () => {
 
     return "Unknown";
 };
+
+/* =========================================================
+   CONNECTION
+========================================================= */
 
 const getConnectionType = () => {
     const connection =
@@ -373,6 +407,10 @@ const getConnectionType = () => {
     return "Unknown";
 };
 
+/* =========================================================
+   DEVICE MODEL
+========================================================= */
+
 const getDeviceModelFromClientHints =
     async () => {
         try {
@@ -381,7 +419,7 @@ const getDeviceModelFromClientHints =
                 typeof navigator
                     .userAgentData
                     .getHighEntropyValues ===
-                "function"
+                    "function"
             ) {
                 const hints =
                     await navigator
@@ -399,6 +437,7 @@ const getDeviceModelFromClientHints =
                 }
             }
         } catch {
+            // ignore
         }
 
         return null;
@@ -468,6 +507,10 @@ const getDeviceModel = async () => {
     return getDeviceModelFromUA();
 };
 
+/* =========================================================
+   DURATION
+========================================================= */
+
 const formatDuration = (seconds) => {
     const totalSeconds = Math.max(
         0,
@@ -475,9 +518,7 @@ const formatDuration = (seconds) => {
     );
 
     const minutes =
-        Math.floor(
-            totalSeconds / 60
-        );
+        Math.floor(totalSeconds / 60);
 
     const remainingSeconds =
         totalSeconds % 60;
@@ -487,6 +528,10 @@ const formatDuration = (seconds) => {
     ).padStart(2, "0")}S`;
 };
 
+/* =========================================================
+   IST TIMESTAMP
+========================================================= */
+
 const getISTTimestamp = () => {
     const now = new Date();
 
@@ -494,7 +539,8 @@ const getISTTimestamp = () => {
         new Intl.DateTimeFormat(
             "en-US",
             {
-                timeZone: "Asia/Kolkata",
+                timeZone:
+                    "Asia/Kolkata",
                 year: "numeric",
                 month: "2-digit",
                 day: "2-digit",
@@ -522,21 +568,18 @@ const getISTTimestamp = () => {
     );
 };
 
-const sendAnalytics = async (
+/* =========================================================
+   BUILD ANALYTICS PAYLOAD
+========================================================= */
+
+const buildAnalyticsPayload = (
     info,
     browser,
     deviceModel,
+    connection,
     durationSeconds = null
 ) => {
-    const webhookUrl =
-        import.meta.env
-            .VITE_ANALYTICS_WEBHOOK_URL;
-
-    if (!webhookUrl) {
-        return false;
-    }
-
-    const payload = {
+    return {
         event:
             durationSeconds !== null
                 ? "close"
@@ -574,46 +617,45 @@ const sendAnalytics = async (
             deviceModel || "Unknown",
 
         Connection:
-            getConnectionType(),
+            connection || "Unknown",
 
         Duration:
             durationSeconds !== null
                 ? formatDuration(
-                    durationSeconds
-                )
+                      durationSeconds
+                  )
                 : "",
     };
+};
+
+/* =========================================================
+   VISIT ANALYTICS
+========================================================= */
+
+const sendVisitAnalytics = async (
+    info,
+    browser,
+    deviceModel,
+    connection
+) => {
+    const webhookUrl =
+        import.meta.env
+            .VITE_ANALYTICS_WEBHOOK_URL;
+
+    if (!webhookUrl) {
+        return false;
+    }
+
+    const payload =
+        buildAnalyticsPayload(
+            info,
+            browser,
+            deviceModel,
+            connection
+        );
 
     const body =
         JSON.stringify(payload);
-
-    if (durationSeconds !== null) {
-        try {
-            if (
-                typeof navigator.sendBeacon ===
-                "function"
-            ) {
-                const blob =
-                    new Blob(
-                        [body],
-                        {
-                            type:
-                                "text/plain;charset=UTF-8",
-                        }
-                    );
-
-                if (
-                    navigator.sendBeacon(
-                        webhookUrl,
-                        blob
-                    )
-                ) {
-                    return true;
-                }
-            }
-        } catch {
-        }
-    }
 
     try {
         await fetch(
@@ -626,7 +668,6 @@ const sendAnalytics = async (
                         "text/plain;charset=UTF-8",
                 },
                 body,
-                keepalive: true,
             }
         );
 
@@ -635,6 +676,67 @@ const sendAnalytics = async (
         return false;
     }
 };
+
+/* =========================================================
+   CLOSE ANALYTICS
+========================================================= */
+
+const sendCloseAnalytics = ({
+    info,
+    browser,
+    deviceModel,
+    connection,
+    durationSeconds,
+}) => {
+    const webhookUrl =
+        import.meta.env
+            .VITE_ANALYTICS_WEBHOOK_URL;
+
+    if (!webhookUrl) {
+        return false;
+    }
+
+    const payload =
+        buildAnalyticsPayload(
+            info,
+            browser,
+            deviceModel,
+            connection,
+            durationSeconds
+        );
+
+    const body =
+        JSON.stringify(payload);
+
+    try {
+        if (
+            typeof navigator.sendBeacon ===
+            "function"
+        ) {
+            const blob =
+                new Blob(
+                    [body],
+                    {
+                        type:
+                            "text/plain;charset=UTF-8",
+                    }
+                );
+
+            return navigator.sendBeacon(
+                webhookUrl,
+                blob
+            );
+        }
+    } catch {
+        // ignore
+    }
+
+    return false;
+};
+
+/* =========================================================
+   TABLE STYLES
+========================================================= */
 
 const labelCellSx = {
     color:
@@ -658,6 +760,10 @@ const valueCellSx = {
     py: 1.25,
 };
 
+/* =========================================================
+   COMPONENT
+========================================================= */
+
 function WebAnalytics() {
     const [loading, setLoading] =
         useState(true);
@@ -668,10 +774,12 @@ function WebAnalytics() {
     const [info, setInfo] =
         useState(null);
 
+    /*
+     * Don't immediately say Chrome.
+     * Wait for Brave detection.
+     */
     const [browser, setBrowser] =
-        useState(
-            getBrowserFromUA()
-        );
+        useState("Detecting...");
 
     const [deviceModel, setDeviceModel] =
         useState("Detecting...");
@@ -681,13 +789,15 @@ function WebAnalytics() {
             getConnectionType()
         );
 
+    /* -----------------------------------------------------
+       REFS
+    ----------------------------------------------------- */
+
     const analyticsInfoRef =
         useRef(null);
 
     const browserRef =
-        useRef(
-            getBrowserFromUA()
-        );
+        useRef("Unknown");
 
     const deviceModelRef =
         useRef("Unknown");
@@ -711,9 +821,17 @@ function WebAnalytics() {
     const closeSentRef =
         useRef(false);
 
+    /* =====================================================
+       SESSION
+    ===================================================== */
+
     useEffect(() => {
         getAnalyticsSessionId();
     }, []);
+
+    /* =====================================================
+       DETECT BROWSER / DEVICE
+    ===================================================== */
 
     useEffect(() => {
         let mounted = true;
@@ -797,6 +915,10 @@ function WebAnalytics() {
         };
     }, []);
 
+    /* =====================================================
+       CONNECTION CHANGE
+    ===================================================== */
+
     useEffect(() => {
         const handleConnectionChange =
             () => {
@@ -851,6 +973,10 @@ function WebAnalytics() {
         };
     }, []);
 
+    /* =====================================================
+       LOAD IP / ISP
+    ===================================================== */
+
     useEffect(() => {
         let mounted = true;
 
@@ -897,7 +1023,7 @@ function WebAnalytics() {
                 ) {
                     throw new Error(
                         data.message ||
-                        "IP lookup failed"
+                            "IP lookup failed"
                     );
                 }
 
@@ -906,6 +1032,11 @@ function WebAnalytics() {
                 analyticsInfoRef.current =
                     data;
 
+                /*
+                 * Detect again here so the
+                 * analytics event gets the
+                 * actual browser.
+                 */
                 const detectedBrowser =
                     await detectBrowser();
 
@@ -925,7 +1056,7 @@ function WebAnalytics() {
 
                 setDeviceModel(
                     detectedDeviceModel ||
-                    "Unknown"
+                        "Unknown"
                 );
 
                 setConnection(
@@ -942,10 +1073,11 @@ function WebAnalytics() {
                 connectionRef.current =
                     detectedConnection;
 
-                await sendAnalytics(
+                await sendVisitAnalytics(
                     data,
                     detectedBrowser,
-                    detectedDeviceModel
+                    detectedDeviceModel,
+                    detectedConnection
                 );
             } catch (err) {
                 if (!mounted) {
@@ -961,7 +1093,7 @@ function WebAnalytics() {
 
                 setError(
                     err?.message ||
-                    String(err)
+                        String(err)
                 );
             } finally {
                 if (mounted) {
@@ -974,9 +1106,14 @@ function WebAnalytics() {
 
         return () => {
             mounted = false;
+
             controller.abort();
         };
     }, []);
+
+    /* =====================================================
+       ACTIVE TIME + PAGE CLOSE
+    ===================================================== */
 
     useEffect(() => {
         const startActiveTime = () => {
@@ -1022,7 +1159,9 @@ function WebAnalytics() {
         };
 
         const sendClose = () => {
-            if (closeSentRef.current) {
+            if (
+                closeSentRef.current
+            ) {
                 return;
             }
 
@@ -1034,12 +1173,21 @@ function WebAnalytics() {
             const durationSeconds =
                 getActiveSeconds();
 
-            sendAnalytics(
-                analyticsInfoRef.current,
-                browserRef.current,
-                deviceModelRef.current,
-                durationSeconds
-            );
+            sendCloseAnalytics({
+                info:
+                    analyticsInfoRef.current,
+
+                browser:
+                    browserRef.current,
+
+                deviceModel:
+                    deviceModelRef.current,
+
+                connection:
+                    connectionRef.current,
+
+                durationSeconds,
+            });
         };
 
         const handleVisibilityChange =
@@ -1058,6 +1206,10 @@ function WebAnalytics() {
             sendClose();
         };
 
+        const handleBeforeUnload = () => {
+            sendClose();
+        };
+
         document.addEventListener(
             "visibilitychange",
             handleVisibilityChange
@@ -1066,6 +1218,11 @@ function WebAnalytics() {
         window.addEventListener(
             "pagehide",
             handlePageHide
+        );
+
+        window.addEventListener(
+            "beforeunload",
+            handleBeforeUnload
         );
 
         return () => {
@@ -1078,68 +1235,78 @@ function WebAnalytics() {
                 "pagehide",
                 handlePageHide
             );
+
+            window.removeEventListener(
+                "beforeunload",
+                handleBeforeUnload
+            );
         };
     }, []);
 
+    /* =====================================================
+       TABLE DATA
+    ===================================================== */
+
     const ispRows = info
         ? [
-            {
-                label: "Status",
-                value:
-                    typeof info.success ===
-                        "boolean"
-                        ? info.success
-                            ? "Success"
-                            : "Failed"
-                        : null,
-            },
-            {
-                label:
-                    "Protocol Version",
-                value: info.type,
-            },
-            {
-                label:
-                    "IP Address",
-                value: info.ip,
-            },
-            {
-                label: "ISP",
-                value:
-                    info.connection?.isp,
-            },
-            {
-                label:
-                    "Continent",
-                value:
-                    info.continent,
-            },
-            {
-                label:
-                    "Country",
-                value:
-                    info.country,
-            },
-            {
-                label:
-                    "Timezone",
-                value:
-                    info.timezone?.abbr
-                        ? `${info.timezone.id} (${info.timezone.abbr})`
-                        : info.timezone?.id,
-            },
-            {
-                label: "UTC",
-                value:
-                    info.timezone?.utc,
-            },
-        ].filter(
-            (row) =>
-                row.value !== null &&
-                row.value !==
-                undefined &&
-                row.value !== ""
-        )
+              {
+                  label: "Status",
+                  value:
+                      typeof info.success ===
+                      "boolean"
+                          ? info.success
+                              ? "Success"
+                              : "Failed"
+                          : null,
+              },
+              {
+                  label:
+                      "Protocol Version",
+                  value: info.type,
+              },
+              {
+                  label:
+                      "IP Address",
+                  value: info.ip,
+              },
+              {
+                  label: "ISP",
+                  value:
+                      info.connection
+                          ?.isp,
+              },
+              {
+                  label:
+                      "Continent",
+                  value:
+                      info.continent,
+              },
+              {
+                  label:
+                      "Country",
+                  value:
+                      info.country,
+              },
+              {
+                  label:
+                      "Timezone",
+                  value:
+                      info.timezone?.abbr
+                          ? `${info.timezone.id} (${info.timezone.abbr})`
+                          : info.timezone?.id,
+              },
+              {
+                  label: "UTC",
+                  value:
+                      info.timezone?.utc,
+              },
+          ].filter(
+              (row) =>
+                  row.value !== null &&
+                  row.value !==
+                      undefined &&
+                  row.value !== ""
+          )
         : [];
 
     const browserRows = [
@@ -1163,6 +1330,10 @@ function WebAnalytics() {
         },
     ];
 
+    /* =====================================================
+       LOADING
+    ===================================================== */
+
     if (loading) {
         return (
             <div
@@ -1184,6 +1355,10 @@ function WebAnalytics() {
             </div>
         );
     }
+
+    /* =====================================================
+       ERROR
+    ===================================================== */
 
     if (error) {
         return (
@@ -1244,6 +1419,10 @@ function WebAnalytics() {
             </>
         );
     }
+
+    /* =====================================================
+       NORMAL TABLE
+    ===================================================== */
 
     const rows = [
         ...ispRows,
