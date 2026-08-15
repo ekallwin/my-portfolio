@@ -36,8 +36,7 @@ import moment from "moment";
 import { parsePhoneNumberFromString, AsYouType, getCountries, getCountryCallingCode } from "libphonenumber-js";
 import ReactSelect from "react-select";
 
-const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL;
-
+const GOOGLE_SCRIPT_URL = `https://script.google.com/macros/s/${import.meta.env.VITE_CONTACT_FORM_SCRIPT_URL}/exec`;
 const ContactForm = () => {
   const [formData, setFormData] = useState({
     name: "",

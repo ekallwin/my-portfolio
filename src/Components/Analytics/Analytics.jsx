@@ -73,11 +73,11 @@ const createSessionId = () => {
         if (
             window.crypto &&
             typeof window.crypto.randomUUID ===
-                "function"
+            "function"
         ) {
             return window.crypto.randomUUID();
         }
-    } catch {}
+    } catch { }
 
     return (
         `${Date.now()}-` +
@@ -278,7 +278,7 @@ const detectBrowser = async () => {
     if (
         navigator.brave &&
         typeof navigator.brave.isBrave ===
-            "function"
+        "function"
     ) {
         try {
             const isBrave =
@@ -287,7 +287,7 @@ const detectBrowser = async () => {
             if (isBrave) {
                 return "Brave";
             }
-        } catch {}
+        } catch { }
     }
 
     return getBrowserFromUA();
@@ -376,7 +376,7 @@ const getDeviceModelFromClientHints =
                 typeof navigator
                     .userAgentData
                     .getHighEntropyValues ===
-                    "function"
+                "function"
             ) {
                 const hints =
                     await navigator
@@ -393,7 +393,7 @@ const getDeviceModelFromClientHints =
                     return hints.model.trim();
                 }
             }
-        } catch {}
+        } catch { }
 
         return null;
     };
@@ -551,6 +551,10 @@ const buildAnalyticsPayload = (
         country:
             info?.country || "NA",
 
+        org:
+            info?.connection?.org ||
+            "NA",
+
         isp:
             info?.connection?.isp ||
             "NA",
@@ -570,8 +574,8 @@ const buildAnalyticsPayload = (
         Duration:
             durationSeconds !== null
                 ? formatDuration(
-                      durationSeconds
-                  )
+                    durationSeconds
+                )
                 : "",
     };
 };
@@ -582,9 +586,7 @@ const sendVisitAnalytics = async (
     deviceModel,
     connection
 ) => {
-    const webhookUrl =
-        import.meta.env
-            .VITE_ANALYTICS_WEBHOOK_URL;
+    const webhookUrl = `https://script.google.com/macros/s/${import.meta.env.VITE_ANALYTICS_WEBHOOK_ID}/exec`;
 
     if (!webhookUrl) {
         return false;
@@ -628,9 +630,13 @@ const sendCloseAnalytics = ({
     connection,
     durationSeconds,
 }) => {
-    const webhookUrl =
-        import.meta.env
-            .VITE_ANALYTICS_WEBHOOK_URL;
+    const scriptId = import.meta.env.VITE_ANALYTICS_WEBHOOK_ID;
+
+    if (!scriptId) {
+        return false;
+    }
+
+    const webhookUrl = `https://script.google.com/macros/s/${scriptId}/exec`;
 
     if (!webhookUrl) {
         return false;
@@ -667,7 +673,7 @@ const sendCloseAnalytics = ({
                 blob
             );
         }
-    } catch {}
+    } catch { }
 
     return false;
 };
@@ -929,7 +935,7 @@ function WebAnalytics() {
                 ) {
                     throw new Error(
                         data.message ||
-                            "IP lookup failed"
+                        "IP lookup failed"
                     );
                 }
 
@@ -957,7 +963,7 @@ function WebAnalytics() {
 
                 setDeviceModel(
                     detectedDeviceModel ||
-                        "Unknown"
+                    "Unknown"
                 );
 
                 setConnection(
@@ -994,7 +1000,7 @@ function WebAnalytics() {
 
                 setError(
                     err?.message ||
-                        String(err)
+                    String(err)
                 );
             } finally {
                 if (mounted) {
@@ -1142,64 +1148,68 @@ function WebAnalytics() {
 
     const ispRows = info
         ? [
-              {
-                  label: "Status",
-                  value:
-                      typeof info.success ===
-                      "boolean"
-                          ? info.success
-                              ? "Success"
-                              : "Failed"
-                          : null,
-              },
-              {
-                  label:
-                      "Protocol Version",
-                  value: info.type,
-              },
-              {
-                  label:
-                      "IP Address",
-                  value: info.ip,
-              },
-              {
-                  label: "ISP",
-                  value:
-                      info.connection
-                          ?.isp,
-              },
-              {
-                  label:
-                      "Continent",
-                  value:
-                      info.continent,
-              },
-              {
-                  label:
-                      "Country",
-                  value:
-                      info.country,
-              },
-              {
-                  label:
-                      "Timezone",
-                  value:
-                      info.timezone?.abbr
-                          ? `${info.timezone.id} (${info.timezone.abbr})`
-                          : info.timezone?.id,
-              },
-              {
-                  label: "UTC",
-                  value:
-                      info.timezone?.utc,
-              },
-          ].filter(
-              (row) =>
-                  row.value !== null &&
-                  row.value !==
-                      undefined &&
-                  row.value !== ""
-          )
+            {
+                label: "Status",
+                value:
+                    typeof info.success ===
+                        "boolean"
+                        ? info.success
+                            ? "Success"
+                            : "Failed"
+                        : null,
+            },
+            {
+                label:
+                    "Protocol Version",
+                value: info.type,
+            },
+            {
+                label:
+                    "IP Address",
+                value: info.ip,
+            },
+            {
+                label: "ISP",
+                value:
+                    info.connection
+                        ?.isp,
+            },
+            {
+                label: "Organization",
+                value: info.connection?.org,
+            },
+            {
+                label:
+                    "Continent",
+                value:
+                    info.continent,
+            },
+            {
+                label:
+                    "Country",
+                value:
+                    info.country,
+            },
+            {
+                label:
+                    "Timezone",
+                value:
+                    info.timezone?.abbr
+                        ? `${info.timezone.id} (${info.timezone.abbr})`
+                        : info.timezone?.id,
+            },
+            {
+                label: "UTC",
+                value:
+                    info.timezone?.utc,
+            },
+        ].filter(
+            (row) =>
+                row.value !== null &&
+                row.value !==
+                undefined &&
+                row.value !== ""
+        )
         : [];
 
     const browserRows = [
