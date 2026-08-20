@@ -80,8 +80,7 @@ function Header() {
         <div className="typing-effect" style={{ display: 'flex', flexDirection: 'column', color: 'white', marginLeft: '10px' }}>
           <h2 className="typewritter"><Typewriter
             options={{
-              strings: ["MERN stack Developer", "Designer", "Freelancer"],
-              autoStart: true,
+              strings: ["An MBA Student", "HR & Finance Enthusiast", "Business Management"], autoStart: true,
               loop: true,
               deleteSpeed: 80,
               delay: 100,
@@ -93,9 +92,9 @@ function Header() {
           className="button"
           onClick={handleContactClick}
           ref={buttonRef}
-        style={{
-          background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`
-        }}
+          style={{
+            background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`
+          }}
         >
           Let's connect
         </button>

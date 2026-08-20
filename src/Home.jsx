@@ -8,7 +8,7 @@ function Home() {
         <>            
             <Header />
             <About />
-            <Skills />
+            {/* <Skills /> */}
             <Contact />
             <Footer />
         </>

@@ -246,24 +246,31 @@ function About() {
 
                 <Box sx={{ flex: 1 }}>
                   <Typography paragraph className="animate-child" data-animate>
-                    I am <b>Allwin E K</b>, a passionate <strong>Web Developer</strong> with a solid foundation in front-end technologies.
-                    I love creating user-friendly and responsive interfaces that deliver excellent user experiences.
+                    I am <strong>Allwin E K</strong>, currently pursuing my <strong>Master of Business Administration (MBA)</strong> at
+                    <strong> St. Xavier’s Catholic College of Engineering, Nagercoil</strong>, with a keen interest in
+                    <strong> Human Resources (HR)</strong> and <strong>Finance</strong>.
                   </Typography>
 
                   <Typography paragraph className="animate-child" data-animate>
-                    Studied <strong>B.E</strong> in <strong>Computer Science and Engineering</strong> at
-                    <strong> Ponjesly College of Engineering, Nagercoil</strong>.
+                    I hold a <strong>Bachelor of Engineering (B.E.) in Computer Science and Engineering</strong> from
+                    <strong> Ponjesly College of Engineering, Nagercoil</strong>. My technical background has helped me
+                    develop strong <strong>analytical</strong> and <strong>problem-solving skills</strong>, which I am now
+                    looking to complement with business and management expertise.
                   </Typography>
 
                   <Typography paragraph className="animate-child" data-animate>
-                    I strongly believe in continuous learning and improving myself, so I try to learn in any situation possible.
+                    I am interested in exploring opportunities in <strong>HR, Finance, Business Management,</strong> and
+                    <strong> Operations</strong>, while continuously developing my professional and managerial skills.
                   </Typography>
 
-                  <Typography variant="h6" gutterBottom className="animate-child" data-animate>
-                    Technologies I Work With:
+                  <Typography paragraph className="animate-child" data-animate>
+                    I am eager to learn, take on new challenges, and build a career where I can combine my
+                    <strong> technical background</strong> with <strong>business and management knowledge</strong> to
+                    contribute effectively to an organization.
                   </Typography>
 
-                  <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mb: 3 }}>
+
+                  {/* <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mb: 3 }}>
                     {skills.map((skill, i) => (
                       <Chip
                         key={i}
@@ -288,7 +295,7 @@ function About() {
                         }}
                       />
                     ))}
-                  </Stack>
+                  </Stack> */}
 
                   <Button
                     disableRipple
