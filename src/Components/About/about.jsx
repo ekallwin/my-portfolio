@@ -178,37 +178,6 @@ function About() {
                   </Box>
 
                   <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
-                    <Box
-                      component="a"
-                      href="https://github.com/ekallwin"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label="GitHub"
-                      sx={{
-                        width: 46,
-                        height: 46,
-                        borderRadius: '50%',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: '#fff',
-                        fontSize: 22,
-                        textDecoration: 'none',
-                        background: 'rgba(255,255,255,0.08)',
-                        backdropFilter: 'blur(10px) saturate(160%)',
-                        WebkitBackdropFilter: 'blur(10px) saturate(160%)',
-                        border: '1px solid rgba(255,255,255,0.2)',
-                        boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.25)',
-                        transition: 'transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease',
-                        '&:hover': {
-                          transform: 'translateY(-3px) scale(1.08)',
-                          background: 'rgba(255,255,255,0.14)',
-                          boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.3), 0 6px 16px rgba(0,0,0,0.35)',
-                        },
-                      }}
-                    >
-                      <FaGithub />
-                    </Box>
 
                     <Box
                       component="a"
@@ -241,6 +210,40 @@ function About() {
                     >
                       <FaLinkedin />
                     </Box>
+                    
+                    <Box
+                      component="a"
+                      href="https://github.com/ekallwin"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="GitHub"
+                      sx={{
+                        width: 46,
+                        height: 46,
+                        borderRadius: '50%',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#fff',
+                        fontSize: 22,
+                        textDecoration: 'none',
+                        background: 'rgba(255,255,255,0.08)',
+                        backdropFilter: 'blur(10px) saturate(160%)',
+                        WebkitBackdropFilter: 'blur(10px) saturate(160%)',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.25)',
+                        transition: 'transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease',
+                        '&:hover': {
+                          transform: 'translateY(-3px) scale(1.08)',
+                          background: 'rgba(255,255,255,0.14)',
+                          boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.3), 0 6px 16px rgba(0,0,0,0.35)',
+                        },
+                      }}
+                    >
+                      <FaGithub />
+                    </Box>
+
+                    
                   </Box>
                 </Box>
 

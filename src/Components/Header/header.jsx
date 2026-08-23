@@ -77,8 +77,9 @@ function Header() {
           />
 
         </div>
-        <div className="typing-effect" style={{ display: 'flex', flexDirection: 'column', color: 'white', marginLeft: '10px' }}>
-          <h2 className="typewritter"><Typewriter
+        {/* <div className="typing-effect" style={{ display: 'flex', flexDirection: 'column', color: 'white', marginLeft: '10px' }}>
+          <h2 className="typewritter">
+            <Typewriter
             options={{
               strings: ["An MBA Student", "HR & Finance Enthusiast", "Business Management"], autoStart: true,
               loop: true,
@@ -87,7 +88,7 @@ function Header() {
             }}
           />
           </h2>
-        </div>
+        </div> */}
         <button
           className="button"
           onClick={handleContactClick}
