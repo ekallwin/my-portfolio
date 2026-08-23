@@ -64,7 +64,7 @@ const Achievements = () => {
     if (isPlaying && slides.length > 1) {
       autoplayInterval.current = setInterval(() => {
         setCurrentIndex((prev) => (prev + 1) % slides.length);
-      }, 5000);
+      }, 6000);
     }
 
     return () => {
