@@ -17,6 +17,7 @@ function About() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isErrorOpen, setIsErrorOpen] = useState(false);
+
   const [buttonText, setButtonText] = useState(
     <>Download Resume <FaDownload style={{ fontSize: '1em', marginLeft: 6 }} /></>
   );
@@ -210,7 +211,7 @@ function About() {
                     >
                       <FaLinkedin />
                     </Box>
-                    
+
                     <Box
                       component="a"
                       href="https://github.com/ekallwin"
@@ -243,7 +244,7 @@ function About() {
                       <FaGithub />
                     </Box>
 
-                    
+
                   </Box>
                 </Box>
 
@@ -299,43 +300,48 @@ function About() {
                       />
                     ))}
                   </Stack> */}
-
-                  {/* <Button
-                    disableRipple
-                    disabled={isDownloading}
-                    variant="contained"
-                    onClick={handleDownload}
-                    style={{
-                      background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`
-                    }}
-                    className={`buttons ${!hasDownloaded ? 'animate-child' : ''}`}
-                    data-animate={!hasDownloaded ? true : undefined}
-                    sx={{
-                      mt: 3,
-                      px: 4,
-                      py: 1.5,
-                      fontWeight: 'bold',
-                      borderRadius: 3,
-                      color: 'white',
-                      mx: { xs: 'auto', md: 0 },
-                      display: { xs: 'block', md: 'inline-flex' },
-                      background: 'linear-gradient(135deg, rgba(102,126,234,0.85), rgba(118,75,162,0.85))',
-                      backdropFilter: 'blur(12px)',
-                      border: '1px solid rgba(255,255,255,0.25)',
-                      boxShadow: '0 8px 24px rgba(102,126,234,0.35), inset 0 1px 1px rgba(255,255,255,0.4)',
-                      '&:hover': {
-                        transform: 'translateY(-2px)',
-                        background: 'linear-gradient(135deg, rgba(102,126,234,0.95), rgba(118,75,162,0.95))',
-                        boxShadow: '0 10px 28px rgba(102,126,234,0.45), inset 0 1px 1px rgba(255,255,255,0.5)',
-                      },
-                      '&.Mui-disabled': {
-                        color: 'rgba(255,255,255,0.5)',
-                      },
-                      transition: 'all 0.3s ease',
-                    }}
-                  >
-                    {isDownloading ? 'Downloading...' : buttonText}
-                  </Button> */}
+                  {downloadStatus.button_enabled && (
+                    <Button
+                      disableRipple
+                      disabled={isDownloading}
+                      variant="contained"
+                      onClick={handleDownload}
+                      style={{
+                        background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`
+                      }}
+                      className={`buttons ${!hasDownloaded ? 'animate-child' : ''}`}
+                      data-animate={!hasDownloaded ? true : undefined}
+                      sx={{
+                        mt: 3,
+                        px: 4,
+                        py: 1.5,
+                        fontWeight: 'bold',
+                        borderRadius: 3,
+                        color: 'white',
+                        mx: { xs: 'auto', md: 0 },
+                        display: { xs: 'block', md: 'inline-flex' },
+                        background: 'linear-gradient(135deg, rgba(102,126,234,0.85), rgba(118,75,162,0.85))',
+                        backdropFilter: 'blur(12px)',
+                        border: '1px solid rgba(255,255,255,0.25)',
+                        boxShadow: '0 8px 24px rgba(102,126,234,0.35), inset 0 1px 1px rgba(255,255,255,0.4)',
+                        '&:hover': {
+                          transform: 'translateY(-2px)',
+                          background: 'linear-gradient(135deg, rgba(102,126,234,0.95), rgba(118,75,162,0.95))',
+                          boxShadow: '0 10px 28px rgba(102,126,234,0.45), inset 0 1px 1px rgba(255,255,255,0.5)'
+                        },
+                        '&.Mui-disabled': {
+                          color: 'rgba(255,255,255,0.5)'
+                        },
+                        transition: 'all 0.3s ease'
+                      }}
+                    >
+                      {isDownloading ? (
+                        'Downloading...'
+                      ) : (
+                        buttonText
+                      )}
+                    </Button>
+                  )}
                 </Box>
               </Stack>
             </CardContent>
