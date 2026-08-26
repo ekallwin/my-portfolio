@@ -300,7 +300,7 @@ function About() {
                     ))}
                   </Stack> */}
 
-                  <Button
+                  {/* <Button
                     disableRipple
                     disabled={isDownloading}
                     variant="contained"
@@ -335,7 +335,7 @@ function About() {
                     }}
                   >
                     {isDownloading ? 'Downloading...' : buttonText}
-                  </Button>
+                  </Button> */}
                 </Box>
               </Stack>
             </CardContent>

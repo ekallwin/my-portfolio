@@ -1,21 +1,25 @@
+// navbar.jsx
+
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { Box, IconButton, Typography, Drawer, List, ListItem, ListItemButton, ListItemText } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Typography,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+} from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IoMenu, IoClose } from "react-icons/io5";
 import { motion } from "motion/react";
+import { navItems } from "./navItems";
 
-const navItems = [
-  { label: 'Home', href: '#Home', isHash: true },
-  { label: 'About', href: '#About', isHash: true },
-  // { label: 'Skills', href: '#Skills', isHash: true },
-  { label: 'Achievements', href: '/achievements', isHash: false },
-  { label: 'Projects', href: '/projects', isHash: false },
-  { label: 'Contact me', href: '#contact', isHash: true },
-];
 
 const containerVariants = {
-  hidden: { 
+  hidden: {
     opacity: 0,
     transition: {
       staggerChildren: 0.05,
@@ -32,8 +36,8 @@ const containerVariants = {
 };
 
 const itemVariants = {
-  hidden: { 
-    x: -30, 
+  hidden: {
+    x: -30,
     opacity: 0,
     transition: {
       type: "tween",
@@ -95,10 +99,10 @@ function Navbar(props) {
   };
 
   const drawer = (
-    <Box 
-      onClick={handleDrawerToggle} 
-      sx={{ 
-        textAlign: 'center', 
+    <Box
+      onClick={handleDrawerToggle}
+      sx={{
+        textAlign: 'center',
         backgroundColor: 'rgba(15, 12, 41, 0.95)',
         backdropFilter: 'blur(30px)',
         WebkitBackdropFilter: 'blur(30px)',
@@ -119,14 +123,14 @@ function Navbar(props) {
         }
       }}
     >
-      <Typography 
-        variant="h6" 
-        sx={{ 
-          my: 2, 
-          color: '#fff', 
-          fontWeight: 'bold', 
-          fontFamily: 'serif', 
-          fontSize: '1.3rem', 
+      <Typography
+        variant="h6"
+        sx={{
+          my: 2,
+          color: '#fff',
+          fontWeight: 'bold',
+          fontFamily: 'serif',
+          fontSize: '1.3rem',
           textTransform: 'capitalize',
           position: 'relative',
           zIndex: 1,
@@ -152,8 +156,8 @@ function Navbar(props) {
           >
             <ListItemButton
               component={motion.div}
-              whileHover={{ 
-                scale: 1.02, 
+              whileHover={{
+                scale: 1.02,
                 backgroundColor: "rgba(139, 92, 246, 0.15)",
               }}
               whileTap={{ scale: 0.98 }}
@@ -176,8 +180,8 @@ function Navbar(props) {
                 }
               }}
             >
-              <ListItemText 
-                primary={label} 
+              <ListItemText
+                primary={label}
                 primaryTypographyProps={{
                   sx: {
                     fontFamily: 'serif',
@@ -244,7 +248,7 @@ function Navbar(props) {
         >
           Allwin's Portfolio
         </Typography>
-        
+
         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: '8px' }}>
           {navItems.map(({ label, href, isHash }) => (
             <Box
@@ -299,8 +303,8 @@ function Navbar(props) {
           aria-label="open drawer"
           edge="start"
           onClick={handleDrawerToggle}
-          sx={{ 
-            display: { md: 'none', paddingRight: '1px' }, 
+          sx={{
+            display: { md: 'none', paddingRight: '1px' },
             color: 'rgba(255, 255, 255, 0.9)',
             '&:hover': {
               color: '#EC4899',

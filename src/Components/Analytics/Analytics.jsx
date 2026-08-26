@@ -465,24 +465,6 @@ const getDeviceModel = async () => {
     return getDeviceModelFromUA();
 };
 
-const formatDuration = (seconds) => {
-    const totalSeconds = Math.max(
-        0,
-        Math.floor(seconds)
-    );
-
-    const minutes =
-        Math.floor(
-            totalSeconds / 60
-        );
-
-    const remainingSeconds =
-        totalSeconds % 60;
-
-    return `${minutes}M:${String(
-        remainingSeconds
-    ).padStart(2, "0")}S`;
-};
 
 const getISTTimestamp = () => {
     const now = new Date();
@@ -525,13 +507,9 @@ const buildAnalyticsPayload = (
     browser,
     deviceModel,
     connection,
-    durationSeconds = null
 ) => {
     return {
-        event:
-            durationSeconds !== null
-                ? "close"
-                : "visit",
+        event: "visit",
 
         sessionId:
             getAnalyticsSessionId(),
@@ -571,12 +549,6 @@ const buildAnalyticsPayload = (
         Connection:
             connection || "Unknown",
 
-        Duration:
-            durationSeconds !== null
-                ? formatDuration(
-                    durationSeconds
-                )
-                : "",
     };
 };
 
@@ -628,7 +600,6 @@ const sendCloseAnalytics = ({
     browser,
     deviceModel,
     connection,
-    durationSeconds,
 }) => {
     const scriptId = import.meta.env.VITE_ANALYTICS_WEBHOOK_ID;
 
@@ -647,8 +618,7 @@ const sendCloseAnalytics = ({
             info,
             browser,
             deviceModel,
-            connection,
-            durationSeconds
+            connection
         );
 
     const body =
@@ -734,17 +704,6 @@ function WebAnalytics() {
         useRef(
             getConnectionType()
         );
-
-    const activeStartRef =
-        useRef(
-            document.visibilityState ===
-                "visible"
-                ? performance.now()
-                : null
-        );
-
-    const activeDurationRef =
-        useRef(0);
 
     const closeSentRef =
         useRef(false);
@@ -1018,133 +977,6 @@ function WebAnalytics() {
         };
     }, []);
 
-    useEffect(() => {
-        const startActiveTime = () => {
-            if (
-                activeStartRef.current ===
-                null
-            ) {
-                activeStartRef.current =
-                    performance.now();
-            }
-        };
-
-        const pauseActiveTime = () => {
-            if (
-                activeStartRef.current !==
-                null
-            ) {
-                activeDurationRef.current +=
-                    performance.now() -
-                    activeStartRef.current;
-
-                activeStartRef.current =
-                    null;
-            }
-        };
-
-        const getActiveSeconds = () => {
-            let duration =
-                activeDurationRef.current;
-
-            if (
-                activeStartRef.current !==
-                null
-            ) {
-                duration +=
-                    performance.now() -
-                    activeStartRef.current;
-            }
-
-            return Math.floor(
-                duration / 1000
-            );
-        };
-
-        const sendClose = () => {
-            if (
-                closeSentRef.current
-            ) {
-                return;
-            }
-
-            closeSentRef.current =
-                true;
-
-            pauseActiveTime();
-
-            const durationSeconds =
-                getActiveSeconds();
-
-            sendCloseAnalytics({
-                info:
-                    analyticsInfoRef.current,
-
-                browser:
-                    browserRef.current,
-
-                deviceModel:
-                    deviceModelRef.current,
-
-                connection:
-                    connectionRef.current,
-
-                durationSeconds,
-            });
-        };
-
-        const handleVisibilityChange =
-            () => {
-                if (
-                    document.visibilityState ===
-                    "visible"
-                ) {
-                    startActiveTime();
-                } else {
-                    pauseActiveTime();
-                }
-            };
-
-        const handlePageHide = () => {
-            sendClose();
-        };
-
-        const handleBeforeUnload = () => {
-            sendClose();
-        };
-
-        document.addEventListener(
-            "visibilitychange",
-            handleVisibilityChange
-        );
-
-        window.addEventListener(
-            "pagehide",
-            handlePageHide
-        );
-
-        window.addEventListener(
-            "beforeunload",
-            handleBeforeUnload
-        );
-
-        return () => {
-            document.removeEventListener(
-                "visibilitychange",
-                handleVisibilityChange
-            );
-
-            window.removeEventListener(
-                "pagehide",
-                handlePageHide
-            );
-
-            window.removeEventListener(
-                "beforeunload",
-                handleBeforeUnload
-            );
-        };
-    }, []);
 
     const ispRows = info
         ? [
