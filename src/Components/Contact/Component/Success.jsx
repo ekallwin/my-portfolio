@@ -4,7 +4,7 @@ export default function GreenTickSuccess({
   size = 120,
   stroke = 8,
   color = "#28A745",
-  durationCircle = 0.6,
+  durationCircle = 0.9,
   durationCheck = 0.4,
 }) {
   const cssVars = {

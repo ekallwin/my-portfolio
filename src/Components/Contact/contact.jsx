@@ -37,6 +37,17 @@ import { parsePhoneNumberFromString, AsYouType, getCountries, getCountryCallingC
 import ReactSelect from "react-select";
 
 const GOOGLE_SCRIPT_URL = `https://script.google.com/macros/s/${import.meta.env.VITE_CONTACT_FORM_SCRIPT_URL}/exec`;
+const ANALYTICS_DATA_KEY = "analytics_session_data";
+
+const getAnalyticsData = () => {
+  try {
+    const stored = sessionStorage.getItem(ANALYTICS_DATA_KEY);
+    if (!stored) return null;
+    return JSON.parse(stored);
+  } catch {
+    return null;
+  }
+};
 const ContactForm = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -353,6 +364,8 @@ const ContactForm = () => {
 
   const submitToGoogleSheets = async (data) => {
     try {
+      const analyticsData = getAnalyticsData();
+
       const submissionData = {
         name: data.name,
         email: data.email,
@@ -360,6 +373,18 @@ const ContactForm = () => {
         message: data.message,
         preferredTimeSlot: data.contactAtSpecificTime ? data.preferredTimeSlot : "",
         timestamp: new Date().toLocaleString(),
+        analyticsTimestamp: analyticsData?.timestamp || "NA",
+        analyticsSessionId: analyticsData?.sessionId || "NA",
+        ipProtocol: analyticsData?.type || "NA",
+        ipAddress: analyticsData?.ip || "NA",
+        continent: analyticsData?.continent || "NA",
+        country: analyticsData?.country || "NA",
+        organisation: analyticsData?.org || "NA",
+        isp: analyticsData?.isp || "NA",
+        browser: analyticsData?.Browser || "Unknown",
+        platform: analyticsData?.Platform || "Unknown",
+        deviceModel: analyticsData?.["Device Model"] || "Unknown",
+        connectionType: analyticsData?.Connection || "Unknown",
       };
 
       await fetch(GOOGLE_SCRIPT_URL, {

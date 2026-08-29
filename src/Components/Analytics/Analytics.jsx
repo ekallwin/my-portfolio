@@ -62,6 +62,9 @@ const GENERIC_TOKENS = new Set([
 const ANALYTICS_SESSION_KEY =
     "analytics_session_id";
 
+const ANALYTICS_DATA_KEY =
+    "analytics_session_data";
+
 const cleanBrandName = (name) =>
     name
         .replace(/[\_-]+/g, " ")
@@ -571,6 +574,13 @@ const sendVisitAnalytics = async (
             deviceModel,
             connection
         );
+
+    try {
+        sessionStorage.setItem(
+            ANALYTICS_DATA_KEY,
+            JSON.stringify(payload)
+        );
+    } catch { }
 
     const body =
         JSON.stringify(payload);
