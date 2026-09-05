@@ -44,7 +44,7 @@ export default function Footer() {
 
   useEffect(() => {
     const fetchYear = async () => {
-      const timeApiUrl = import.meta.env.TIME_API_URL;
+      const timeApiUrl = import.meta.env.VITE_TIME_API_URL;
 
       if (!timeApiUrl) {
         return;
