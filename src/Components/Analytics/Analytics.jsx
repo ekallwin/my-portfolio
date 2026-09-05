@@ -561,7 +561,7 @@ const sendVisitAnalytics = async (
     deviceModel,
     connection
 ) => {
-    const webhookUrl = `https://script.google.com/macros/s/${import.meta.env.VITE_ANALYTICS_WEBHOOK_ID}/exec`;
+    const webhookUrl = `https://script.google.com/macros/s/${import.meta.env.ANALYTICS_WEBHOOK_ID}/exec`;
 
     if (!webhookUrl) {
         return false;
@@ -611,7 +611,7 @@ const sendCloseAnalytics = ({
     deviceModel,
     connection,
 }) => {
-    const scriptId = import.meta.env.VITE_ANALYTICS_WEBHOOK_ID;
+    const scriptId = import.meta.env.ANALYTICS_WEBHOOK_ID;
 
     if (!scriptId) {
         return false;
@@ -868,11 +868,11 @@ function WebAnalytics() {
             try {
                 const apiUrl =
                     import.meta.env
-                        .VITE_IP_API;
+                        .IP_API;
 
                 if (!apiUrl) {
                     throw new Error(
-                        "VITE_IP_API is not configured."
+                        "IP_API is not configured."
                     );
                 }
 

@@ -36,7 +36,7 @@ import moment from "moment";
 import { parsePhoneNumberFromString, AsYouType, getCountries, getCountryCallingCode } from "libphonenumber-js";
 import ReactSelect from "react-select";
 
-const GOOGLE_SCRIPT_URL = `https://script.google.com/macros/s/${import.meta.env.VITE_CONTACT_FORM_SCRIPT_URL}/exec`;
+const GOOGLE_SCRIPT_URL = `https://script.google.com/macros/s/${import.meta.env.CONTACT_FORM_SCRIPT_URL}/exec`;
 const ANALYTICS_DATA_KEY = "analytics_session_data";
 
 const getAnalyticsData = () => {
