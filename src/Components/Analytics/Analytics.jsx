@@ -532,6 +532,9 @@ const buildAnalyticsPayload = (
         country:
             info?.country || "NA",
 
+        region:
+            info?.region || "NA",
+
         org:
             info?.connection?.org ||
             "NA",
@@ -1025,6 +1028,12 @@ function WebAnalytics() {
                     "Continent",
                 value:
                     info.continent,
+            },
+            {
+                label:
+                    "Region",
+                value:
+                    info.region,
             },
             {
                 label:
