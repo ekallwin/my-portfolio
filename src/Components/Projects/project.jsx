@@ -395,7 +395,7 @@ function Projects() {
                 fontFamily: "Times New Roman"
               }}
             >
-              No projects to show
+              Currently, My projects are hidden. Please check back later!
             </Typography>
           </Box>
         )}
