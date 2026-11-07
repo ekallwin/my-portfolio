@@ -24,51 +24,43 @@ import NVSP from "./Project Images/Nvsp.png";
 import Billing from "./Project Images/Billing.png";
 
 const projects = [
-  // {
-  //   id: 5,
-  //   title: "Billing Management System (MERN)",
-  //   image: Billing,
-  //   alt: "Billing management system Screenshot",
-  //   skills: ["Node.js", "React.js", "Express.js", "Firebase (Auth & Firestore)"],
-  //   githubUrl: "https://github.com/ekallwin/billing-management-system",
-  //   demoUrl: "https://ekallwin-bill-management-system.vercel.app"
-  // },
-  // {
-  //   id: 1,
-  //   title: "Voter's Services Portal (MERN)",
-  //   image: NVSP,
-  //   alt: "Voter's Services Portal Screenshot",
-  //   skills: ["Node.js", "React.js", "Express.js", "MongoDB"],
-  //   githubUrl: "https://github.com/ekallwin/nvsp",
-  //   demoUrl: "https://ekallwin-nvsp.vercel.app"
-  // },
-  // {
-  //   id: 2,
-  //   title: "Railway Reservation Site (MERN)",
-  //   image: Railway,
-  //   alt: "Railway Reservation System Screenshot",
-  //   skills: ["Node.js", "React.js", "Express.js", "MongoDB"],
-  //   githubUrl: "https://github.com/ekallwin/railway_reservation",
-  //   demoUrl: "https://railway-reservation-frontend.onrender.com"
-  // },
-  // {
-  //   id: 3,
-  //   title: "Instagram Clone (React.js)",
-  //   image: Instagram,
-  //   alt: "Instagram Clone Screenshot",
-  //   skills: ["React.js", "Vite", "Rest API"],
-  //   githubUrl: "https://github.com/ekallwin/instagram-clone",
-  //   demoUrl: "https://instagram-clone-ekallwin.vercel.app"
-  // },
-  // {
-  //   id: 4,
-  //   title: "Food Ordering Website (Front-End)",
-  //   image: Dine,
-  //   alt: "Food Ordering Website Screenshot",
-  //   skills: ["HTML", "CSS", "JavaScript"],
-  //   githubUrl: "https://github.com/ekallwin/Dine",
-  //   demoUrl: "https://ekallwin-dine.vercel.app/"
-  // }
+  {
+    id: 5,
+    title: "Billing Management System (MERN)",
+    image: Billing,
+    alt: "Billing management system Screenshot",
+    skills: ["Node.js", "React.js", "Express.js", "Firebase (Auth & Firestore)"],
+    githubUrl: "https://github.com/ekallwin/billing-management-system",
+    demoUrl: "https://ekallwin-bill-management-system.vercel.app"
+  },
+
+  {
+    id: 2,
+    title: "Railway Reservation Site (MERN)",
+    image: Railway,
+    alt: "Railway Reservation System Screenshot",
+    skills: ["Node.js", "React.js", "Express.js", "MongoDB"],
+    githubUrl: "https://github.com/ekallwin/railway_reservation",
+    demoUrl: "https://railway-reservation-frontend.onrender.com"
+  },
+  {
+    id: 3,
+    title: "Instagram Clone (React.js)",
+    image: Instagram,
+    alt: "Instagram Clone Screenshot",
+    skills: ["React.js", "Vite", "Rest API"],
+    githubUrl: "https://github.com/ekallwin/instagram-clone",
+    demoUrl: "https://instagram-clone-ekallwin.vercel.app"
+  },
+  {
+    id: 4,
+    title: "Food Ordering Website (Front-End)",
+    image: Dine,
+    alt: "Food Ordering Website Screenshot",
+    skills: ["HTML", "CSS", "JavaScript"],
+    githubUrl: "https://github.com/ekallwin/Dine",
+    demoUrl: "https://ekallwin-dine.vercel.app/"
+  }
 ];
 
 function Projects() {
